@@ -1,58 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# UPLYFT — Multi-Institute SaaS Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+UPLYFT is a multi-institute school management, examination, and governance SaaS platform built with PHP and Laravel 11.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🏛️ Architecture & Module Breakdown
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+UPLYFT is designed with a modular architecture to support parallel multi-developer workflows across separate system domains:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+UPLYFT Platform
+├── Module 1: Core Architecture & Global Admin Governance (Completed)
+│   ├── Multi-Institute Database Schema (`institutes`, `institute_feature_toggles`)
+│   ├── Global Admin Dashboard (`/global-admin`)
+│   ├── Dynamic Feature Toggle Middleware (`CheckInstituteFeature`)
+│   └── Architectural Privacy Scope (`TenantPrivacyScope`)
+│
+├── Module 2: Authentication, Roles & Automated Tenant Onboarding
+├── Module 3: Institute Principal Panel & School Structure Setup (Classes, Subjects, Sections)
+├── Module 4: Examination, Grading & Marksheet Engine
+├── Module 5: Student & Teacher Portals
+└── Module 6: AI Analytics & Learning Management System
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## 🚀 Module 1 (Core Governance Architecture)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Key Features Implemented
 
-## Code of Conduct
+1. **Global Admin Panel (`/global-admin`)**:
+   - Platform Overview stats & tenant management
+   - Institute registration with Education System selection (`Matric`, `Higher Secondary`, `O/A Level`, `ACCA`, `Other`)
+   - Plan Subscription tiers (`Basic`, `Standard`, `Premium`)
+   - Custom styled animated deactivation/restoration modal (Soft Deletes)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. **Dynamic Feature Control (`InstituteFeatureToggle`)**:
+   - 12+ per-institute granular feature flags (AI Bot, Online Exams, Payroll, LMS, etc.)
+   - Plan tier presets with one-click default application
+   - Guard middleware: `Route::middleware('feature:ai_bot')->group(...)`
 
-## Security Vulnerabilities
+3. **Data Privacy Guardrail (`TenantPrivacyScope`)**:
+   - Restricts Global Admin Eloquent queries to governance-only fields by default.
+   - Prevents accidental exposure of operational tenant data unless `GLOBAL_ADMIN_EMERGENCY_OVERRIDE=true` is set.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🛠️ Local Environment Setup
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Prerequisites
+- PHP >= 8.2
+- MySQL >= 8.0
+- Composer
+- Node.js & NPM
+
+### Setup Instructions
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Hexxi07/UPLYFT.git
+   cd UPLYFT
+   ```
+
+2. **Install PHP dependencies**:
+   ```bash
+   composer install
+   ```
+
+3. **Environment Configuration**:
+   Copy `.env.example` to `.env` and update your database credentials:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Run Migrations & Storage Link**:
+   ```bash
+   php artisan migrate
+   php artisan storage:link
+   ```
+
+5. **Start Development Server**:
+   ```bash
+   php artisan serve
+   ```
+   Access the Global Admin panel at: `http://localhost:8000/global-admin`
+
+---
+
+## 👥 Multi-Developer Collaboration Guidelines
+
+When building additional modules (e.g. Principal Panel, Student Portal, Exams):
+
+1. **Route Files**: Place module routes in designated files inside `routes/` (e.g. `routes/principal.php`, `routes/student.php`) and register them in `bootstrap/app.php`.
+2. **Feature Protection**: Wrap new routes in the `feature:{flag_name}` middleware to respect institute feature toggles.
+3. **Database Migrations**: Name migrations cleanly with timestamps. Do not modify existing core migrations (`institutes`, `institute_feature_toggles`).
