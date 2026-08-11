@@ -15,6 +15,16 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        \App\Models\Institute::create([
+            'name' => 'Uplyft Academy',
+            'logo_path' => 'logos/uplyft_academy.png',
+            'settings' => [
+                'base_admission_fee' => 15000.00,
+                'filer_tax_rate' => 0.04,
+                'non_filer_tax_rate' => 0.12,
+            ],
+        ]);
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
