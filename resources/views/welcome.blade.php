@@ -493,7 +493,11 @@
                         <label for="institute_id">Target Institute</label>
                         <select name="institute_id" id="institute_id" required>
                             @php
-                                $institutes = \App\Models\Institute::all();
+                                try {
+                                    $institutes = \App\Models\Institute::all();
+                                } catch (\Throwable $e) {
+                                    $institutes = collect();
+                                }
                             @endphp
                             @forelse($institutes as $inst)
                                 <option value="{{ $inst->id }}" 

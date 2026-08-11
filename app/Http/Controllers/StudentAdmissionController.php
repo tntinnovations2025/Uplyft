@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentAdmissionRequest;
 use App\Models\Student;
+use App\Models\User;
 use App\Services\FeeCalculationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class StudentAdmissionController extends Controller
 {
@@ -22,41 +23,66 @@ class StudentAdmissionController extends Controller
 
     /**
      * Handle the incoming student admission form submission.
+     * Creates a linked User login account with roll number credentials.
      */
     public function store(StoreStudentAdmissionRequest $request): JsonResponse
     {
         return DB::transaction(function () use ($request) {
-            // Resolve the current tenant (institute) context
-            $instituteId = auth()->user()->institute_id 
-                ?? $request->input('institute_id') 
-                ?? (app()->bound('current_institute_id') ? app('current_institute_id') : null);
+            $validated    = $request->validated();
+            $instituteId  = $validated['institute_id']
+                ?? (auth()->check() ? auth()->user()->institute_id : null)
+                ?? (app()->bound('current_institute_id') ? app('current_institute_id') : 1);
 
-            // 1. Process validation-cleaned inputs
-            $validatedData = $request->validated();
-            
-            // Add institute scoping if resolved
-            if ($instituteId) {
-                $validatedData['institute_id'] = $instituteId;
-            }
+            $validated['institute_id'] = $instituteId;
 
-            // 2. Persist the Student Record (Global Scope & creation hooks apply here)
-            $student = Student::create($validatedData);
+            // 1. Generate unique Roll Number: STD-YYYY-XXXX
+            $year     = now()->year;
+            $sequence = str_pad(Student::withoutGlobalScopes()->count() + 1, 4, '0', STR_PAD_LEFT);
+            $rollNumber = "STD-{$year}-{$sequence}";
 
-            // 3. Delegate fee calculation logic to the dedicated domain service
+            $defaultPassword = 'UplyftStudent123!';
+
+            // 2. Create a global User login account for the student
+            $user = User::create([
+                'institute_id' => $instituteId,
+                'name'         => trim($validated['first_name'] . ' ' . $validated['last_name']),
+                'login_id'     => $rollNumber,
+                'role'         => 'student',
+                'email'        => $validated['email'],
+                'password'     => Hash::make($defaultPassword),
+            ]);
+
+            // 3. Persist the Student profile linked to the User account
+            $student = Student::create(array_merge($validated, [
+                'user_id'     => $user->id,
+                'roll_number' => $rollNumber,
+            ]));
+
+            // 4. Compute fee breakdown
             $feeBreakdown = $this->feeCalculator->calculate(
                 $student->guardian_tax_status,
                 $student->institute_id
             );
 
-            // 4. Return structural json confirmation
             return response()->json([
                 'success' => true,
-                'message' => 'Student registration successful.',
-                'data' => [
-                    'student' => $student,
-                    'fee_breakdown' => $feeBreakdown,
-                    'invoice_download_url' => route('admissions.invoice', ['student' => $student->id])
-                ]
+                'message' => 'Student admission registered successfully.',
+                'student' => [
+                    'id'         => $student->id,
+                    'first_name' => $student->first_name,
+                    'last_name'  => $student->last_name,
+                    'email'      => $student->email,
+                    'roll_number'=> $rollNumber,
+                ],
+                'credentials' => [
+                    'login_id' => $rollNumber,
+                    'password' => $defaultPassword,
+                    'portal'   => url('/student/dashboard'),
+                ],
+                'invoice' => [
+                    'grand_total'          => $feeBreakdown['grand_total'],
+                    'invoice_download_url' => route('admissions.invoice', ['student' => $student->id]),
+                ],
             ], 201);
         });
     }
@@ -66,29 +92,23 @@ class StudentAdmissionController extends Controller
      */
     public function generateInvoicePdf(Student $student): Response
     {
-        // 1. Fetch related institute (tenant context is already isolated via Global Scope on student queries)
         $institute = $student->institute;
 
-        // 2. Compute live fee breakdown
         $feeBreakdown = $this->feeCalculator->calculate(
             $student->guardian_tax_status,
             $student->institute_id
         );
 
-        // 3. Safely convert the logo to a Base64 string for reliable DomPDF execution.
-        // This avoids sandbox exceptions or network lookup limits during PDF rendering.
         $logoBase64 = null;
         if ($institute && $institute->logo_path) {
             $logoPath = storage_path('app/public/' . $institute->logo_path);
-            
             if (file_exists($logoPath)) {
                 $fileContent = file_get_contents($logoPath);
-                $mimeType = mime_content_type($logoPath) ?: 'image/png';
-                $logoBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($fileContent);
+                $mimeType    = mime_content_type($logoPath) ?: 'image/png';
+                $logoBase64  = 'data:' . $mimeType . ';base64,' . base64_encode($fileContent);
             }
         }
 
-        // 4. Scaffolding dynamic payload for the Blade PDF layout
         $data = [
             'student'      => $student,
             'institute'    => $institute,
@@ -97,7 +117,6 @@ class StudentAdmissionController extends Controller
             'issuedAt'     => now()->format('Y-m-d H:i:s'),
         ];
 
-        // 5. Build and output PDF Stream
         $pdf = Pdf::loadView('pdf.invoice', $data);
 
         return $pdf->download("uplyft_invoice_{$student->id}.pdf");

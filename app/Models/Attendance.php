@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
-class Student extends Model
+class Attendance extends Model
 {
     use HasFactory;
 
@@ -19,16 +19,10 @@ class Student extends Model
      */
     protected $fillable = [
         'institute_id',
-        'user_id',
-        'roll_number',
-        'first_name',
-        'last_name',
-        'email',
-        'phone',
-        'date_of_birth',
-        'previous_marks',
-        'guardian_tax_status',
-        'blood_group',
+        'academic_term_id',
+        'student_id',
+        'date',
+        'status',
     ];
 
     /**
@@ -37,8 +31,9 @@ class Student extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date_of_birth' => 'date',
-        'previous_marks' => 'decimal:2',
+        'date' => 'date:Y-m-d',
+        'academic_term_id' => 'integer',
+        'student_id' => 'integer',
     ];
 
     /**
@@ -46,39 +41,34 @@ class Student extends Model
      */
     protected static function booted(): void
     {
-        // Apply Global Scope for multi-tenancy
+        // Apply Global Scope for multi-tenancy isolation
         static::addGlobalScope(new InstituteScope);
 
-        // Auto-assign institute_id when creating a new student record
-        static::creating(function ($student) {
-            if (empty($student->institute_id)) {
+        // Auto-assign institute_id when creating a new attendance record
+        static::creating(function ($attendance) {
+            if (empty($attendance->institute_id)) {
                 if (Auth::check() && isset(Auth::user()->institute_id)) {
-                    $student->institute_id = Auth::user()->institute_id;
+                    $attendance->institute_id = Auth::user()->institute_id;
                 } elseif (app()->bound('current_institute_id')) {
-                    $student->institute_id = app('current_institute_id');
+                    $attendance->institute_id = app('current_institute_id');
                 }
             }
         });
     }
 
     /**
-     * Get the Institute that this student belongs to.
+     * Get the Institute that this attendance log belongs to.
      */
     public function institute(): BelongsTo
     {
         return $this->belongsTo(Institute::class);
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     /**
-     * Get the student's full name.
+     * Get the Student for this attendance record.
      */
-    public function getFullNameAttribute(): string
+    public function student(): BelongsTo
     {
-        return "{$this->first_name} {$this->last_name}";
+        return $this->belongsTo(Student::class);
     }
 }
