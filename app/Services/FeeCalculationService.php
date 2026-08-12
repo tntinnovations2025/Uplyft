@@ -16,16 +16,17 @@ class FeeCalculationService
      *
      * @param string $taxStatus ('filer' or 'non-filer')
      * @param int|null $instituteId Target tenant ID to pull custom pricing settings from.
+     * @param float|null $customBaseFee Optional custom base fee override.
      * @return array{
      *     base_fee: float,
      *     tax_rate: float,
      *     tax_amount: float,
-     *     total_fee: float
+     *     grand_total: float
      * }
      */
-    public function calculate(string $taxStatus, ?int $instituteId = null): array
+    public function calculate(string $taxStatus, ?int $instituteId = null, ?float $customBaseFee = null): array
     {
-        $baseFee = self::DEFAULT_BASE_FEE;
+        $baseFee = $customBaseFee ?? self::DEFAULT_BASE_FEE;
         $filerRate = self::FILER_TAX_RATE;
         $nonFilerRate = self::NON_FILER_TAX_RATE;
 
@@ -47,10 +48,10 @@ class FeeCalculationService
         $totalFee  = round($baseFee + $taxAmount, 2);
 
         return [
-            'base_fee'   => $baseFee,
-            'tax_rate'   => $taxRate,
-            'tax_amount' => $taxAmount,
-            'total_fee'  => $totalFee,
+            'base_fee'    => $baseFee,
+            'tax_rate'    => $taxRate,
+            'tax_amount'  => $taxAmount,
+            'grand_total' => $totalFee,
         ];
     }
 }

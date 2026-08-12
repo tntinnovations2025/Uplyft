@@ -28,7 +28,15 @@ class StoreTeacherOnboardingRequest extends FormRequest
             'email'               => ['required', 'email', 'max:255'],
             'phone'               => ['nullable', 'string', 'max:20'],
             'qualification'       => ['required', 'string', 'max:100'],
-            'qualifications_file' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'], // Max 5MB
+            'matriculation_cert'  => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'intermediate_cert'   => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'bachelors_cert'      => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'masters_cert'        => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'phd_cert'            => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
+            'years_of_experience' => ['nullable', 'integer', 'min:0'],
+            'specialization_subjects' => ['nullable', 'string', 'max:255'],
+            'emergency_contact_phone' => ['nullable', 'string', 'max:20'],
+            'basic_salary_pkr'        => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -40,9 +48,9 @@ class StoreTeacherOnboardingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'qualifications_file.required' => 'The academic qualification transcript file is required.',
-            'qualifications_file.max'      => 'The transcript document size must not exceed 5MB.',
-            'qualifications_file.mimes'    => 'The transcript document must be a PDF or valid image (JPG, JPEG, PNG).',
+            'matriculation_cert.required' => 'Matriculation certificate is required.',
+            'intermediate_cert.required'  => 'Intermediate certificate is required.',
+            'bachelors_cert.required'     => 'Bachelors certificate is required.',
         ];
     }
 }

@@ -26,7 +26,15 @@ class Teacher extends Model
         'email',
         'phone',
         'qualification',
-        'qualifications_file_path',
+        'matriculation_cert',
+        'intermediate_cert',
+        'bachelors_cert',
+        'masters_cert',
+        'phd_cert',
+        'years_of_experience',
+        'specialization_subjects',
+        'emergency_contact_phone',
+        'basic_salary_pkr',
     ];
 
     /**

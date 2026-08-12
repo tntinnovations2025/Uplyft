@@ -57,9 +57,18 @@ class StoreStudentAdmissionRequest extends FormRequest
 
             // Academic Profile
             'previous_marks' => ['required', 'numeric', 'min:0', 'max:100'],
+            'enrolled_program' => ['nullable', 'string', 'max:50'],
 
             // Guardian Tax Filing Profile
             'guardian_tax_status' => ['required', 'string', Rule::in(['filer', 'non-filer'])],
+            
+            // New Advanced Enrollment Fields
+            'passport_picture' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'student_bform_cnic' => ['nullable', 'string', 'max:20'],
+            'father_guardian_cnic' => ['nullable', 'string', 'max:20'],
+            'father_guardian_name' => ['nullable', 'string', 'max:100'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'base_fee' => ['required', 'numeric', 'min:0'],
         ];
     }
 

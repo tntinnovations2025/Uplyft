@@ -24,9 +24,15 @@ class TeacherOnboardingController extends Controller
     public function store(StoreTeacherOnboardingRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $file      = $request->file('qualifications_file');
+        
+        $files = [];
+        if ($request->hasFile('matriculation_cert')) $files['matriculation_cert'] = $request->file('matriculation_cert');
+        if ($request->hasFile('intermediate_cert')) $files['intermediate_cert'] = $request->file('intermediate_cert');
+        if ($request->hasFile('bachelors_cert')) $files['bachelors_cert'] = $request->file('bachelors_cert');
+        if ($request->hasFile('masters_cert')) $files['masters_cert'] = $request->file('masters_cert');
+        if ($request->hasFile('phd_cert')) $files['phd_cert'] = $request->file('phd_cert');
 
-        $result = $this->onboardingService->onboard($validated, $file);
+        $result = $this->onboardingService->onboard($validated, $files);
 
         return response()->json([
             'message'     => 'Teacher onboarding registration completed successfully.',

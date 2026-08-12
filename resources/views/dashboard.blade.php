@@ -4,19 +4,7 @@
 @section('page-header', 'Dashboard Overview')
 
 @section('content')
-@php
-    try {
-        $totalStudents = \App\Models\Student::count();
-        $totalTeachers = \App\Models\Teacher::count();
-        $totalAttendance = \App\Models\Attendance::count();
-        $activeInstitute = \App\Models\Institute::first();
-    } catch (\Throwable $e) {
-        $totalStudents = 0;
-        $totalTeachers = 0;
-        $totalAttendance = 0;
-        $activeInstitute = null;
-    }
-@endphp
+
 
 <div class="space-y-6">
 
@@ -68,15 +56,15 @@
             </div>
         </div>
 
-        <!-- Metric 4: Tenant Scope -->
+        <!-- Metric 4: Seat Availability -->
         <div class="glass-panel p-5 flex items-center justify-between">
             <div>
-                <p class="text-xs text-slate-400 font-medium">Active Institute Tenant</p>
-                <h3 class="text-lg font-bold text-white mt-1 truncate max-w-[140px]">{{ $activeInstitute ? $activeInstitute->name : 'Global Tenant' }}</h3>
-                <p class="text-[11px] text-indigo-400 mt-1"><i class="fa-solid fa-lock text-[9px] mr-1"></i> GlobalScope Isolated</p>
+                <p class="text-xs text-slate-400 font-medium">Seat Availability / Capacity</p>
+                <h3 class="text-lg font-bold text-white mt-1 truncate max-w-[140px]">{{ number_format($totalStudents) }} / 500</h3>
+                <p class="text-[11px] text-amber-400 mt-1"><i class="fa-solid fa-chair text-[9px] mr-1"></i> {{ 500 - $totalStudents }} Seats Left</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl">
-                <i class="fa-solid fa-building"></i>
+                <i class="fa-solid fa-users-viewfinder"></i>
             </div>
         </div>
     </div>
@@ -90,7 +78,7 @@
                 <div class="w-10 h-10 rounded-lg bg-indigo-600/30 text-indigo-400 flex items-center justify-center text-lg mb-4">
                     <i class="fa-solid fa-user-plus"></i>
                 </div>
-                <h3 class="text-lg font-bold text-white mb-2">Student Admissions</h3>
+                <h3 class="text-lg font-bold text-white mb-2">Manage Students</h3>
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">
                     Register applicants, configure tax status (filer vs. non-filer), preview real-time fee ledgers, and download PDF invoices.
                 </p>
@@ -107,7 +95,7 @@
                 <div class="w-10 h-10 rounded-lg bg-cyan-600/30 text-cyan-400 flex items-center justify-center text-lg mb-4">
                     <i class="fa-solid fa-id-card"></i>
                 </div>
-                <h3 class="text-lg font-bold text-white mb-2">Teacher Onboarding</h3>
+                <h3 class="text-lg font-bold text-white mb-2">Manage Teachers</h3>
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">
                     Onboard new faculty members, record qualifications, and securely upload academic transcripts under isolated tenant paths.
                 </p>
@@ -124,7 +112,7 @@
                 <div class="w-10 h-10 rounded-lg bg-emerald-600/30 text-emerald-400 flex items-center justify-center text-lg mb-4">
                     <i class="fa-solid fa-list-check"></i>
                 </div>
-                <h3 class="text-lg font-bold text-white mb-2">Attendance Roster</h3>
+                <h3 class="text-lg font-bold text-white mb-2">Global Attendance Overview</h3>
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">
                     Inspect class rosters by term and date, toggle student statuses (Present, Absent, Late, Leave), and log bulk records.
                 </p>

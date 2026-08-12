@@ -29,6 +29,13 @@ class Student extends Model
         'previous_marks',
         'guardian_tax_status',
         'blood_group',
+        'passport_picture_path',
+        'student_bform_cnic',
+        'father_guardian_cnic',
+        'father_guardian_name',
+        'address',
+        'enrolled_program',
+        'base_fee',
     ];
 
     /**
@@ -67,6 +74,11 @@ class Student extends Model
     public function institute(): BelongsTo
     {
         return $this->belongsTo(Institute::class);
+    }
+
+    public function invoices(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 
     public function user(): BelongsTo

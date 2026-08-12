@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStudentAdmissionRequest;
 use App\Models\Student;
 use App\Models\User;
+use App\Models\Invoice;
 use App\Services\FeeCalculationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class StudentAdmissionController extends Controller
 {
@@ -52,17 +54,62 @@ class StudentAdmissionController extends Controller
                 'password'     => Hash::make($defaultPassword),
             ]);
 
-            // 3. Persist the Student profile linked to the User account
+            // 3. Handle passport picture upload
+            $passportPath = null;
+            if ($request->hasFile('passport_picture')) {
+                $storagePath = "institutes/{$instituteId}/students/passports";
+                $passportPath = $request->file('passport_picture')->store($storagePath, 'public');
+            }
+
+            // 4. Persist the Student profile linked to the User account
             $student = Student::create(array_merge($validated, [
-                'user_id'     => $user->id,
-                'roll_number' => $rollNumber,
+                'user_id'               => $user->id,
+                'roll_number'           => $rollNumber,
+                'passport_picture_path' => $passportPath,
             ]));
 
-            // 4. Compute fee breakdown
+            // 5. Compute fee breakdown
             $feeBreakdown = $this->feeCalculator->calculate(
                 $student->guardian_tax_status,
-                $student->institute_id
+                $student->institute_id,
+                $student->base_fee
             );
+
+            // 6. Generate DOMPDF and save to disk
+            $institute = $student->institute;
+            $logoBase64 = null;
+            if ($institute && $institute->logo_path) {
+                $logoPath = storage_path('app/public/' . $institute->logo_path);
+                if (file_exists($logoPath)) {
+                    $fileContent = file_get_contents($logoPath);
+                    $mimeType    = mime_content_type($logoPath) ?: 'image/png';
+                    $logoBase64  = 'data:' . $mimeType . ';base64,' . base64_encode($fileContent);
+                }
+            }
+            
+            $data = [
+                'student'      => $student,
+                'institute'    => $institute,
+                'feeBreakdown' => $feeBreakdown,
+                'logoBase64'   => $logoBase64,
+                'issuedAt'     => now()->format('Y-m-d H:i:s'),
+            ];
+
+            $pdf = Pdf::loadView('pdf.invoice', $data);
+            $pdfFileName = "invoices/{$student->id}_" . time() . ".pdf";
+            $storagePath = "institutes/{$instituteId}/{$pdfFileName}";
+            
+            Storage::disk('public')->put($storagePath, $pdf->output());
+
+            // 7. Create Invoice record
+            $invoice = Invoice::create([
+                'institute_id' => $instituteId,
+                'student_id'   => $student->id,
+                'amount_pkr'   => $feeBreakdown['grand_total'],
+                'due_date'     => now()->addDays(7),
+                'status'       => 'unpaid',
+                'pdf_path'     => $storagePath,
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -81,7 +128,7 @@ class StudentAdmissionController extends Controller
                 ],
                 'invoice' => [
                     'grand_total'          => $feeBreakdown['grand_total'],
-                    'invoice_download_url' => route('admissions.invoice', ['student' => $student->id]),
+                    'invoice_download_url' => Storage::url($storagePath),
                 ],
             ], 201);
         });
@@ -96,7 +143,8 @@ class StudentAdmissionController extends Controller
 
         $feeBreakdown = $this->feeCalculator->calculate(
             $student->guardian_tax_status,
-            $student->institute_id
+            $student->institute_id,
+            $student->base_fee
         );
 
         $logoBase64 = null;

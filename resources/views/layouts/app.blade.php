@@ -116,25 +116,93 @@
 
             <!-- NAVIGATION LINKS -->
             <nav class="p-4 space-y-2">
-                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-pie w-5 text-center"></i>
-                    <span>Dashboard Home</span>
-                </a>
+                @if(auth()->check())
+                    @if(auth()->user()->role === 'admin')
+                        <!-- ADMIN SIDEBAR -->
+                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                            <span>Dashboard Home</span>
+                        </a>
+                        <a href="{{ route('admissions.index') }}" class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-user-graduate w-5 text-center"></i>
+                            <span>Manage Students</span>
+                        </a>
+                        <a href="{{ route('teachers.onboarding') }}" class="nav-link {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-chalkboard-user w-5 text-center"></i>
+                            <span>Manage Teachers</span>
+                        </a>
+                        <a href="{{ route('admin.students.directory') }}" class="nav-link {{ request()->routeIs('admin.students.directory') ? 'active' : '' }}">
+                            <i class="fa-solid fa-users w-5 text-center"></i>
+                            <span>Student Directory</span>
+                        </a>
+                        <a href="{{ route('admin.teachers.directory') }}" class="nav-link {{ request()->routeIs('admin.teachers.directory') ? 'active' : '' }}">
+                            <i class="fa-solid fa-id-badge w-5 text-center"></i>
+                            <span>Teacher Directory</span>
+                        </a>
+                        <a href="{{ route('admin.fees.management') }}" class="nav-link {{ request()->routeIs('admin.fees.management') ? 'active' : '' }}">
+                            <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i>
+                            <span>Fee Management</span>
+                        </a>
+                        
+                        <form method="POST" action="{{ route('logout') }}" class="mt-4 pt-4 border-t border-white/10">
+                            @csrf
+                            <button type="submit" class="w-full nav-link text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition border-none bg-transparent cursor-pointer">
+                                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                                <span>Sign Out</span>
+                            </button>
+                        </form>
 
-                <a href="{{ route('admissions.index') }}" class="nav-link {{ request()->routeIs('admissions.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-graduate w-5 text-center"></i>
-                    <span>Student Admissions</span>
-                </a>
+                    @elseif(auth()->user()->role === 'teacher')
+                        <!-- TEACHER SIDEBAR -->
+                        <a href="{{ route('teacher.dashboard') }}" class="nav-link {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
+                            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                            <span>Dashboard Home</span>
+                        </a>
+                        <a href="{{ route('teacher.schedule') }}" class="nav-link {{ request()->routeIs('teacher.schedule') ? 'active' : '' }}">
+                            <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                            <span>My Schedule</span>
+                        </a>
+                        <a href="{{ route('teacher.attendance') }}" class="nav-link {{ request()->routeIs('teacher.attendance') ? 'active' : '' }}">
+                            <i class="fa-solid fa-clipboard-user w-5 text-center"></i>
+                            <span>Mark Attendance</span>
+                        </a>
+                        <a href="{{ route('teacher.lms') }}" class="nav-link {{ request()->routeIs('teacher.lms') ? 'active' : '' }}">
+                            <i class="fa-solid fa-file-pen w-5 text-center"></i>
+                            <span>Assignments & Quizzes</span>
+                        </a>
+                        <a href="{{ route('teacher.lms') }}" class="nav-link {{ request()->routeIs('teacher.lms') ? 'active' : '' }}">
+                            <i class="fa-solid fa-graduation-cap w-5 text-center"></i>
+                            <span>Exam Management</span>
+                        </a>
 
-                <a href="{{ route('teachers.onboarding') }}" class="nav-link {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chalkboard-user w-5 text-center"></i>
-                    <span>Teacher Onboarding</span>
-                </a>
-
-                <a href="{{ route('attendance.index') }}" class="nav-link {{ request()->routeIs('attendance.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-clipboard-user w-5 text-center"></i>
-                    <span>Attendance Roster</span>
-                </a>
+                    @elseif(auth()->user()->role === 'student')
+                        <!-- STUDENT SIDEBAR -->
+                        <a href="{{ route('student.dashboard') }}" class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{{ route('student.timetable') }}" class="nav-link {{ request()->routeIs('student.timetable') ? 'active' : '' }}">
+                            <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                            <span>Timetable</span>
+                        </a>
+                        <a href="{{ route('student.courses') }}" class="nav-link {{ request()->routeIs('student.courses') ? 'active' : '' }}">
+                            <i class="fa-solid fa-book w-5 text-center"></i>
+                            <span>My Courses</span>
+                        </a>
+                        <a href="{{ route('student.attendance') }}" class="nav-link {{ request()->routeIs('student.attendance') ? 'active' : '' }}">
+                            <i class="fa-solid fa-clipboard-user w-5 text-center"></i>
+                            <span>Attendance Record</span>
+                        </a>
+                        <a href="{{ route('student.lms') }}" class="nav-link {{ request()->routeIs('student.lms') ? 'active' : '' }}">
+                            <i class="fa-solid fa-file-pen w-5 text-center"></i>
+                            <span>Assignments</span>
+                        </a>
+                        <a href="{{ route('student.invoices') }}" class="nav-link {{ request()->routeIs('student.invoices') ? 'active' : '' }}">
+                            <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i>
+                            <span>My Fees & Invoices</span>
+                        </a>
+                    @endif
+                @endif
             </nav>
         </div>
 
