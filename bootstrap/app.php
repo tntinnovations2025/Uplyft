@@ -16,11 +16,19 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('global-admin')
                 ->name('global-admin.')
                 ->group(base_path('routes/global-admin.php'));
+
+            Route::middleware('web')
+                ->prefix('principal')
+                ->name('principal.')
+                ->group(base_path('routes/principal.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'feature' => \App\Http\Middleware\CheckInstituteFeature::class,
+            'feature'            => \App\Http\Middleware\CheckInstituteFeature::class,
+            'role'               => \App\Http\Middleware\CheckRole::class,
+            'institute.member'   => \App\Http\Middleware\EnsureUserBelongsToInstitute::class,
+            'active.term'        => \App\Http\Middleware\EnsureActiveAcademicTerm::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

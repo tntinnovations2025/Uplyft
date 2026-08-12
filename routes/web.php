@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -8,6 +9,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    $user = Auth::user();
+
+    // Role-based dashboard redirects
+    if ($user->isGlobalAdmin()) {
+        return redirect()->route('global-admin.dashboard');
+    }
+
+    if ($user->isPrincipal()) {
+        return redirect()->route('principal.dashboard');
+    }
+
+    // Default dashboard for teachers and students
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

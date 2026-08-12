@@ -1,24 +1,29 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
-
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+
+    <div class="mb-4 text-sm text-gray-600">
+        {{ __('Enter your email address or institutional ID below. If an account exists, your administrator will be notified to reset your password.') }}
+    </div>
 
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Email or Identifier -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="credential" :value="__('Email or Institutional ID')" />
+            <x-text-input id="credential" class="block mt-1 w-full" type="text" name="credential" :value="old('credential')" required autofocus
+                placeholder="e.g. admin@uplyft.com, STU-2026/0101, EMP#402" />
+            <x-input-error :messages="$errors->get('credential')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex items-center justify-between mt-4">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
+                {{ __('Back to Login') }}
+            </a>
+
             <x-primary-button>
-                {{ __('Email Password Reset Link') }}
+                {{ __('Request Password Reset') }}
             </x-primary-button>
         </div>
     </form>

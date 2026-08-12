@@ -34,10 +34,11 @@ class InstituteController extends Controller
         ]);
     }
 
-    // ── Store new institute ──────────────────────────────────────────────
+    // ── Store new institute + create Principal master login ────────────
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            // Institute fields
             'name'                    => 'required|string|max:255|unique:institutes,name',
             'subscription_tier'       => 'required|in:basic,standard,premium',
             'subscription_starts_at'  => 'nullable|date',
@@ -48,6 +49,12 @@ class InstituteController extends Controller
             'logo'                    => 'nullable|image|mimes:jpeg,png,svg|max:2048',
             'education_systems'       => 'nullable|array',
             'education_systems.*'     => 'in:matric,higher_sec,o_a_level,acca,other',
+
+            // Principal master login fields
+            'principal_name'                  => 'required|string|max:255',
+            'principal_email'                 => 'required|email|max:255|unique:users,email',
+            'principal_password'              => ['required', 'string', 'confirmed', new \App\Rules\StrongPassword],
+            'principal_identifier'            => ['nullable', 'string', new \App\Rules\ValidIdentifier, 'unique:users,identifier'],
         ]);
 
         DB::beginTransaction();
@@ -58,37 +65,66 @@ class InstituteController extends Controller
                 $logoPath = $request->file('logo')->store('institute-logos', 'public');
             }
 
+            // 1. Create the Institute
             $institute = Institute::create([
-                ...$validated,
-                'logo_path'   => $logoPath,
-                'is_active'   => true,
-                'is_onboarded'=> false,
+                'name'                    => $validated['name'],
+                'subscription_tier'       => $validated['subscription_tier'],
+                'subscription_starts_at'  => $validated['subscription_starts_at'] ?? null,
+                'subscription_expires_at' => $validated['subscription_expires_at'] ?? null,
+                'contact_email'           => $validated['contact_email'] ?? null,
+                'contact_phone'           => $validated['contact_phone'] ?? null,
+                'city'                    => $validated['city'] ?? null,
+                'education_systems'       => $validated['education_systems'] ?? [],
+                'logo_path'               => $logoPath,
+                'is_active'               => true,
+                'is_onboarded'            => false,
             ]);
 
-            // Create default feature toggles row (all OFF)
+            // 2. Create default feature toggles row (all OFF)
             InstituteFeatureToggle::create([
-                'institute_id'   => $institute->id,
-                'last_updated_by'=> auth()->id(),
+                'institute_id'    => $institute->id,
+                'last_updated_by' => auth()->id(),
             ]);
+
+            // 3. Create the Principal master login account
+            $plainPassword = $validated['principal_password'];
+
+            $principal = \App\Models\User::create([
+                'name'         => $validated['principal_name'],
+                'email'        => $validated['principal_email'],
+                'identifier'   => $validated['principal_identifier'] ?? null,
+                'password'     => \Illuminate\Support\Facades\Hash::make($plainPassword),
+                'role'         => \App\Models\User::ROLE_PRINCIPAL,
+                'institute_id' => $institute->id,
+                'created_by'   => auth()->id(),
+            ]);
+
+            // 4. Send login credentials to the principal via email
+            \Illuminate\Support\Facades\Mail::to($principal->email)
+                ->send(new \App\Mail\PrincipalCredentialsMail($principal, $institute, $plainPassword));
 
             DB::commit();
-            Log::info('Global Admin: Institute created', ['institute_id' => $institute->id, 'actor' => auth()->id()]);
+            Log::info('Global Admin: Institute + Principal created', [
+                'institute_id' => $institute->id,
+                'principal_id' => $principal->id,
+                'actor'        => auth()->id(),
+            ]);
 
             return redirect()
                 ->route('global-admin.institutes.show', $institute)
-                ->with('success', 'Institute "' . $institute->name . '" registered successfully.');
+                ->with('success', 'Institute "' . $institute->name . '" registered successfully. Principal login credentials sent to ' . $principal->email . '.');
 
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Institute creation failed', ['error' => $e->getMessage()]);
-            return back()->withInput()->with('error', 'Failed to create institute. Please try again.');
+            return back()->withInput()->with('error', 'Failed to create institute. ' . $e->getMessage());
         }
     }
 
     // ── Show single institute ─────────────────────────────────────────────
     public function show(Institute $institute): View
     {
-        $institute->load(['featureToggles']);
+        $institute->load(['featureToggles', 'principals']);
         $featureLabels = InstituteFeatureToggle::$featureLabels;
 
         return view('global-admin.institutes.show', compact('institute', 'featureLabels'));

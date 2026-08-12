@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -10,6 +11,15 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Custom Login Request supporting dual-credential authentication.
+ *
+ * Users can log in with either:
+ *  - A standard email address
+ *  - A custom institutional identifier (Roll Number / Employee ID)
+ *
+ * The 'credential' field accepts both formats and resolves automatically.
+ */
 class LoginRequest extends FormRequest
 {
     /**
@@ -28,13 +38,25 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'credential' => ['required', 'string', 'max:255'],
+            'password'   => ['required', 'string'],
+        ];
+    }
+
+    /**
+     * Custom validation messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'credential.required' => 'Please enter your email address or institutional ID.',
         ];
     }
 
     /**
      * Attempt to authenticate the request's credentials.
+     *
+     * Tries matching against both email and identifier fields.
      *
      * @throws ValidationException
      */
@@ -42,11 +64,43 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $credential = $this->input('credential');
+        $password   = $this->input('password');
+        $remember   = $this->boolean('remember');
+
+        // Determine if input looks like an email
+        $isEmail = filter_var($credential, FILTER_VALIDATE_EMAIL) !== false;
+
+        // Attempt authentication by email first, then by identifier
+        $authenticated = false;
+
+        if ($isEmail) {
+            $authenticated = Auth::attempt(
+                ['email' => $credential, 'password' => $password],
+                $remember
+            );
+        }
+
+        if (! $authenticated) {
+            $authenticated = Auth::attempt(
+                ['identifier' => $credential, 'password' => $password],
+                $remember
+            );
+        }
+
+        // Fallback: if it looked like email but failed, also try identifier
+        if (! $authenticated && $isEmail) {
+            $authenticated = Auth::attempt(
+                ['identifier' => $credential, 'password' => $password],
+                $remember
+            );
+        }
+
+        if (! $authenticated) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'credential' => trans('auth.failed'),
             ]);
         }
 
@@ -69,7 +123,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'credential' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -81,6 +135,8 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(
+            Str::lower($this->string('credential')) . '|' . $this->ip()
+        );
     }
 }

@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Institute extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -80,6 +80,22 @@ class Institute extends Model
     public function classAssignments(): HasMany
     {
         return $this->hasMany(InstituteClassAssignment::class);
+    }
+
+    /**
+     * All users belonging to this institute.
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+    /**
+     * The principal(s) assigned to this institute.
+     */
+    public function principals()
+    {
+        return $this->hasMany(User::class)->where('role', 'principal');
     }
 
     public function assignedClasses()

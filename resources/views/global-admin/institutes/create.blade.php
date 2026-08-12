@@ -104,8 +104,65 @@
             @error('education_systems')<p class="form-error" style="margin-top:8px">{{ $message }}</p>@enderror
         </div>
 
+        {{-- ── Master Login (Principal Account) ─────────────────────────── --}}
+        <div style="margin-top:28px;padding:24px;background:linear-gradient(135deg, rgba(108,99,255,.06), rgba(0,206,209,.06));border:1.5px solid var(--accent);border-radius:12px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+                <span style="font-size:22px">🔑</span>
+                <div>
+                    <label style="font-size:15px;font-weight:700;color:var(--text);display:block">
+                        Create Master Login for Institute *
+                    </label>
+                    <span style="font-weight:400;color:var(--text-muted);font-size:12px">
+                        This creates the Principal account. Login credentials will be emailed automatically.
+                    </span>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label for="principal_name">Principal Full Name *</label>
+                    <input id="principal_name" type="text" name="principal_name"
+                           value="{{ old('principal_name') }}"
+                           placeholder="e.g. Mr. Ahmed Khan" required />
+                    @error('principal_name')<p class="form-error">{{ $message }}</p>@enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="principal_email">Principal Email *</label>
+                    <input id="principal_email" type="email" name="principal_email"
+                           value="{{ old('principal_email') }}"
+                           placeholder="principal@school.edu.pk" required />
+                    <span style="font-size:11px;color:var(--text-muted)">This email will be used for login and credential delivery.</span>
+                    @error('principal_email')<p class="form-error">{{ $message }}</p>@enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="principal_password">Login Password *</label>
+                    <input id="principal_password" type="password" name="principal_password"
+                           placeholder="Min 8 chars: Aa1@..." required />
+                    <span style="font-size:11px;color:var(--text-muted)">Uppercase + lowercase + number + special char required.</span>
+                    @error('principal_password')<p class="form-error">{{ $message }}</p>@enderror
+                </div>
+
+                <div class="form-group" style="grid-column:1;">
+                    <label for="principal_password_confirmation">Confirm Password *</label>
+                    <input id="principal_password_confirmation" type="password"
+                           name="principal_password_confirmation"
+                           placeholder="Re-type password" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="principal_identifier">Employee ID <span style="color:var(--text-muted)">(Optional)</span></label>
+                    <input id="principal_identifier" type="text" name="principal_identifier"
+                           value="{{ old('principal_identifier') }}"
+                           placeholder="e.g. PRIN-001, ADM#101" />
+                    @error('principal_identifier')<p class="form-error">{{ $message }}</p>@enderror
+                </div>
+            </div>
+        </div>
+
         <div style="display:flex;gap:12px;margin-top:24px">
-            <button type="submit" class="btn btn-primary">✅ Register Institute</button>
+            <button type="submit" class="btn btn-primary">✅ Register Institute & Create Master Login</button>
             <a href="{{ route('global-admin.institutes.index') }}" class="btn btn-ghost">Cancel</a>
         </div>
     </form>

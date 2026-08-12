@@ -83,6 +83,31 @@
 
 </div>
 
+<!-- Master Login (Principal) Card -->
+<div class="card" style="margin-top:20px">
+    <div class="card-header">
+        <div class="card-title">🔑 Master Login (Principal)</div>
+    </div>
+    @php $principal = $institute->principals->first(); @endphp
+    @if($principal)
+        <table>
+            <tr><td style="color:var(--text-muted);width:140px">Name</td><td>{{ $principal->name }}</td></tr>
+            <tr><td style="color:var(--text-muted)">Email</td><td><code style="font-size:13px">{{ $principal->email }}</code></td></tr>
+            @if($principal->identifier)
+            <tr><td style="color:var(--text-muted)">Employee ID</td><td><code style="font-size:13px">{{ $principal->identifier }}</code></td></tr>
+            @endif
+            <tr><td style="color:var(--text-muted)">Created</td><td>{{ $principal->created_at->format('d M Y, h:i A') }}</td></tr>
+            <tr><td style="color:var(--text-muted)">Status</td>
+                <td><span class="badge badge-green">Active</span></td></tr>
+        </table>
+    @else
+        <p style="color:var(--text-muted);font-size:14px;padding:4px 0">
+            No principal account created yet.
+            <a href="{{ route('global-admin.accounts.principals.create') }}?institute_id={{ $institute->id }}" style="color:var(--accent)">Create one →</a>
+        </p>
+    @endif
+</div>
+
 <!-- Education System Types -->
 <div class="card" style="margin-top:20px">
     <div class="card-header">

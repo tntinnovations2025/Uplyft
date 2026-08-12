@@ -5,11 +5,12 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Email or Identifier -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="credential" :value="__('Email or Institutional ID')" />
+            <x-text-input id="credential" class="block mt-1 w-full" type="text" name="credential" :value="old('credential')" required autofocus autocomplete="username"
+                placeholder="e.g. admin@uplyft.com, STU-2026/0101, EMP#402" />
+            <x-input-error :messages="$errors->get('credential')" class="mt-2" />
         </div>
 
         <!-- Password -->

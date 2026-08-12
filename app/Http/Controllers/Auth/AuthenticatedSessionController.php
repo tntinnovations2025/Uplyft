@@ -21,6 +21,8 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
+     *
+     * Uses the custom LoginRequest that supports both email and identifier.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -28,7 +30,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Route to role-appropriate dashboard
+        $user = Auth::user();
+
+        return match ($user->role) {
+            'global_admin' => redirect()->intended(route('global-admin.dashboard', absolute: false)),
+            'principal'    => redirect()->intended(route('principal.dashboard', absolute: false)),
+            default        => redirect()->intended(route('dashboard', absolute: false)),
+        };
     }
 
     /**
