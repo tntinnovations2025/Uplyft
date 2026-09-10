@@ -1,0 +1,49 @@
+@extends('layouts.app')
+
+@section('title', 'Teachers Directory')
+@section('page-header', 'Teacher Directory')
+
+@section('content')
+<div class="space-y-6">
+
+    <div class="liquid-glass-card p-6 flex flex-col md:flex-row items-center justify-between gap-4 border border-slate-200/90 shadow-2xs glass-specular-top">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-900 font-display">Onboarded Teachers</h2>
+            <p class="text-xs text-slate-500 font-medium">Total Faculty: <span class="badge badge-pink text-xs font-bold">{{ $teachers->count() }}</span></p>
+        </div>
+        <a href="{{ route('teachers.onboarding') }}" class="btn-primary py-2.5 px-5 text-sm font-extrabold shadow-md inline-flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>Onboard New Teacher</span>
+        </a>
+    </div>
+
+    <div class="liquid-glass-card p-0 overflow-hidden border border-slate-200/90 shadow-2xs">
+        <div class="overflow-x-auto rounded-xl">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-xs text-slate-700 font-extrabold uppercase tracking-wider">
+                        <th class="py-3.5 px-6">Employee ID</th>
+                        <th class="py-3.5 px-6">Teacher Name</th>
+                        <th class="py-3.5 px-6">Specialization</th>
+                        <th class="py-3.5 px-6">Experience</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-slate-700 divide-y divide-slate-100 bg-white">
+                    @forelse($teachers as $teacher)
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-3.5 px-6 font-bold font-mono text-pink-700">{{ $teacher->employee_id }}</td>
+                            <td class="py-3.5 px-6 font-extrabold text-slate-900">{{ $teacher->first_name }} {{ $teacher->last_name }}</td>
+                            <td class="py-3.5 px-6 font-semibold text-slate-600">{{ $teacher->specialization_subjects ?? 'N/A' }}</td>
+                            <td class="py-3.5 px-6 font-medium text-slate-500">{{ $teacher->years_of_experience ? $teacher->years_of_experience . ' Years' : 'N/A' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-400 text-sm font-medium">No teachers onboarded yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endsection

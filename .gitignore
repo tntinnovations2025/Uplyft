@@ -1,0 +1,79 @@
+# ── OS / Editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
+.phpactor.json
+/.codex
+/.cursor/
+/.idea
+/.nova
+/.vscode
+/.zed
+/.fleet
+/.phpunit.cache
+/.phpunit.result.cache
+_ide_helper.php
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+
+# ── Environment & Secrets (STRICT) ───────────────────────────────────────────
+# Never commit environment files. `.env.example` is the only tracked template.
+.env
+.env.backup
+.env.*
+!.env.example
+
+# Local credentials/operational tooling that must never enter version control.
+/open-mysql-cli.cmd
+/update_user.php
+/scratch/
+/.scratch/
+
+# ── Dependencies / Build Artifacts ───────────────────────────────────────────
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/fonts-manifest.dev.json
+/public/storage
+/public/storage-link
+/storage/*.key
+/storage/pail
+
+# ── Runtime Generated Files ──────────────────────────────────────────────────
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+!/storage/framework/cache/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+!/storage/logs/.gitignore
+
+# ── Tenant Uploads, Materials & Documents (never committed) ───────────────────
+# LMS subject materials / courseware uploads (local disk)
+/storage/app/private/subject-materials/*
+/storage/app/private/*
+/storage/app/materials/*
+
+# Tenant-generated PDF invoices, vouchers, receipts, passports & photos
+/storage/app/public/institutes/*
+/storage/app/public/invoices/*
+/storage/app/invoices/*
+/storage/app/pdf/*
+
+# Vector caches / embedding artifacts (DB-backed in this build; defensive)
+/storage/app/vector/*
+/storage/app/cache/*
+/storage/app/storage/vector/*
+
+# Security operational artifacts (e.g. password-rotation CSV hand-outs)
+/storage/app/security/*
+
+# ── AI / Tooling Cache ───────────────────────────────────────────────────────
+/.opencode/
+/.turbo
+/.cache

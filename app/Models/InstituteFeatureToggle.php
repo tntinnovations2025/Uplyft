@@ -1,0 +1,316 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class InstituteFeatureToggle extends Model
+{
+    protected $fillable = [
+        'institute_id',
+        'principal_portal',
+        'teacher_portal',
+        'parent_portal',
+        'staff_governance',
+        'security_management',
+        'registration_portals',
+        'master_directory',
+        'fee_invoicing',
+        'financial_accounts',
+        'scholarships',
+        'classes_sections',
+        'subjects_catalog',
+        'teacher_allocations',
+        'faculty_hours',
+        'rooms_facilities',
+        'attendance_system',
+        'timetable',
+        'ai_bot',
+        'practice_tests',
+        'lms_content',
+        'assessment_engine',
+        'datesheet_manager',
+        'exam_reports',
+        'grading_normalizer',
+        'sms_notifications',
+        'last_updated_by',
+        'last_updated_at',
+    ];
+
+    protected $casts = [
+        'principal_portal'       => 'boolean',
+        'teacher_portal'         => 'boolean',
+        'parent_portal'          => 'boolean',
+        'staff_governance'       => 'boolean',
+        'security_management'    => 'boolean',
+        'registration_portals'   => 'boolean',
+        'master_directory'       => 'boolean',
+        'fee_invoicing'          => 'boolean',
+        'financial_accounts'     => 'boolean',
+        'scholarships'           => 'boolean',
+        'classes_sections'       => 'boolean',
+        'subjects_catalog'       => 'boolean',
+        'teacher_allocations'    => 'boolean',
+        'faculty_hours'          => 'boolean',
+        'rooms_facilities'       => 'boolean',
+        'attendance_system'      => 'boolean',
+        'timetable'              => 'boolean',
+        'ai_bot'                 => 'boolean',
+        'practice_tests'         => 'boolean',
+        'lms_content'            => 'boolean',
+        'assessment_engine'      => 'boolean',
+        'datesheet_manager'      => 'boolean',
+        'exam_reports'           => 'boolean',
+        'grading_normalizer'     => 'boolean',
+        'sms_notifications'      => 'boolean',
+        'last_updated_at'        => 'datetime',
+    ];
+
+    // ── All toggle feature keys (used for validation & iteration) ─────────
+    public static array $featureKeys = [
+        'principal_portal',
+        'teacher_portal',
+        'parent_portal',
+        'staff_governance',
+        'security_management',
+        'registration_portals',
+        'master_directory',
+        'fee_invoicing',
+        'financial_accounts',
+        'scholarships',
+        'classes_sections',
+        'subjects_catalog',
+        'teacher_allocations',
+        'faculty_hours',
+        'rooms_facilities',
+        'attendance_system',
+        'timetable',
+        'ai_bot',
+        'practice_tests',
+        'lms_content',
+        'assessment_engine',
+        'datesheet_manager',
+        'exam_reports',
+        'grading_normalizer',
+        'sms_notifications',
+    ];
+
+    // ── Human-readable labels for the dashboard UI ───────────────────────
+    public static array $featureLabels = [
+        'principal_portal'       => 'Principal Governance Suite',
+        'teacher_portal'         => 'Faculty & Staff Portal',
+        'parent_portal'          => 'Parent & Guardian Gateway',
+        'staff_governance'       => 'Faculty & Staff Roster & Onboarding',
+        'security_management'    => 'Security Center & Password Resets',
+        'registration_portals'   => 'Student Registration & Admissions',
+        'master_directory'       => 'Master Directory & Student Dossiers',
+        'fee_invoicing'          => 'Fee Vouchers & Invoicing Engine',
+        'financial_accounts'     => 'Financial Ledger & Salary Accounts',
+        'scholarships'           => 'Scholarship % Decision Engine',
+        'classes_sections'       => 'Classes & Section Management',
+        'subjects_catalog'       => 'Subject Catalog & Lab Requirements',
+        'teacher_allocations'    => 'Subject-Teacher Allocation Matrix',
+        'faculty_hours'          => 'Faculty Work Hours & Availability',
+        'rooms_facilities'       => 'Campus Rooms & Infrastructure Facilities',
+        'attendance_system'      => 'Daily Student & Faculty Attendance',
+        'timetable'              => 'AI Timetable Auto-Generator Engine',
+        'ai_bot'                 => 'AI RAG Study Tutor & Assistant',
+        'practice_tests'         => 'AI Practice Test & Mock Generator',
+        'lms_content'            => 'LMS Course Material & Lecture Uploads',
+        'assessment_engine'      => 'Assessments & Paper Quiz Engine',
+        'datesheet_manager'      => 'Official Exam Datesheet Manager',
+        'exam_reports'           => 'Examination Reports & Marksheets',
+        'grading_normalizer'     => 'Grade Weightage & Normalization Engine',
+        'sms_notifications'      => 'SMS & Cloud Email Notifications',
+    ];
+
+    // ── Detailed descriptions for the modern UI switchboard ───────────────
+    public static array $featureMetadata = [
+        'principal_portal' => [
+            'category' => 'Executive & Core Governance',
+            'category_key' => 'governance',
+            'icon' => 'fa-solid fa-crown',
+            'badge' => 'CORE',
+            'desc' => 'High-level institutional analytics, administrative rights matrix, and master control center.',
+        ],
+        'teacher_portal' => [
+            'category' => 'Executive & Core Governance',
+            'category_key' => 'governance',
+            'icon' => 'fa-solid fa-chalkboard-user',
+            'badge' => 'FACULTY',
+            'desc' => 'Daily faculty workspace, lecture notes, timetable matrix, and student evaluations.',
+        ],
+        'parent_portal' => [
+            'category' => 'Executive & Core Governance',
+            'category_key' => 'governance',
+            'icon' => 'fa-solid fa-users-viewfinder',
+            'badge' => 'PORTAL',
+            'desc' => 'Parent guardian portal for fee vouchers, child performance reports, and attendance records.',
+        ],
+        'staff_governance' => [
+            'category' => 'Executive & Core Governance',
+            'category_key' => 'governance',
+            'icon' => 'fa-solid fa-id-card-clip',
+            'badge' => 'HR & STAFF',
+            'desc' => 'Manage employee profiles, qualifications, experience records, and staff onboarding.',
+        ],
+        'security_management' => [
+            'category' => 'Executive & Core Governance',
+            'category_key' => 'governance',
+            'icon' => 'fa-solid fa-shield-halved',
+            'badge' => 'SECURITY',
+            'desc' => 'Password reset center, multi-tenant credential management, and security audit logs.',
+        ],
+        'registration_portals' => [
+            'category' => 'Admissions & Directory',
+            'category_key' => 'admissions',
+            'icon' => 'fa-solid fa-user-plus',
+            'badge' => 'ADMISSIONS',
+            'desc' => 'Full online student registration workflow, document attachments, and system ID generation.',
+        ],
+        'master_directory' => [
+            'category' => 'Admissions & Directory',
+            'category_key' => 'admissions',
+            'icon' => 'fa-solid fa-address-book',
+            'badge' => 'RECORDS',
+            'desc' => 'Searchable global dossier database across all students, faculty members, and staff profiles.',
+        ],
+        'fee_invoicing' => [
+            'category' => 'Financials & Accounts',
+            'category_key' => 'financials',
+            'icon' => 'fa-solid fa-file-invoice-dollar',
+            'badge' => 'BILLING',
+            'desc' => 'Monthly & term fee voucher generation, payment collection tracking, and downloadable PDF receipts.',
+        ],
+        'financial_accounts' => [
+            'category' => 'Financials & Accounts',
+            'category_key' => 'financials',
+            'icon' => 'fa-solid fa-scale-balanced',
+            'badge' => 'LEDGER',
+            'desc' => 'General financial ledger, accounting heads, expense entries, and faculty payroll salaries.',
+        ],
+        'scholarships' => [
+            'category' => 'Financials & Accounts',
+            'category_key' => 'financials',
+            'icon' => 'fa-solid fa-percent',
+            'badge' => 'DISCOUNTS',
+            'desc' => 'Merit, kinship, and need-based fee deduction policy engine with automatic discount calculation.',
+        ],
+        'classes_sections' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-school',
+            'badge' => 'STRUCTURE',
+            'desc' => 'Manage academic classes, section allocations, student capacity limits, and grade divisions.',
+        ],
+        'subjects_catalog' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-book-bookmark',
+            'badge' => 'CURRICULUM',
+            'desc' => 'Define curriculum subjects, credit weights, practical lab prerequisites, and textbooks.',
+        ],
+        'teacher_allocations' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-diagram-project',
+            'badge' => 'ALLOCATION',
+            'desc' => 'Workload distribution engine mapping specialist faculty members to specific class sections.',
+        ],
+        'faculty_hours' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-business-time',
+            'badge' => 'HOURS',
+            'desc' => 'Configure teacher daily working windows, max daily lectures, and availability slots.',
+        ],
+        'rooms_facilities' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-building-columns',
+            'badge' => 'CAMPUS',
+            'desc' => 'Manage campus lecture halls, science laboratories, computer rooms, and capacity limits.',
+        ],
+        'attendance_system' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-clipboard-check',
+            'badge' => 'ATTENDANCE',
+            'desc' => 'Daily interactive roster for marking student and staff attendance with real-time statistics.',
+        ],
+        'timetable' => [
+            'category' => 'Academics & Operations',
+            'category_key' => 'academics',
+            'icon' => 'fa-solid fa-calendar-days',
+            'badge' => 'AI SCHEDULER',
+            'desc' => 'Automated clash-free weekly matrix generator, timetable solver, and room schedule matrix.',
+        ],
+        'ai_bot' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-robot',
+            'badge' => 'AI RAG',
+            'desc' => 'AI Study Assistant powered by vector-embedded course material with strict hallucination controls.',
+        ],
+        'practice_tests' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-wand-magic-sparkles',
+            'badge' => 'AI QUIZ',
+            'desc' => 'Adaptive practice quiz and mock generator with instant automated AI grading and feedback.',
+        ],
+        'lms_content' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-layer-group',
+            'badge' => 'LMS',
+            'desc' => 'Course syllabus management, lecture notes, PDF document uploads, and revision slides.',
+        ],
+        'assessment_engine' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-file-signature',
+            'badge' => 'EXAMS',
+            'desc' => 'Online & paper assessment creator, MCQ question banks, auto-marking, and grading workflows.',
+        ],
+        'datesheet_manager' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-calendar-check',
+            'badge' => 'DATESHEET',
+            'desc' => 'Term midterms and finals datesheet schedule builder with student and teacher visibility.',
+        ],
+        'exam_reports' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-chart-line',
+            'badge' => 'REPORTS',
+            'desc' => 'Term exam marksheets, student performance analytics, and printable academic report cards.',
+        ],
+        'grading_normalizer' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-chart-pie',
+            'badge' => 'ANALYTICS',
+            'desc' => 'Continuous evaluation grade weightage calculator, term normalizer, and final GPA engine.',
+        ],
+        'sms_notifications' => [
+            'category' => 'AI Suite, LMS & Cloud Communication',
+            'category_key' => 'ai_lms',
+            'icon' => 'fa-solid fa-comment-sms',
+            'badge' => 'ALERTS',
+            'desc' => 'Automated SMS and email broadcasts for fee dues, attendance absences, and urgent circulars.',
+        ],
+    ];
+
+    public function institute(): BelongsTo
+    {
+        return $this->belongsTo(Institute::class);
+    }
+
+    public function lastUpdatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_updated_by');
+    }
+}
