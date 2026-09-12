@@ -13,6 +13,9 @@ $app = require_once __DIR__ . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
+$principalPassword = env('PRINCIPAL_DEFAULT_PASSWORD', 'unset-principal-default-password-in-env');
+$teacherPassword = env('TEACHER_DEFAULT_PASSWORD', 'unset-teacher-default-password-in-env');
+
 // 1. Create Institute
 $institute = Institute::firstOrCreate(
     ['code' => 'APEX-01'],
@@ -31,7 +34,7 @@ $principal = User::updateOrCreate(
     [
         'name'         => 'Dr. Ahmed Khan (Principal)',
         'identifier'   => 'PRIN-APEX-01',
-        'password'     => Hash::make('Principal123!@#'),
+        'password'     => Hash::make($principalPassword),
         'role'         => User::ROLE_PRINCIPAL,
         'institute_id' => $institute->id,
     ]
@@ -94,7 +97,7 @@ $teacher = User::updateOrCreate(
     [
         'name'               => 'Prof. Usman Ali',
         'identifier'         => 'EMP#402',
-        'password'           => Hash::make('Teacher123!@#'),
+        'password'           => Hash::make($teacherPassword),
         'role'               => User::ROLE_TEACHER,
         'institute_id'       => $institute->id,
         'is_delegated_admin' => true,
@@ -102,6 +105,5 @@ $teacher = User::updateOrCreate(
 );
 
 echo "SUCCESS: Seeded Module 3 Test Data!\n";
-echo "Principal Email: principal@apex.edu.pk\n";
-echo "Principal Password: Principal123!@#\n";
+echo "Principal Email: principal@apex.edu.pk (password from PRINCIPAL_DEFAULT_PASSWORD env var)\n";
 echo "Active Term: {$term->name}\n";

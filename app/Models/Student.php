@@ -39,7 +39,10 @@ class Student extends Model
         'address',
         'enrolled_program',
         'class_section_id',
+        'academic_track_id',
+        'selected_subject_ids',
         'annual_result_status',
+        'admission_status',
         'base_fee',
         'admission_fee',
         'security_fee',
@@ -65,6 +68,8 @@ class Student extends Model
         'tax_percentage' => 'decimal:2',
         'scholarship_percentage' => 'decimal:2',
         'scholarship_verification_answers' => 'array',
+        'academic_track_id' => 'integer',
+        'selected_subject_ids' => 'array',
     ];
 
     /**
@@ -125,11 +130,31 @@ class Student extends Model
         return $this->hasMany(StudentSubjectResult::class);
     }
 
+    public function academicTrack(): BelongsTo
+    {
+        return $this->belongsTo(AcademicTrack::class, 'academic_track_id');
+    }
+
+    public function subjectEnrollments(): HasMany
+    {
+        return $this->hasMany(StudentSubjectEnrollment::class, 'student_id', 'user_id');
+    }
+
     /**
      * Get the student's full name.
      */
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getStatusAttribute(): string
+    {
+        return $this->admission_status ?? 'pending_payment';
+    }
+
+    public function setStatusAttribute($value): void
+    {
+        $this->attributes['admission_status'] = $value;
     }
 }

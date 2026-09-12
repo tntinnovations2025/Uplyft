@@ -5,7 +5,9 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -100,6 +102,18 @@ class User extends Authenticatable
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    public function subjectEnrollments(): HasMany
+    {
+        return $this->hasMany(StudentSubjectEnrollment::class, 'student_id');
+    }
+
+    public function enrolledSubjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'student_subject_enrollments', 'student_id', 'subject_id')
+            ->withPivot(['class_section_id', 'academic_track_id', 'enrollment_status'])
+            ->withTimestamps();
     }
 
     /**

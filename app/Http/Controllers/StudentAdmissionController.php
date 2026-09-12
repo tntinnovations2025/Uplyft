@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\FeeCalculationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -67,6 +68,7 @@ class StudentAdmissionController extends Controller
                     'name' => $studentName,
                     'role' => 'student',
                     'email' => $studentEmail,
+                    'identifier' => $rollNumber,
                     'password' => Hash::make($tempPassword),
                 ]);
             } else {
@@ -74,12 +76,13 @@ class StudentAdmissionController extends Controller
                     $user->restore();
                 }
                 // If user account exists, reconcile to active institute without
-                // changing its password.
+                // changing its password, ensuring identifier is populated.
                 $user->update([
                     'institute_id' => $instituteId,
                     'name' => $studentName,
                     'role' => 'student',
                     'email' => $studentEmail,
+                    'identifier' => $user->identifier ?: $rollNumber,
                 ]);
             }
 
@@ -90,14 +93,23 @@ class StudentAdmissionController extends Controller
                 $passportPath = $request->file('passport_picture')->store($storagePath, 'public');
             }
 
-            // Auto-populate enrolled_program if class_section_id is provided & increment enrolled counter
-            if (! empty($validated['class_section_id'])) {
-                $section = ClassSection::with('instituteClass')->find($validated['class_section_id']);
-                if ($section) {
-                    if ($section->instituteClass) {
-                        $validated['enrolled_program'] = $section->instituteClass->name.' - '.$section->section_name;
+            // Controlled Enrollment Gate (BUG-ENROLL-001):
+            // Do NOT assign class_section_id or increment enrolled_students at initial intake.
+            // Retain designated section for post-payment activation in EnrollmentService.
+            $designatedSectionId = $validated['class_section_id'] ?? null;
+            $enrolledProgram = null;
+
+            if (! empty($designatedSectionId)) {
+                $section = ClassSection::with('instituteClass')->find($designatedSectionId);
+                if ($section && $section->instituteClass) {
+                    $trackSuffix = '';
+                    if (! empty($validated['academic_track_id'])) {
+                        $track = \App\Models\AcademicTrack::find($validated['academic_track_id']);
+                        if ($track) {
+                            $trackSuffix = ' (' . $track->track_name . ')';
+                        }
                     }
-                    $section->increment('enrolled_students');
+                    $enrolledProgram = $section->instituteClass->name.' - '.$section->section_name . $trackSuffix;
                 }
             }
 
@@ -113,11 +125,15 @@ class StudentAdmissionController extends Controller
                 }
             }
 
-            // 4. Persist the Student profile linked to the User account and active term
+            // 4. Persist Student profile with pending_payment status and unassigned section (BUG-ENROLL-001)
             $student = Student::create(array_merge($validated, [
                 'user_id' => $user->id,
                 'academic_term_id' => $activeTerm?->id,
                 'roll_number' => $rollNumber,
+                'class_section_id' => null, // Gated until invoice settlement
+                'admission_status' => 'pending_payment',
+                'annual_result_status' => 'pending',
+                'enrolled_program' => $enrolledProgram,
                 'passport_picture_path' => $passportPath,
             ]));
 
@@ -168,12 +184,12 @@ class StudentAdmissionController extends Controller
                 'institute_id' => $instituteId,
                 'academic_term_id' => $activeTerm?->id,
                 'student_id' => $student->id,
-                'class_section_id' => $student->class_section_id,
+                'class_section_id' => $designatedSectionId, // Held until invoice is settled
                 'title' => 'Admission & Initial Tuition Fee',
                 'fee_month' => $feeMonthName,
                 'amount_pkr' => $feeBreakdown['grand_total'],
-                'admission_fee' => $student->admission_fee,
-                'security_fee' => $student->security_fee,
+                'admission_fee' => (float) ($student->admission_fee ?? 0.0),
+                'security_fee' => (float) ($student->security_fee ?? 0.0),
                 'due_date' => now()->addDays(7),
                 'status' => 'unpaid',
                 'pdf_path' => $storagePath,
@@ -240,5 +256,15 @@ class StudentAdmissionController extends Controller
         $pdf = Pdf::loadView('pdf.invoice', $data);
 
         return $pdf->download("uplyft_invoice_{$student->id}.pdf");
+    }
+
+    /**
+     * Update an admitted student profile.
+     */
+    public function update(Request $request, $id): JsonResponse
+    {
+        $student = Student::withoutGlobalScopes()->findOrFail($id);
+        $student->update($request->only(['first_name', 'last_name', 'phone', 'address']));
+        return response()->json(['success' => true, 'student' => $student]);
     }
 }

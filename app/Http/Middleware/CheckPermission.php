@@ -24,8 +24,8 @@ class CheckPermission
 
         // Check if user has specific granular permission
         if (! $user->hasPermission($permissionKey, $mode)) {
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Permission denied. Action restricted by Administration.'], 403);
+            if ($request->expectsJson() || ! $request->isMethodSafe()) {
+                abort(403, "Access Denied: You do not have {$mode} rights for this module.");
             }
 
             $fallbackRoute = match ($user->role) {

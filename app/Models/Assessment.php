@@ -163,4 +163,16 @@ class Assessment extends Model
     {
         return in_array($this->status, [self::STATUS_DRAFT, self::STATUS_PUBLISHED]);
     }
+
+    /**
+     * Resolve the institute ID owning this assessment.
+     */
+    public function getInstituteIdAttribute(): ?int
+    {
+        return $this->subject?->instituteClass?->institute_id
+            ?? $this->classSection?->instituteClass?->institute_id
+            ?? $this->academicTerm?->institute_id
+            ?? (int) ($this->attributes['institute_id'] ?? 0) ?: null;
+    }
 }
+

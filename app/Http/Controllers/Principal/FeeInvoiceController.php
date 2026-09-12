@@ -301,6 +301,9 @@ class FeeInvoiceController extends Controller
             'paid_slip_path' => $slipPath,
         ]);
 
+        // Trigger controlled class section enrollment upon invoice settlement (BUG-ENROLL-001)
+        app(\App\Services\EnrollmentService::class)->enrollStudentAfterPayment($invoice);
+
         // Auto-log to Financial Ledger (Total Income)
         \App\Models\FinancialTransaction::create([
             'institute_id' => $invoice->institute_id,

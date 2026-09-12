@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Institute;
+use App\Models\InstituteSetting;
 
 class FeeCalculationService
 {
@@ -46,23 +47,36 @@ class FeeCalculationService
         $admFee = (float) ($admissionFee ?? 0.0);
         $secFee = (float) ($securityFee ?? 0.0);
 
-        // If a tenant context is available, try to resolve institute-level custom parameters
+        // If a tenant context is available, resolve settings via relationship or InstituteSetting model (BUG-FIN-001)
         if ($instituteId) {
             $institute = Institute::find($instituteId);
-            if ($institute && isset($institute->settings)) {
-                $baseFee = $customBaseFee ?? (float) ($institute->settings['base_admission_fee'] ?? self::DEFAULT_BASE_FEE);
-                $filerRate = (float) ($institute->settings['filer_tax_rate'] ?? self::FILER_TAX_RATE);
-                $nonFilerRate = (float) ($institute->settings['non_filer_tax_rate'] ?? self::NON_FILER_TAX_RATE);
+            $setting = $institute?->setting
+                ?? InstituteSetting::withoutGlobalScopes()->where('institute_id', $instituteId)->first()
+                ?? InstituteSetting::getForInstitute($instituteId);
+
+            if ($setting) {
+                $baseFee = $customBaseFee ?? (float) ($setting->base_admission_fee ?? self::DEFAULT_BASE_FEE);
+                $filerRate = (float) ($setting->filer_tax_rate ?? self::FILER_TAX_RATE);
+                $nonFilerRate = (float) ($setting->non_filer_tax_rate ?? self::NON_FILER_TAX_RATE);
             }
+        }
+
+        // Normalize rates if configured as a percentage greater than 1.0 (e.g. 5.0 for 5%)
+        if ($filerRate > 1.0) {
+            $filerRate = $filerRate / 100.0;
+        }
+        if ($nonFilerRate > 1.0) {
+            $nonFilerRate = $nonFilerRate / 100.0;
         }
 
         // Determine Tax Rate Decimal (e.g., 0.05 for 5%)
         if ($customTaxRate !== null && $customTaxRate !== '' && is_numeric($customTaxRate)) {
-            $taxRateDecimal = (float) $customTaxRate / 100.0;
+            $rawRate = (float) $customTaxRate;
+            $taxRateDecimal = ($rawRate > 1.0) ? ($rawRate / 100.0) : $rawRate;
         } else {
-            $taxRateDecimal = ($taxStatus === 'filer') ? $filerRate : $nonFilerRate;
+            $taxRateDecimal = (strtolower(trim($taxStatus)) === 'filer') ? $filerRate : $nonFilerRate;
         }
-        $taxPercentage = $taxRateDecimal * 100.0;
+        $taxPercentage = round($taxRateDecimal * 100.0, 2);
 
         // Determine Scholarship Discount Amount (applied to base tuition)
         $scholarshipPct = max(0.0, min(100.0, (float) ($scholarshipPercentage ?? 0.0)));

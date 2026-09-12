@@ -94,4 +94,20 @@ class Subject extends Model
     {
         return $this->hasMany(Assessment::class);
     }
+
+    public function classSubjects(): HasMany
+    {
+        return $this->hasMany(ClassSubject::class, 'subject_id');
+    }
+
+    public function academicTracks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(AcademicTrack::class, 'academic_track_subjects', 'subject_id', 'academic_track_id')
+            ->withTimestamps();
+    }
+
+    public function studentEnrollments(): HasMany
+    {
+        return $this->hasMany(StudentSubjectEnrollment::class, 'subject_id');
+    }
 }

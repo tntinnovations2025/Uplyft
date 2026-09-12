@@ -2,29 +2,32 @@
 
 namespace App\Http\Requests\Auth;
 
-use Illuminate\Contracts\Validation\Validator;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 
 /**
- * Dedicated Student portal login request.
+ * Dedicated Student Portal Login Request.
+ * Supports multi-format authentication (BUG-AUTH-001):
+ *  - Standard student email address (name@student.local)
+ *  - Custom Roll Numbers with slashes, dashes, or alphanumeric strings (e.g., STU-2026/0101, 10A-045)
  *
- * Accepts ONLY an RFC-valid email address as the credential, a string
- * password, and an optional remember flag. Any other submitted field is
- * rejected so that identifier/roll-number/auth-vector smuggling is
- * impossible on the student portal.
+ * Scoped strictly by active tenant/institute to eliminate cross-institute roll number collisions.
  */
 class StudentLoginRequest extends LoginRequest
 {
-    private const ALLOWED_FIELDS = ['credential', 'password', 'remember', '_token'];
+    private const ALLOWED_FIELDS = ['identifier', 'credential', 'email', 'password', 'remember', '_token', 'institute_id', 'tenant_id'];
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, array<int, string>>
+     * Accepts flexible roll numbers (slashes, dashes, alphanumeric) or email identifiers (BUG-AUTH-001).
      */
     public function rules(): array
     {
         return [
-            'credential' => ['required', 'string', 'max:255', 'email:rfc,filter'],
+            'identifier' => ['required', 'string', 'max:50'],
             'password'   => ['required', 'string'],
             'remember'   => ['sometimes', 'boolean'],
         ];
@@ -35,43 +38,124 @@ class StudentLoginRequest extends LoginRequest
      */
     protected function prepareForValidation(): void
     {
+        $raw = $this->input('identifier') ?? $this->input('credential') ?? $this->input('email');
+        $resolved = trim((string) $raw);
+
         $this->merge([
-            'credential' => trim((string) $this->input('credential')),
+            'identifier' => $resolved,
+            'credential' => $resolved,
             'password'   => (string) $this->input('password'),
             'remember'   => $this->boolean('remember'),
         ]);
     }
 
     /**
-     * Configure the validator instance.
-     *
-     * Rejects any unexpected field so a crafted payload cannot smuggle
-     * alternative credential keys or role/auth tokens into the request.
-     */
-    public function withValidator(Validator $validator): void
-    {
-        $unexpected = array_values(array_diff_key($this->all(), array_flip(self::ALLOWED_FIELDS)));
-
-        if ($unexpected !== []) {
-            $validator->errors()->add(
-                'credential',
-                'Unexpected field(s) are not allowed on the student login form: ' . implode(', ', $unexpected) . '.'
-            );
-        }
-    }
-
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
+     * Custom validation messages.
      */
     public function messages(): array
     {
         return [
-            'credential.required' => 'Please enter your email address.',
-            'credential.email'    => 'Student login requires a valid email address in the format name@example.com.',
+            'identifier.required' => 'Please enter your student Roll Number or email address.',
+            'identifier.max'      => 'Identifier must not exceed 50 characters.',
+            'credential.required' => 'Please enter your student Roll Number or email address.',
+            'credential.max'      => 'Identifier must not exceed 50 characters.',
             'password.required'   => 'Please enter your password.',
         ];
+    }
+
+    /**
+     * Authenticate student credentials with strict tenant scoping.
+     * Accepts both student roll numbers (User.identifier or Student.roll_number) and email addresses.
+     */
+    public function authenticate(): void
+    {
+        $this->ensureIsNotRateLimited();
+
+        $credential = trim((string) $this->input('credential'));
+        $password   = (string) $this->input('password');
+        $remember   = $this->boolean('remember');
+
+        if (empty($credential)) {
+            throw ValidationException::withMessages([
+                'identifier' => 'Please enter your student Roll Number or email address.',
+                'credential' => 'Please enter your student Roll Number or email address.',
+            ]);
+        }
+
+        $currentInstituteId = $this->resolveActiveInstituteId();
+
+        // 1. Build Query for Student role
+        $query = User::where('role', User::ROLE_STUDENT);
+
+        if ($currentInstituteId) {
+            $query->where('institute_id', $currentInstituteId);
+        }
+
+        // 2. Multi-Format Match: Email OR Roll Number / Identifier
+        if (filter_var($credential, FILTER_VALIDATE_EMAIL)) {
+            $query->whereRaw('LOWER(email) = ?', [strtolower($credential)]);
+            $user = $query->first();
+        } else {
+            $query->where(function ($sub) use ($credential) {
+                $sub->where('identifier', $credential)
+                    ->orWhereHas('studentProfile', function ($sq) use ($credential) {
+                        $sq->where('roll_number', $credential);
+                    });
+            });
+
+            if (! $currentInstituteId) {
+                // When no institute context is supplied, ensure identifier is unambiguously unique across the platform
+                $matches = (clone $query)->get();
+                if ($matches->count() === 1) {
+                    $user = $matches->first();
+                } else {
+                    RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                    throw ValidationException::withMessages([
+                        'identifier' => trans('auth.failed'),
+                        'credential' => trans('auth.failed'),
+                    ]);
+                }
+            } else {
+                $user = $query->first();
+            }
+        }
+
+        $authenticated = false;
+
+        if ($user && Hash::check($password, $user->password)) {
+            // Check if user is deactivated
+            if (isset($user->is_active) && ! $user->is_active) {
+                RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                throw ValidationException::withMessages([
+                    'identifier' => 'Access Denied: Your student account has been deactivated. Please contact administration.',
+                    'credential' => 'Access Denied: Your student account has been deactivated. Please contact administration.',
+                ]);
+            }
+
+            // Verify institute is active
+            $institute = $user->institute;
+            if ($institute && (! $institute->is_active || $institute->trashed())) {
+                RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                throw ValidationException::withMessages([
+                    'identifier' => "Access Paused: The educational institution '{$institute->name}' is temporarily paused.",
+                    'credential' => "Access Paused: The educational institution '{$institute->name}' is temporarily paused.",
+                ]);
+            }
+
+            Auth::login($user, $remember);
+            $authenticated = true;
+        }
+
+        if (! $authenticated) {
+            RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+
+            throw ValidationException::withMessages([
+                'identifier' => trans('auth.failed'),
+                'credential' => trans('auth.failed'),
+            ]);
+        }
+
+        RateLimiter::clear($this->throttleKey());
     }
 
     /**

@@ -32,6 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('principal.')
                 ->group(base_path('routes/principal.php'));
 
+            // Student Portal Routes (Module 2 & 5)
+            Route::middleware('web')
+                ->group(base_path('routes/student.php'));
+
             // Module 6: LMS, Assessments & Grading (plug-and-play)
             Route::middleware('web')
                 ->group(base_path('routes/lms.php'));
@@ -52,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'portal.active' => \App\Http\Middleware\EnsureActiveInstituteAndPortal::class,
             'staff.prefix' => \App\Http\Middleware\EnsureStaffPortalPrefix::class,
             'throttle' => Throttle::class,
+            'student.fee_paid' => \App\Http\Middleware\EnsureStudentFeePaid::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

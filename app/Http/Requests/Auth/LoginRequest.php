@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\Institute;
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -14,19 +15,22 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Custom Login Request supporting dual-credential authentication.
+ * Custom Login Request supporting dual-credential authentication with strict multi-tenant scoping.
  *
  * Users can log in with either:
  *  - A standard email address
  *  - A custom institutional identifier (Roll Number / Employee ID)
  *
- * The 'credential' field accepts both formats and resolves automatically.
+ * Multi-tenancy Isolation:
+ *  - Non-email identifier logins MUST be scoped to the active tenant/institute context
+ *    to prevent cross-tenant credential collisions (BUG-AUTH-002).
+ *  - Tenant context is resolved via explicit input, headers, route bindings,
+ *    subdomains, session, or container bindings.
  *
  * Rate limiting:
  *  - Tier A (network, 40 req/min/IP): enforced by the Throttle middleware.
  *  - Tier B (account): keyed by normalized email/identifier + institute,
- *    max 5 failed attempts per 15 minutes. Attempts are incremented on
- *    failures here and cleared on a successful login.
+ *    max 5 failed attempts per 15 minutes.
  */
 class LoginRequest extends FormRequest
 {
@@ -71,9 +75,73 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Attempt to authenticate the request's credentials.
+     * Resolve the active tenant/institute ID context for the incoming request.
      *
-     * Tries matching against both email and identifier fields.
+     * Resolution hierarchy:
+     * 1. Direct request input ('institute_id', 'tenant_id')
+     * 2. Request headers ('X-Institute-Id', 'X-Tenant-Id')
+     * 3. Route parameter ('institute', 'institute_id')
+     * 4. Application container binding ('current_institute_id')
+     * 5. Session state ('current_institute_id', 'active_institute_id', 'tenant_id')
+     * 6. Subdomain from host (e.g., apex.uplyft.example.com -> 'apex')
+     */
+    public function resolveActiveInstituteId(): ?int
+    {
+        // 1. Direct request input
+        if ($id = $this->input('institute_id') ?? $this->input('tenant_id')) {
+            if (is_numeric($id)) {
+                return (int) $id;
+            }
+        }
+
+        // 2. Request headers
+        if ($id = $this->header('X-Institute-Id') ?? $this->header('X-Tenant-Id')) {
+            if (is_numeric($id)) {
+                return (int) $id;
+            }
+        }
+
+        // 3. Route parameters
+        if ($param = $this->route('institute') ?? $this->route('institute_id')) {
+            if ($param instanceof Institute) {
+                return (int) $param->id;
+            }
+            if (is_numeric($param)) {
+                return (int) $param;
+            }
+        }
+
+        // 4. Container binding
+        if (app()->bound('current_institute_id') && ($boundId = app('current_institute_id'))) {
+            return (int) $boundId;
+        }
+
+        // 5. Session state
+        if ($sessionId = session('current_institute_id') ?? session('active_institute_id') ?? session('tenant_id')) {
+            return (int) $sessionId;
+        }
+
+        // 6. Subdomain resolution
+        $host = $this->getHost();
+        $parts = explode('.', $host);
+        if (count($parts) >= 3) {
+            $subdomain = strtolower($parts[0]);
+            $reserved = ['www', 'app', 'admin', 'portal', 'api', 'mail', 'localhost', 'staging', 'dev'];
+            if (!in_array($subdomain, $reserved, true)) {
+                $instituteId = Institute::withoutGlobalScopes()
+                    ->where('slug', $subdomain)
+                    ->value('id');
+                if ($instituteId) {
+                    return (int) $instituteId;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempt to authenticate the request's credentials.
      *
      * @throws ValidationException
      */
@@ -91,21 +159,66 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $currentInstituteId = $this->resolveActiveInstituteId();
+        $user = null;
+
         if ($this->isStudentLogin()) {
-            // Student portal: strict email-only lookup.
-            $user = User::whereRaw('LOWER(email) = ?', [strtolower($credential)])->first();
+            // Student portal: strict email lookup. Scoped by institute if tenant context is present.
+            $query = User::whereRaw('LOWER(email) = ?', [strtolower($credential)]);
+            if ($currentInstituteId) {
+                $query->where('institute_id', $currentInstituteId);
+            }
+            $user = $query->first();
         } else {
-            // Non-student portals accept email OR institutional identifier;
-            // student accounts may only authenticate via email.
-            $user = User::where(function ($query) use ($credential) {
-                $query->whereRaw('LOWER(email) = ?', [strtolower($credential)]);
-                $query->orWhere(function ($sub) use ($credential) {
-                    $sub->whereNotNull('identifier')
-                        ->where('identifier', '!=', '')
-                        ->where('identifier', $credential)
-                        ->where('role', '!=', 'student');
-                });
-            })->first();
+            // Non-student portals: Email OR Institutional Identifier
+            if (filter_var($credential, FILTER_VALIDATE_EMAIL)) {
+                $query = User::whereRaw('LOWER(email) = ?', [strtolower($credential)]);
+                
+                if ($currentInstituteId) {
+                    // In a scoped tenant environment, ensure user belongs to this institute or is a Global Admin
+                    $user = (clone $query)->where(function ($q) use ($currentInstituteId) {
+                        $q->where('institute_id', $currentInstituteId)
+                          ->orWhere('role', User::ROLE_GLOBAL_ADMIN);
+                    })->first();
+
+                    if (!$user) {
+                        // Check if email exists in another institute to prevent cross-tenant bleed
+                        $crossUser = $query->first();
+                        if ($crossUser && !$crossUser->isGlobalAdmin()) {
+                            RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                            throw ValidationException::withMessages([
+                                'credential' => trans('auth.failed'),
+                            ]);
+                        }
+                    }
+                } else {
+                    $user = $query->first();
+                }
+            } else {
+                // Non-email credential: must be an institutional identifier (e.g. EMP-100)
+                // STRICT MULTI-TENANT ISOLATION (BUG-AUTH-002)
+                if ($currentInstituteId) {
+                    $user = User::where('identifier', $credential)
+                        ->where('institute_id', $currentInstituteId)
+                        ->where('role', '!=', 'student')
+                        ->first();
+                } else {
+                    // When no institute context is supplied, ensure identifier is unambiguously unique
+                    $matchingUsers = User::where('identifier', $credential)
+                        ->where('role', '!=', 'student')
+                        ->get();
+
+                    if ($matchingUsers->count() === 1) {
+                        $user = $matchingUsers->first();
+                    } else {
+                        // Ambiguous collision across tenants or not found: reject with clean unrevealing error
+                        RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                        throw ValidationException::withMessages([
+                            'credential' => trans('auth.failed'),
+                        ]);
+                    }
+                }
+            }
         }
 
         $authenticated = false;
@@ -113,7 +226,7 @@ class LoginRequest extends FormRequest
         if ($user) {
             if (Hash::check($password, $user->password)) {
 
-                // Student portal: the credential must map to a student account.
+                // Student portal: credential must belong to a student
                 if ($this->isStudentLogin() && ! $user->isStudent()) {
                     throw ValidationException::withMessages([
                         'credential' => 'This account is not registered as a Student. Please use the correct portal.',
@@ -121,7 +234,7 @@ class LoginRequest extends FormRequest
                 }
 
                 // Check if user is deactivated
-                if (isset($user->is_active) && !$user->is_active) {
+                if (isset($user->is_active) && ! $user->is_active) {
                     RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                     throw ValidationException::withMessages([
                         'credential' => 'Access Denied: Your user account has been deactivated. Please contact administration.',
@@ -129,23 +242,23 @@ class LoginRequest extends FormRequest
                 }
 
                 // Check institute and organization status for non-global-admin users
-                if (!$user->isGlobalAdmin()) {
-                    $institute = $user->institute ?? ($user->current_institute_id ? \App\Models\Institute::withoutGlobalScopes()->withTrashed()->find($user->current_institute_id) : null);
+                if (! $user->isGlobalAdmin()) {
+                    $institute = $user->institute ?? ($user->current_institute_id ? Institute::withoutGlobalScopes()->withTrashed()->find($user->current_institute_id) : null);
 
                     if ($institute) {
-                        if (!$institute->is_active || $institute->trashed()) {
+                        if (! $institute->is_active || $institute->trashed()) {
                             RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                             throw ValidationException::withMessages([
-                                'credential' => "Services Temporarily Paused: Access for '{$institute->name}' is temporarily paused (e.g. pending payment resolution). All records are safely preserved. Please contact platform administration to resume services.",
+                                'credential' => "Services Temporarily Paused: Access for '{$institute->name}' is temporarily paused. All records are safely preserved.",
                             ]);
                         }
 
                         if ($institute->organization_id && $institute->organization) {
                             $org = $institute->organization;
-                            if (!$org->is_active || $org->trashed()) {
+                            if (! $org->is_active || $org->trashed()) {
                                 RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                                 throw ValidationException::withMessages([
-                                    'credential' => "Services Temporarily Paused: Services for '{$org->name}' are temporarily paused (e.g. pending payment resolution). All records are safely preserved.",
+                                    'credential' => "Services Temporarily Paused: Services for '{$org->name}' are temporarily paused.",
                                 ]);
                             }
                         }
@@ -153,10 +266,10 @@ class LoginRequest extends FormRequest
 
                     if ($user->organization_id && $user->organization) {
                         $org = $user->organization;
-                        if (!$org->is_active || $org->trashed()) {
+                        if (! $org->is_active || $org->trashed()) {
                             RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                             throw ValidationException::withMessages([
-                                'credential' => "Access Denied: The organization network '{$org->name}' has been deactivated. All linked portals are disabled.",
+                                'credential' => "Access Denied: The organization network '{$org->name}' has been deactivated.",
                             ]);
                         }
                     }
@@ -204,10 +317,6 @@ class LoginRequest extends FormRequest
 
     /**
      * Get the rate limiting throttle key for the request.
-     *
-     * Prefers the account-level key resolved by the Throttle middleware
-     * (stored on the request attributes) so the pre-check, hit, and clear
-     * operations all target the SAME key.
      */
     public function throttleKey(): string
     {
@@ -222,17 +331,22 @@ class LoginRequest extends FormRequest
      * Resolve the account-level throttle key for a given login request.
      *
      * Key = md5( normalizedCredential | instituteId )
-     * The institute is resolved from the credential's owning user so that
-     * brute-force attempts are scoped per tenant and cannot lock out a
-     * shared campus IP or consume another institute's quota.
      */
     public static function resolveLoginThrottleKey(Request $request): string
     {
         $credential  = trim((string) ($request->input('credential') ?? $request->input('email')));
         $normalized  = $credential === '' ? 'anonymous' : Str::transliterate(Str::lower($credential));
-        $instituteId = 0;
+        $instituteId = (int) ($request->input('institute_id') ?? $request->header('X-Institute-Id') ?? 0);
 
-        if ($credential !== '') {
+        if ($instituteId === 0 && app()->bound('current_institute_id')) {
+            $instituteId = (int) app('current_institute_id');
+        }
+
+        if ($instituteId === 0 && ($sessionId = session('current_institute_id') ?? session('active_institute_id'))) {
+            $instituteId = (int) $sessionId;
+        }
+
+        if ($instituteId === 0 && $credential !== '') {
             $user = User::withoutGlobalScopes()
                 ->where(function ($query) use ($credential) {
                     $query->whereRaw('LOWER(email) = ?', [strtolower($credential)]);

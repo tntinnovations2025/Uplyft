@@ -62,4 +62,9 @@ class ClassSection extends Model
     {
         return $this->hasMany(Subject::class, 'institute_class_id', 'institute_class_id');
     }
+
+    public function studentSubjectEnrollments(): HasMany
+    {
+        return $this->hasMany(StudentSubjectEnrollment::class, 'class_section_id');
+    }
 }

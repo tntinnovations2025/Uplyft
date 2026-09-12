@@ -54,4 +54,14 @@ class InstituteClass extends Model
     {
         return $this->hasManyThrough(Student::class, ClassSection::class, 'institute_class_id', 'class_section_id');
     }
+
+    public function classSubjects(): HasMany
+    {
+        return $this->hasMany(ClassSubject::class, 'class_id');
+    }
+
+    public function academicTracks(): HasMany
+    {
+        return $this->hasMany(AcademicTrack::class, 'class_id');
+    }
 }

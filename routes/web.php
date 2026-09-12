@@ -97,20 +97,7 @@ Route::post('/tenant/switch-institute', [\App\Http\Controllers\TenantSwitchContr
     ->middleware('auth')
     ->name('tenant.switch-institute');
 
-// ── 1. Student Portal ────────────────────────────────────────────────────────
-Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/dashboard', [StudentPortalController::class, 'dashboard'])->name('dashboard');
-    Route::get('/fees', [StudentPortalController::class, 'fees'])->name('fees');
-    Route::get('/attendance', [StudentPortalController::class, 'attendance'])->name('attendance');
-    Route::get('/invoices', [StudentPortalController::class, 'invoices'])->name('invoices');
-    Route::get('/timetable', [StudentPortalController::class, 'timetable'])->name('timetable');
-    Route::get('/schedule', [StudentPortalController::class, 'timetable'])->name('schedule');
-    Route::get('/courses', [StudentPortalController::class, 'courses'])->name('courses');
-    Route::get('/profile', [StudentPortalController::class, 'invoices'])->name('profile');
-    Route::get('/lms', [StudentPortalController::class, 'lms'])->name('lms');
-    Route::get('/datesheet', [StudentPortalController::class, 'datesheet'])->name('datesheet');
-    Route::get('/exam-report', [StudentPortalController::class, 'examReport'])->name('examReport');
-});
+// ── 1. Student Portal Routes are registered in routes/student.php ──────
 
 // ── 2. Teacher Portal (Includes Delegated Administrative Rights under /teacher/) ─
 // ── 2. Staff / Faculty / Employee Portals (Teacher, Staff, Accountant) ────────
@@ -228,9 +215,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 // ── Core Admissions & Attendance Actions ──────────────────────────────────
 Route::middleware(['auth'])->group(function () {
-    Route::post('/admissions', [StudentAdmissionController::class, 'store'])->name('admissions.store');
+    Route::get('/admissions', [AdminPortalController::class, 'admissions'])->middleware('permission:student_registration,view')->name('admissions.index');
+    Route::post('/admissions', [StudentAdmissionController::class, 'store'])->middleware('permission:student_registration,edit')->name('admissions.store');
+    Route::put('/admissions/{id}', [StudentAdmissionController::class, 'update'])->middleware('permission:student_registration,edit')->name('admissions.update');
     Route::post('/teachers/onboarding', [TeacherOnboardingController::class, 'store'])->name('teachers.onboarding.store');
     Route::post('/attendance/store', [AttendanceController::class, 'storeBatchAttendance'])->name('attendance.store');
+
+    // Teacher Daily Diary Posting (Hardened against IDOR)
+    Route::post('/teacher/diary', [\App\Http\Controllers\Teacher\DailyDiaryController::class, 'store'])->name('teacher.diary.store');
+    Route::post('/teacher/daily-diaries', [\App\Http\Controllers\Teacher\DailyDiaryController::class, 'store'])->name('teacher.daily-diaries.store');
 });
 
 // ── Principal Multi-Campus Organization Onboarding & Management ─────────────

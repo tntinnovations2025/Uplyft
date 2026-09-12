@@ -12,6 +12,9 @@ $app = require_once __DIR__ . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
+$principalPassword = env('PRINCIPAL_DEFAULT_PASSWORD', 'unset-principal-default-password-in-env');
+$teacherPassword = env('TEACHER_DEFAULT_PASSWORD', 'unset-teacher-default-password-in-env');
+
 $inst = Institute::where('slug', 'apex-science-commerce-academy')->first();
 if (!$inst) {
     $inst = new Institute();
@@ -31,7 +34,7 @@ if (!$principal) {
 }
 $principal->name = 'Dr. Ahmed Khan (Principal)';
 $principal->identifier = 'PRIN-APEX-01';
-$principal->password = Hash::make('Principal123!@#');
+$principal->password = Hash::make($principalPassword);
 $principal->role = 'principal';
 $principal->institute_id = $inst->id;
 $principal->save();
@@ -81,10 +84,10 @@ if (!$teacher) {
 }
 $teacher->name = 'Prof. Usman Ali';
 $teacher->identifier = 'EMP#402';
-$teacher->password = Hash::make('Teacher123!@#');
+$teacher->password = Hash::make($teacherPassword);
 $teacher->role = 'teacher';
 $teacher->institute_id = $inst->id;
 $teacher->is_delegated_admin = true;
 $teacher->save();
 
-echo "MODULE3_SEEDED_SUCCESSFULLY: principal@apex.edu.pk / Principal123!@#\n";
+echo "MODULE3_SEEDED_SUCCESSFULLY: principal@apex.edu.pk (password from PRINCIPAL_DEFAULT_PASSWORD env var)\n";

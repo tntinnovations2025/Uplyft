@@ -56,6 +56,27 @@ class AssessmentController extends Controller
             $query->where('creator_id', auth()->id());
         }
 
+        // Students only see assessments for sections and subjects they are enrolled in
+        if (auth()->user()->isStudent()) {
+            $student = auth()->user()->getStudentModel();
+            if ($student && $student->class_section_id) {
+                $query->where('class_section_id', $student->class_section_id)
+                    ->where('is_portal_visible', true)
+                    ->where('is_published', true);
+
+                $enrolledSubjectIds = \App\Models\StudentSubjectEnrollment::where('student_id', auth()->id())
+                    ->where('enrollment_status', 'active')
+                    ->pluck('subject_id')
+                    ->all();
+
+                if (! empty($enrolledSubjectIds)) {
+                    $query->whereIn('subject_id', $enrolledSubjectIds);
+                }
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        }
+
         $assessments = $query->paginate(20);
 
         if ($request->expectsJson()) {
@@ -68,11 +89,52 @@ class AssessmentController extends Controller
     // ── Create Assessment ────────────────────────────────────────────────────
 
     /**
+     * Show the assessment creation form (guarded by active academic term: BUG-LMS-001).
+     */
+    public function create(Request $request)
+    {
+        Gate::authorize('create', Assessment::class);
+
+        $instituteId = auth()->user()->institute_id;
+        $hasActiveTerm = \App\Models\AcademicTerm::where('institute_id', $instituteId)
+            ->where('is_active', true)
+            ->exists();
+
+        if (! $hasActiveTerm) {
+            $errorMessage = 'Academic Term Prerequisite Required: An active academic term must be configured before creating assessments.';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $errorMessage], 422);
+            }
+            return redirect()->route('principal.academic-terms.index')->with('error', $errorMessage);
+        }
+
+        $subjects = \App\Models\Subject::whereHas('instituteClass', fn ($q) => $q->where('institute_id', $instituteId))->orderBy('subject_name')->get();
+        $classSections = \App\Models\ClassSection::whereHas('instituteClass', fn ($q) => $q->where('institute_id', $instituteId))->with('instituteClass')->get();
+        $academicTerms = \App\Models\AcademicTerm::where('institute_id', $instituteId)->where('is_active', true)->get();
+
+        return view('lms.assessments.create', compact('subjects', 'classSections', 'academicTerms'));
+    }
+
+    /**
      * Store a new assessment (draft by default).
+     * Enforces active academic term prerequisite guard (BUG-LMS-001).
      */
     public function store(Request $request): RedirectResponse|JsonResponse
     {
         Gate::authorize('create', Assessment::class);
+
+        $instituteId = auth()->user()->institute_id;
+        $hasActiveTerm = \App\Models\AcademicTerm::where('institute_id', $instituteId)
+            ->where('is_active', true)
+            ->exists();
+
+        if (! $hasActiveTerm) {
+            $errorMessage = 'Academic Term Prerequisite Required: An active academic term must be configured before creating assessments.';
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $errorMessage], 422);
+            }
+            return redirect()->back()->with('error', $errorMessage);
+        }
 
         $validated = $request->validate([
             'subject_id' => 'required|exists:subjects,id',

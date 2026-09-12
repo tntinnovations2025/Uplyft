@@ -102,6 +102,11 @@ class StoreStudentAdmissionRequest extends FormRequest
             'scholarship_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'scholarship_reason' => ['nullable', 'string', 'max:500'],
             'scholarship_verification_answers' => ['nullable', 'array'],
+
+            // Dynamic Subject Architecture: Track & Elective Choices
+            'academic_track_id' => ['nullable', 'integer', 'exists:academic_tracks,id'],
+            'selected_subject_ids' => ['nullable', 'array'],
+            'selected_subject_ids.*' => ['integer', 'exists:subjects,id'],
         ];
     }
 

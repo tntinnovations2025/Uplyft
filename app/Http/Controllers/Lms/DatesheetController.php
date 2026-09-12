@@ -390,56 +390,59 @@ class DatesheetController extends Controller
             return redirect()->back()->with('error', 'Unauthorized: Only Principal or Administration can remove Class Datesheets.');
         }
 
+        $classSection = ClassSection::with('instituteClass')->findOrFail($classSectionId);
+        $authorizedCampuses = method_exists($user, 'authorizedCampusIds')
+            ? ($user->authorizedCampusIds() ?: [$user->institute_id])
+            : [$user->institute_id];
+
+        $sectionInstituteId = $classSection->instituteClass?->institute_id;
+        abort_if(
+            $sectionInstituteId !== $user->institute_id && ! in_array($sectionInstituteId, $authorizedCampuses, true),
+            403,
+            'Cross-tenant resource modification denied.'
+        );
+
         $deleted = Assessment::where('class_section_id', $classSectionId)->delete();
 
         return redirect()->back()->with('success', "Entire datesheet ({$deleted} exam papers) for this class section has been removed.");
     }
 
     /**
-     * Delete Exam Entry from Datesheet (Principal / Admin Only)
+     * Delete Exam Entry from Datesheet (Principal / Admin Only).
+     * Hardened against Cross-Tenant Insecure Direct Object Reference (IDOR).
      */
-    public function destroy(int $id)
+    public function destroy(int|string $id)
     {
         $user = auth()->user();
-        if (! $user->isAdministration()) {
-            return redirect()->back()->with('error', 'Unauthorized: Only Principal or Administration can remove Exam Datesheet entries.');
+
+        if (! $user->isAdministration() && ! $user->isPrincipal() && $user->role !== \App\Models\User::ROLE_PRINCIPAL) {
+            abort(403, 'Unauthorized: Only Administration or Principal can remove Exam Datesheet entries.');
         }
 
-        $assessment = Assessment::findOrFail($id);
+        // Fetch without global scopes so cross-tenant checks are explicit
+        $assessment = Assessment::withoutGlobalScopes()->findOrFail($id);
+
+        // Resolve the institute this assessment belongs to (may be indirect via classSection)
+        $assessmentInstituteId = $assessment->institute_id
+            ?? $assessment->classSection?->institute_id
+            ?? $assessment->classSection?->instituteClass?->institute_id;
+
+        $authorizedCampuses = method_exists($user, 'authorizedCampusIds')
+            ? ($user->authorizedCampusIds() ?: [$user->institute_id])
+            : [$user->institute_id];
+
+        abort_if(
+            $assessmentInstituteId !== $user->institute_id && ! in_array($assessmentInstituteId, $authorizedCampuses, true),
+            403,
+            'Cross-tenant resource modification denied.'
+        );
+
         $assessment->delete();
 
+        if (request()->expectsJson() || request()->is('api/*')) {
+            return response()->json(['success' => true, 'message' => 'Exam schedule entry removed from Datesheet.']);
+        }
+
         return redirect()->back()->with('success', 'Exam schedule entry removed from Datesheet.');
-    }
-
-    /**
-     * Toggle Portal Visibility for ENTIRE Class Section Datesheet (Principal / Admin Only)
-     */
-    public function toggleClassVisibility(Request $request, int $classSectionId)
-    {
-        $user = auth()->user();
-        if (! $user->isAdministration()) {
-            return redirect()->back()->with('error', 'Unauthorized: Only Principal or Administration can modify portal visibility.');
-        }
-
-        $target = $request->input('target'); // 'teacher' or 'student'
-        $assessments = Assessment::where('class_section_id', $classSectionId)->get();
-
-        if ($assessments->isEmpty()) {
-            return redirect()->back()->with('error', 'No exam entries found for this class section.');
-        }
-
-        if ($target === 'teacher') {
-            $newStatus = ! $assessments->first()->is_published_teacher;
-            Assessment::where('class_section_id', $classSectionId)->update(['is_published_teacher' => $newStatus]);
-            $statusText = $newStatus ? 'Visible' : 'Hidden';
-            return redirect()->back()->with('success', "Teacher Portal visibility set to '{$statusText}' for whole class datesheet.");
-        } elseif ($target === 'student') {
-            $newStatus = ! $assessments->first()->is_published_student;
-            Assessment::where('class_section_id', $classSectionId)->update(['is_published_student' => $newStatus]);
-            $statusText = $newStatus ? 'Visible' : 'Hidden';
-            return redirect()->back()->with('success', "Student Portal visibility set to '{$statusText}' for whole class datesheet.");
-        }
-
-        return redirect()->back();
     }
 }

@@ -5,23 +5,39 @@ namespace App\Http\Controllers\Principal;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceSetting;
 use App\Models\InstituteSetting;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class InstituteSettingController extends Controller
 {
     /**
      * Display Institute Configuration, Financial Targets & Attendance Rules.
+     * Strictly restricted to Principals and authorized administrative personnel.
      */
     public function index(): View
     {
-        $user = auth()->user();
+        $user = Auth::user();
+
+        abort_if(
+            ! $user->isPrincipal() && $user->role !== User::ROLE_PRINCIPAL,
+            403,
+            'Unauthorized: Only institutional Principals can access administrative configuration.'
+        );
+
         $institute = $user->institute;
         $setting = InstituteSetting::getForInstitute($user->institute_id);
 
-        $staffMembers = \App\Models\User::whereIn('institute_id', $user->authorizedCampusIds() ?? [])
-            ->whereIn('role', [\App\Models\User::ROLE_TEACHER, \App\Models\User::ROLE_PRINCIPAL])
+        $authorizedCampuses = method_exists($user, 'authorizedCampusIds')
+            ? ($user->authorizedCampusIds() ?: [$user->institute_id])
+            : [$user->institute_id];
+
+        $staffMembers = User::whereIn('institute_id', $authorizedCampuses)
+            ->whereIn('role', [User::ROLE_TEACHER, User::ROLE_PRINCIPAL])
             ->with(['teacherProfile'])
             ->orderBy('role')
             ->orderBy('name')
@@ -35,6 +51,14 @@ class InstituteSettingController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
+        abort_if(
+            ! $user->isPrincipal() && $user->role !== User::ROLE_PRINCIPAL,
+            403,
+            'Unauthorized: Only institutional Principals can modify settings.'
+        );
+
         $activeTab = $request->input('active_tab', 'all');
         $isAll = $activeTab === 'all';
         $showTab = fn (string $tab): bool => $isAll || $activeTab === $tab;
@@ -86,7 +110,6 @@ class InstituteSettingController extends Controller
             'city' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $user = auth()->user();
         $instituteId = $user->institute_id;
         $setting = InstituteSetting::getForInstitute($instituteId);
 
@@ -116,7 +139,7 @@ class InstituteSettingController extends Controller
             ];
         }
 
-        // ── Notifications & Contact (OTP sender + future SMS bot) ──
+        // ── Notifications & Contact ──
         if ($showTab('financial') || $showTab('bank') || $showTab('notifications')) {
             $updates += [
                 'notification_email' => $validated['notification_email'] ?? $setting->notification_email,
@@ -143,12 +166,11 @@ class InstituteSettingController extends Controller
             ];
         }
 
-        // Persist only the groups belonging to the submitted tab(s)
         if (! empty($updates)) {
             $setting->update($updates);
         }
 
-        // Keep AttendanceSetting in sync for legacy compatibility
+        // Sync legacy AttendanceSetting
         if ($request->hasAny(['attendance_mode', 'attendance_start_time', 'attendance_end_time'])) {
             try {
                 $attSetting = AttendanceSetting::getForInstitute($instituteId);
@@ -164,22 +186,21 @@ class InstituteSettingController extends Controller
             }
         }
 
-        // Update Institute Model fields & Brand Assets if supplied
+        // Update Institute Profile & Brand Assets
         if ($user->institute) {
             $institute = $user->institute;
             $instituteUpdates = [];
-            if (!empty($validated['institute_name'])) $instituteUpdates['name'] = $validated['institute_name'];
-            if (!empty($validated['contact_email'])) $instituteUpdates['contact_email'] = $validated['contact_email'];
-            if (!empty($validated['contact_phone'])) $instituteUpdates['contact_phone'] = $validated['contact_phone'];
-            if (!empty($validated['city'])) $instituteUpdates['city'] = $validated['city'];
+            if (! empty($validated['institute_name'])) $instituteUpdates['name'] = $validated['institute_name'];
+            if (! empty($validated['contact_email'])) $instituteUpdates['contact_email'] = $validated['contact_email'];
+            if (! empty($validated['contact_phone'])) $instituteUpdates['contact_phone'] = $validated['contact_phone'];
+            if (! empty($validated['city'])) $instituteUpdates['city'] = $validated['city'];
 
-            // Handle logo remove, cropped base64, or direct file upload
             if ($request->boolean('remove_logo')) {
                 if ($institute->logo_path) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($institute->logo_path);
+                    Storage::disk('public')->delete($institute->logo_path);
                 }
                 if ($institute->icon_path) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($institute->icon_path);
+                    Storage::disk('public')->delete($institute->icon_path);
                 }
                 $instituteUpdates['logo_path'] = null;
                 $instituteUpdates['icon_path'] = null;
@@ -191,12 +212,12 @@ class InstituteSettingController extends Controller
                     if ($imageData !== false) {
                         $filename = 'institute-logos/logo_' . $institute->id . '_' . time() . '.png';
                         if ($institute->logo_path) {
-                            \Illuminate\Support\Facades\Storage::disk('public')->delete($institute->logo_path);
+                            Storage::disk('public')->delete($institute->logo_path);
                         }
                         if ($institute->icon_path && $institute->icon_path !== $institute->logo_path) {
-                            \Illuminate\Support\Facades\Storage::disk('public')->delete($institute->icon_path);
+                            Storage::disk('public')->delete($institute->icon_path);
                         }
-                        \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $imageData);
+                        Storage::disk('public')->put($filename, $imageData);
                         $instituteUpdates['logo_path'] = $filename;
                         $instituteUpdates['icon_path'] = $filename;
                     }
@@ -206,13 +227,13 @@ class InstituteSettingController extends Controller
                     'logo' => 'required|image|mimes:jpeg,jpg,png,svg,webp|max:2048',
                 ]);
                 if ($institute->logo_path) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($institute->logo_path);
+                    Storage::disk('public')->delete($institute->logo_path);
                 }
                 $instituteUpdates['logo_path'] = $request->file('logo')->store('institute-logos', 'public');
                 $instituteUpdates['icon_path'] = $instituteUpdates['logo_path'];
             }
 
-            if (!empty($instituteUpdates)) {
+            if (! empty($instituteUpdates)) {
                 $institute->update($instituteUpdates);
             }
         }
@@ -220,15 +241,72 @@ class InstituteSettingController extends Controller
         return redirect()->back()->with('success', 'Institute Settings, Branding & Attendance Policies updated successfully!');
     }
 
+
+    /**
+     * View individual staff member salary & leave policy.
+     * Hardened against Insecure Direct Object References (BUG-RBAC-002).
+     */
+    public function showStaffPayroll(Request $request, User $staff)
+    {
+        $authUser = Auth::user();
+
+        // 1. Role Authorization Check: Only Principals can view faculty payroll
+        abort_if(
+            ! $authUser->isPrincipal() && $authUser->role !== User::ROLE_PRINCIPAL,
+            403,
+            'Unauthorized: Only Principals are authorized to manage staff compensation and payroll.'
+        );
+
+        // 2. Strict Multi-Tenant Isolation Check (BUG-RBAC-002)
+        $authorizedCampuses = method_exists($authUser, 'authorizedCampusIds')
+            ? ($authUser->authorizedCampusIds() ?: [$authUser->institute_id])
+            : [$authUser->institute_id];
+
+        abort_if(
+            $staff->institute_id !== $authUser->institute_id && ! in_array($staff->institute_id, $authorizedCampuses, true),
+            403,
+            'Unauthorized access to faculty payroll in another institute.'
+        );
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'staff_id' => $staff->id,
+                'name' => $staff->name,
+                'basic_salary_pkr' => $staff->basic_salary_pkr,
+                'allowed_absent_days_per_month' => $staff->allowed_absent_days_per_month,
+                'salary_disbursement_day' => $staff->salary_disbursement_day,
+                'salary_deduction_type' => $staff->salary_deduction_type,
+            ]);
+        }
+
+        return view('principal.settings.staff-payroll', compact('staff'));
+    }
+
     /**
      * Update individual staff member salary & leave policy.
+     * Hardened against Insecure Direct Object References (BUG-RBAC-002).
      */
-    public function updateStaffPayroll(Request $request, \App\Models\User $staff): RedirectResponse
+    public function updateStaffPayroll(Request $request, User $staff): RedirectResponse
     {
-        $authUser = auth()->user();
-        if ($staff->institute_id !== $authUser->institute_id) {
-            abort(403);
-        }
+        $authUser = Auth::user();
+
+        // 1. Role Authorization Check: Only Principals can modify faculty payroll
+        abort_if(
+            ! $authUser->isPrincipal() && $authUser->role !== User::ROLE_PRINCIPAL,
+            403,
+            'Unauthorized: Only Principals are authorized to manage staff compensation and payroll.'
+        );
+
+        // 2. Strict Multi-Tenant Isolation Check (BUG-RBAC-002)
+        $authorizedCampuses = method_exists($authUser, 'authorizedCampusIds')
+            ? ($authUser->authorizedCampusIds() ?: [$authUser->institute_id])
+            : [$authUser->institute_id];
+
+        abort_if(
+            $staff->institute_id !== $authUser->institute_id && ! in_array($staff->institute_id, $authorizedCampuses, true),
+            403,
+            'Unauthorized access to faculty payroll in another institute.'
+        );
 
         $validated = $request->validate([
             'basic_salary_pkr' => ['nullable', 'numeric', 'min:0'],
@@ -258,6 +336,6 @@ class InstituteSettingController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', "🎉 Salary & leave allowance settings updated for '{$staff->name}' successfully!");
+        return redirect()->back()->with('success', "Salary & leave allowance settings updated for '{$staff->name}' successfully.");
     }
 }

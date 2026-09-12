@@ -2,40 +2,53 @@
 
 namespace App\Services;
 
+use App\Models\ClassSection;
 use App\Models\Institute;
+use App\Models\InstituteSetting;
 use App\Models\Invoice;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Enrollment Service (BUG-ENROLL-001 & BUG-FIN-001)
+ *
+ * Coordinates tax calculations, admission fee invoices, and the controlled
+ * post-payment activation of student enrollments into class sections.
+ */
 class EnrollmentService
 {
+    protected FeeCalculationService $feeCalculator;
+    protected TrackEnrollmentService $trackEnrollmentService;
+
+    public function __construct(
+        ?FeeCalculationService $feeCalculator = null,
+        ?TrackEnrollmentService $trackEnrollmentService = null
+    ) {
+        $this->feeCalculator = $feeCalculator ?? app(FeeCalculationService::class);
+        $this->trackEnrollmentService = $trackEnrollmentService ?? app(TrackEnrollmentService::class);
+    }
+
     /**
-     * Calculate tax and grand total based on Filer / Non-Filer status.
+     * Calculate tax and grand total based on Filer / Non-Filer status (BUG-FIN-001).
+     * Resolves tax percentages dynamically via InstituteSetting.
      */
     public function calculateFee(float $baseFee, string $taxStatus, ?int $instituteId = null): array
     {
-        $isFiler = strtolower($taxStatus) === 'filer';
+        $result = $this->feeCalculator->calculate(
+            taxStatus: $taxStatus,
+            instituteId: $instituteId,
+            customBaseFee: $baseFee
+        );
 
-        // 0% for Filers, 5% for Non-Filers (or tenant setting)
-        $taxRate = $isFiler ? 0.00 : 0.05;
-
-        if ($instituteId) {
-            $institute = Institute::find($instituteId);
-            if ($institute && isset($institute->settings['non_filer_tax_rate'])) {
-                $taxRate = $isFiler ? 0.00 : (float) $institute->settings['non_filer_tax_rate'];
-            }
-        }
-
-        $taxAmount = round($baseFee * $taxRate, 2);
-        $grandTotal = round($baseFee + $taxAmount, 2);
+        $isFiler = strtolower(trim($taxStatus)) === 'filer';
 
         return [
-            'base_fee' => $baseFee,
+            'base_fee' => $result['base_fee'],
             'is_filer' => $isFiler,
-            'tax_rate' => $taxRate,
-            'tax_amount' => $taxAmount,
-            'grand_total' => $grandTotal,
+            'tax_rate' => $result['tax_rate'],
+            'tax_amount' => $result['tax_amount'],
+            'grand_total' => $result['grand_total'],
         ];
     }
 
@@ -49,14 +62,72 @@ class EnrollmentService
         return Invoice::create([
             'institute_id' => $student->institute_id,
             'student_id' => $student->id,
-            'invoice_number' => 'INV-'.strtoupper(Str::random(8)),
+            'class_section_id' => $student->class_section_id,
             'title' => 'Admission & Tuition Fee',
-            'amount' => $feeDetails['grand_total'],
-            'base_amount' => $feeDetails['base_fee'],
-            'tax_amount' => $feeDetails['tax_amount'],
-            'status' => 'Pending',
+            'amount_pkr' => $feeDetails['grand_total'],
+            'admission_fee' => 0.00,
+            'security_fee' => 0.00,
+            'status' => 'unpaid',
             'due_date' => now()->addDays(14),
         ]);
+    }
+
+    /**
+     * Complete student enrollment into Class & Section once admission fee is settled (BUG-ENROLL-001).
+     * Assigns class_section_id, increments section counter, and sets status to enrolled.
+     */
+    public function enrollStudentAfterPayment(Invoice $invoice): bool
+    {
+        return DB::transaction(function () use ($invoice) {
+            $student = $invoice->student;
+            if (! $student) {
+                return false;
+            }
+
+            // Determine target section from invoice or student
+            $targetSectionId = $invoice->class_section_id ?? $student->class_section_id;
+
+            // If already fully enrolled with section assigned, avoid duplicate counter increment
+            if ($student->class_section_id && $student->annual_result_status === 'enrolled') {
+                return true;
+            }
+
+            $updateData = [
+                'admission_status' => 'enrolled',
+                'annual_result_status' => 'enrolled',
+            ];
+
+            if ($targetSectionId) {
+                $updateData['class_section_id'] = $targetSectionId;
+
+                $section = ClassSection::with('instituteClass')->find($targetSectionId);
+                if ($section) {
+                    $section->increment('enrolled_students');
+
+                    if ($section->instituteClass && empty($student->enrolled_program)) {
+                        $updateData['enrolled_program'] = $section->instituteClass->name.' - '.$section->section_name;
+                    }
+                }
+            }
+
+            $student->update($updateData);
+
+            // Dynamic Subject Architecture: Seed granular subject enrollments
+            if ($targetSectionId && $student->user_id) {
+                try {
+                    $this->trackEnrollmentService->assignTrackToStudent(
+                        studentUserId: (int) $student->user_id,
+                        classSectionId: (int) $targetSectionId,
+                        trackId: $student->academic_track_id ? (int) $student->academic_track_id : null,
+                        customSubjectIds: is_array($student->selected_subject_ids) ? $student->selected_subject_ids : []
+                    );
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning("Dynamic subject auto-enrollment failed for student #{$student->id}: " . $e->getMessage());
+                }
+            }
+
+            return true;
+        });
     }
 
     /**
@@ -67,22 +138,12 @@ class EnrollmentService
         return DB::transaction(function () use ($invoice, $paymentMethod) {
             // Update invoice status
             $invoice->update([
-                'status' => 'Paid',
-                'payment_method' => $paymentMethod,
+                'status' => 'paid',
+                'payment_method' => $paymentMethod ?? 'Bank Transfer',
                 'paid_at' => now(),
             ]);
 
-            // Retrieve student and auto-enroll
-            $student = $invoice->student;
-            if ($student) {
-                $student->update([
-                    'status' => 'Active',
-                    'is_enrolled' => true,
-                    'enrolled_at' => now(),
-                ]);
-            }
-
-            return true;
+            return $this->enrollStudentAfterPayment($invoice);
         });
     }
 }

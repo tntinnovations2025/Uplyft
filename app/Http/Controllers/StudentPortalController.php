@@ -67,6 +67,16 @@ class StudentPortalController extends Controller
                 $subjects = Subject::where('institute_class_id', $student->classSection->institute_class_id)->get();
             }
 
+            // Dynamic Subject Architecture: Scope to student's enrolled subjects
+            $enrolledSubjectIds = \App\Models\StudentSubjectEnrollment::where('student_id', $student->user_id ?? Auth::id())
+                ->where('enrollment_status', 'active')
+                ->pluck('subject_id')
+                ->all();
+
+            if (! empty($enrolledSubjectIds)) {
+                $subjects = $subjects->whereIn('id', $enrolledSubjectIds)->values();
+            }
+
             // Benchmark distribution for visual variance
             $sampleOffsets = [0, -3, 2, -6, 1, -9, 3];
             $idx = 0;
@@ -241,6 +251,10 @@ class StudentPortalController extends Controller
                 ->orderBy('start_time')
                 ->get();
 
+            if (! empty($enrolledSubjectIds)) {
+                $rawToday = $rawToday->filter(fn ($slot) => in_array($slot->subject_id, $enrolledSubjectIds));
+            }
+
             $todaySlots = Timetable::mergeContiguousSlots($rawToday);
         }
 
@@ -249,14 +263,18 @@ class StudentPortalController extends Controller
         try {
             if ($student->classSection) {
                 $classId = $student->classSection->institute_class_id;
-                $upcomingAssessments = Assessment::where('institute_class_id', $classId)
+                $assessQuery = Assessment::where('institute_class_id', $classId)
                     ->where(function ($q) {
                         $q->whereNull('due_date')->orWhere('due_date', '>=', now()->toDateString());
                     })
                     ->with('subject')
-                    ->orderBy('due_date')
-                    ->take(3)
-                    ->get();
+                    ->orderBy('due_date');
+
+                if (! empty($enrolledSubjectIds)) {
+                    $assessQuery->whereIn('subject_id', $enrolledSubjectIds);
+                }
+
+                $upcomingAssessments = $assessQuery->take(3)->get();
             }
         } catch (\Throwable $e) {
             $upcomingAssessments = collect();

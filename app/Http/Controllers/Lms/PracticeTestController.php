@@ -49,13 +49,27 @@ class PracticeTestController extends Controller
             if ($student && $student->class_section_id) {
                 $section = $student->classSection;
                 $classId = $section ? $section->institute_class_id : null;
+
+                // Dynamic Subject Architecture: check granular student_subject_enrollments
+                $enrolledSubjectIds = \App\Models\StudentSubjectEnrollment::where('student_id', $user->id)
+                    ->where('enrollment_status', 'active')
+                    ->pluck('subject_id')
+                    ->all();
+
                 $query = Subject::query()->with(['instituteClass.systemClass']);
-                $query->where(function ($sq) use ($classId, $student) {
-                    if ($classId) {
-                        $sq->where('institute_class_id', $classId);
-                    }
-                    $sq->orWhereHas('teacherAssignments', fn ($ta) => $ta->where('class_section_id', $student->class_section_id));
-                });
+
+                if (! empty($enrolledSubjectIds)) {
+                    // Strict downstream isolation: student only sees enrolled subjects
+                    $query->whereIn('id', $enrolledSubjectIds);
+                } else {
+                    // Fallback for classes/students without granular enrollments (e.g. junior classes)
+                    $query->where(function ($sq) use ($classId, $student) {
+                        if ($classId) {
+                            $sq->where('institute_class_id', $classId);
+                        }
+                        $sq->orWhereHas('teacherAssignments', fn ($ta) => $ta->where('class_section_id', $student->class_section_id));
+                    });
+                }
                 return $query;
             } else {
                 return Subject::whereRaw('1 = 0');
