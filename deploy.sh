@@ -108,21 +108,32 @@ log_info "Running database migrations..."
 "$PHP_BIN" artisan migrate --force
 log_success "Database migrations up to date."
 
-# 7. Optimize & Cache Configuration / Routes / Views
+# 7. Ensure Storage Directories & Permissions Exist
+log_info "Verifying storage and cache directories..."
+mkdir -p storage/framework/cache/data \
+         storage/framework/sessions \
+         storage/framework/views \
+         storage/framework/testing \
+         storage/logs \
+         bootstrap/cache
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+log_success "Storage and cache directory structure verified."
+
+# 8. Optimize & Cache Configuration / Routes / Views
 log_info "Clearing stale cache and optimizing application..."
 "$PHP_BIN" artisan optimize:clear
 "$PHP_BIN" artisan optimize
 log_success "Application cached and optimized."
 
-# 8. Ensure Storage Symlink Exists
+# 9. Ensure Storage Symlink Exists
 log_info "Checking public storage symlink..."
 "$PHP_BIN" artisan storage:link 2>/dev/null || true
 
-# 9. Restart Background Queue Workers
+# 10. Restart Background Queue Workers
 log_info "Restarting queue workers..."
 "$PHP_BIN" artisan queue:restart 2>/dev/null || true
 
-# 10. Reload PHP-FPM / OPcache (if running in systemd service environment)
+# 11. Reload PHP-FPM / OPcache (if running in systemd service environment)
 if command -v systemctl >/dev/null 2>&1; then
     for fpm in php8.4-fpm php8.3-fpm php8.2-fpm php-fpm; do
         if systemctl is-active --quiet "$fpm" 2>/dev/null; then
@@ -133,7 +144,7 @@ if command -v systemctl >/dev/null 2>&1; then
     done
 fi
 
-# 11. Bring Application Back Online
+# 12. Bring Application Back Online
 log_info "Bringing application out of maintenance mode..."
 "$PHP_BIN" artisan up
 log_success "Application is online!"
