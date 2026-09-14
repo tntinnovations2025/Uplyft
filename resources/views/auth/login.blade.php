@@ -73,7 +73,7 @@
             <label for="credential" class="input-label">{{ $studentLogin ? 'Email Address' : 'Email Address or ID' }}</label>
             <div class="input-wrapper">
                 <input id="credential" class="custom-input" type="{{ $studentLogin ? 'email' : 'text' }}" name="credential" value="{{ old('credential') }}" required autofocus autocomplete="username"
-                    placeholder="{{ $studentLogin ? 'e.g. student@apex.edu.pk' : 'e.g. teacher@apex.edu.pk, STU-2025-001' }}" />
+                    placeholder="{{ $studentLogin ? 'Enter your email address' : 'Enter email address or ID' }}" />
                 <span class="input-icon">✉️</span>
             </div>
             <x-input-error :messages="$errors->get('credential')" class="mt-1 text-xs text-red-500" />

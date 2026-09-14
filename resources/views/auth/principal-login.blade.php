@@ -69,7 +69,7 @@
             <label for="credential" class="input-label">Principal Email or ID</label>
             <div class="input-wrapper">
                 <input id="credential" class="custom-input" type="text" name="credential" value="{{ old('credential') }}" required autofocus autocomplete="username"
-                    placeholder="e.g. principal@superior.edu.pk" />
+                    placeholder="Enter principal email or institutional ID" />
                 <span class="input-icon">✉️</span>
             </div>
             <x-input-error :messages="$errors->get('credential')" class="mt-1 text-xs text-red-500" />

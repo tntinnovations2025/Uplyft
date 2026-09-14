@@ -737,4 +737,29 @@ class User extends Authenticatable
         }
         return strtoupper(substr($name, 0, 2));
     }
+
+    /**
+     * Subjects assigned to the teacher via teacher_subject_sections.
+     */
+    public function assignedSubjects(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'teacher_subject_sections', 'teacher_id', 'subject_id')
+            ->distinct();
+    }
+
+    /**
+     * Teacher's assignments across sections and subjects.
+     */
+    public function teacherSubjectSections(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(TeacherSubjectSection::class, 'teacher_id');
+    }
+
+    /**
+     * Assessment submissions made by the student.
+     */
+    public function assessmentSubmissions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(AssessmentSubmission::class, 'student_id');
+    }
 }

@@ -36,5 +36,11 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
         Route::get('/lms', [StudentPortalController::class, 'lms'])->name('lms');
         Route::get('/datesheet', [StudentPortalController::class, 'datesheet'])->name('datesheet');
         Route::get('/exam-report', [StudentPortalController::class, 'examReport'])->name('examReport');
+
+        // ── Cambridge / Standard Mock Examinations & Instant Grading ──
+        Route::get('/mocks', [\App\Http\Controllers\Student\StudentMockController::class, 'index'])->name('mocks.index');
+        Route::get('/mocks/{assessment}/take', [\App\Http\Controllers\Student\StudentMockController::class, 'take'])->name('mocks.take');
+        Route::post('/mocks/{assessment}/submit', [\App\Http\Controllers\Student\StudentMockController::class, 'submit'])->name('mocks.submit');
+        Route::get('/mocks/{assessment}/result/{submission}', [\App\Http\Controllers\Student\StudentMockController::class, 'result'])->name('mocks.result');
     });
 });

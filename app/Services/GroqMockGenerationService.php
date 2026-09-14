@@ -36,6 +36,7 @@ class GroqMockGenerationService
      * @param array $topics
      * @param int $totalMcqs 30 or 40
      * @param string $examStandard 'caie_o_level'|'caie_a_level'|'edexcel_igcse'
+     * @param int $optionsCount 3, 4 (default), or 5
      * @return array
      */
     public function generateMockExam(
@@ -43,8 +44,10 @@ class GroqMockGenerationService
         int $instituteId,
         array $topics = [],
         int $totalMcqs = 30,
-        string $examStandard = 'caie_o_level'
+        string $examStandard = 'caie_o_level',
+        int $optionsCount = 4
     ): array {
+        $optionsCount = in_array($optionsCount, [3, 4, 5], true) ? $optionsCount : 4;
         $subject = Subject::find($subjectId);
         $subjectName = $subject ? $subject->name : 'Subject';
         $syllabusCode = $subject ? ($subject->code ?? 'O/A Level') : 'O/A Level';
@@ -74,7 +77,7 @@ class GroqMockGenerationService
             'semantic_duplicates_rejected' => 0,
         ];
 
-        $systemPrompt = $this->buildChiefExaminerSystemPrompt($examStandard, $subjectName, $syllabusCode);
+        $systemPrompt = $this->buildChiefExaminerSystemPrompt($examStandard, $subjectName, $syllabusCode, $optionsCount);
 
         for ($batch = 1; $batch <= $numBatches; $batch++) {
             $neededInBatch = min($batchSize, $totalMcqs - count($validatedQuestions));
@@ -92,7 +95,8 @@ class GroqMockGenerationService
                 $batchTopicStr,
                 $neededInBatch,
                 $batch,
-                $subjectName
+                $subjectName,
+                $optionsCount
             );
 
             foreach ($candidates as $cand) {
@@ -109,12 +113,12 @@ class GroqMockGenerationService
                 $topicTag = (string) ($cand['topic'] ?? $batchTopicStr);
                 $cogLevel = (string) ($cand['cognitive_level'] ?? 'Application');
 
-                if (empty($stem) || count($options) !== 4) {
+                if (empty($stem) || !is_array($options) || count($options) < 3) {
                     continue;
                 }
 
                 // Format options to key-value [A => '...', B => '...', C => '...', D => '...']
-                $formattedOptions = $this->normalizeOptions($options);
+                $formattedOptions = $this->normalizeOptions($options, $optionsCount);
 
                 // Run Deduplication Matrix Validation
                 $valResult = $this->dedupValidator->validateQuestion(
@@ -147,7 +151,7 @@ class GroqMockGenerationService
                     'topic' => $topicTag,
                     'question_stem' => $stem,
                     'options' => $formattedOptions,
-                    'correct_answer' => $this->normalizeCorrectAnswerKey($correctAnswer, $formattedOptions),
+                    'correct_answer' => $this->normalizeCorrectAnswerKey($correctAnswer, $formattedOptions, $optionsCount),
                     'explanation' => $explanation,
                     'cognitive_level' => $cogLevel,
                     'stem_hash' => $valResult['stem_hash'],
@@ -171,7 +175,8 @@ class GroqMockGenerationService
                 $randomTopic . " (Advanced / Novel angle)",
                 $remainingCount + 2,
                 99 + $retryAttempts,
-                $subjectName
+                $subjectName,
+                $optionsCount
             );
 
             foreach ($topUpCandidates as $cand) {
@@ -187,11 +192,11 @@ class GroqMockGenerationService
                 $topicTag = (string) ($cand['topic'] ?? $randomTopic);
                 $cogLevel = (string) ($cand['cognitive_level'] ?? 'Application');
 
-                if (empty($stem) || count($options) !== 4) {
+                if (empty($stem) || !is_array($options) || count($options) < 3) {
                     continue;
                 }
 
-                $formattedOptions = $this->normalizeOptions($options);
+                $formattedOptions = $this->normalizeOptions($options, $optionsCount);
                 $valResult = $this->dedupValidator->validateQuestion(
                     $stem,
                     $correctAnswer,
@@ -212,7 +217,7 @@ class GroqMockGenerationService
                         'topic' => $topicTag,
                         'question_stem' => $stem,
                         'options' => $formattedOptions,
-                        'correct_answer' => $this->normalizeCorrectAnswerKey($correctAnswer, $formattedOptions),
+                        'correct_answer' => $this->normalizeCorrectAnswerKey($correctAnswer, $formattedOptions, $optionsCount),
                         'explanation' => $explanation,
                         'cognitive_level' => $cogLevel,
                         'stem_hash' => $valResult['stem_hash'],
@@ -243,6 +248,7 @@ class GroqMockGenerationService
             'exam_standard_label' => $standardLabels[$examStandard] ?? 'CAIE Standard',
             'total_mcqs' => count($validatedQuestions),
             'target_mcqs' => $totalMcqs,
+            'options_per_mcq' => $optionsCount,
             'time_limit_minutes' => $timeLimitMinutes,
             'topics_covered' => $topics,
             'exemplars_used' => $exemplars->count(),
@@ -255,16 +261,17 @@ class GroqMockGenerationService
     /**
      * Build the Cambridge Chief Examiner system prompt.
      */
-    protected function buildChiefExaminerSystemPrompt(string $examStandard, string $subjectName, string $code): string
+    protected function buildChiefExaminerSystemPrompt(string $examStandard, string $subjectName, string $code, int $optionsCount = 4): string
     {
+        $letterChoices = implode(', ', array_slice(['A', 'B', 'C', 'D', 'E'], 0, $optionsCount));
         return <<<PROMPT
 You are the Cambridge Assessment International Education (CAIE) Chief Examiner and Lead Question Setter for {$subjectName} ({$code}).
 Your mission is to construct official-standard Multiple Choice Questions (MCQs) indistinguishable from live Cambridge O/A Level / Edexcel examinations.
 
 INTERNATIONAL EXAMINATION BENCHMARK RULES:
-1. PURE 4-OPTION MCQ FORMAT: Every single question must have exactly 4 options labeled A, B, C, D. No "All of the above" or "None of the above".
-2. UNAMBIGUOUS SINGLE ANSWER KEY: Exactly ONE option is factually, mathematically, and scientifically correct. The other three options MUST be plausible distractors.
-3. PLAUSIBLE DISTRACTORS: Distractors must reflect common student misconceptions, inverted ratios, arithmetic sign errors, or confusion between related laws/theories.
+1. PURE {$optionsCount}-OPTION MCQ FORMAT: Every single question must have exactly {$optionsCount} options labeled {$letterChoices}. No "All of the above" or "None of the above".
+2. UNAMBIGUOUS SINGLE ANSWER KEY: Exactly ONE option is factually, mathematically, and scientifically correct. The other remaining options MUST be plausible distractors.
+3. PLAUSIBLE DISTRACTORS: Distractors must reflect common student misconceptions, inverted ratios, arithmetic sign errors, or confusion between related laws/theories. Distribute plausibility across all letter choices ({$letterChoices}).
 4. RIGOROUS COGNITIVE TAXONOMY: Distribute questions across:
    - Recall & Definition (20%)
    - Conceptual Understanding (30%)
@@ -289,10 +296,19 @@ PROMPT;
         string $topicString,
         int $count,
         int $batchNumber,
-        string $subjectName
+        string $subjectName,
+        int $optionsCount = 4
     ): array {
+        $keys = array_slice(['A', 'B', 'C', 'D', 'E'], 0, $optionsCount);
+        $optionsSchema = [];
+        foreach ($keys as $k) {
+            $optionsSchema[$k] = "Plausible choice for {$k}";
+        }
+        $optionsJsonSample = json_encode($optionsSchema, JSON_PRETTY_PRINT);
+
         $userPrompt = <<<PROMPT
 Generate {$count} high-rigor Cambridge examination standard MCQs on the topic(s): "{$topicString}" for {$subjectName}.
+Each question MUST have exactly {$optionsCount} options: ({$optionsJsonSample}).
 
 {$fewShotContext}
 
@@ -308,14 +324,9 @@ OUTPUT JSON SCHEMA:
             "topic": "Specific Topic / Subtopic",
             "cognitive_level": "Recall | Understanding | Application | Analysis",
             "question_stem": "Clear, precise Cambridge-style question stem...",
-            "options": {
-                "A": "First plausible choice",
-                "B": "Second plausible choice",
-                "C": "Third plausible choice",
-                "D": "Fourth plausible choice"
-            },
+            "options": {$optionsJsonSample},
             "correct_answer": "A",
-            "explanation": "Detailed mark scheme explanation showing why A is correct and why B, C, D are misconceptions."
+            "explanation": "Detailed mark scheme explanation showing why correct option is right and why others are misconceptions."
         }
     ]
 }
@@ -391,15 +402,20 @@ PROMPT;
     /**
      * Normalize options array into [A => '...', B => '...', C => '...', D => '...'].
      */
-    protected function normalizeOptions($options): array
+    protected function normalizeOptions($options, int $optionsCount = 4): array
     {
+        $keys = array_slice(['A', 'B', 'C', 'D', 'E'], 0, $optionsCount);
+
         if (!is_array($options)) {
-            return ['A' => 'Option A', 'B' => 'Option B', 'C' => 'Option C', 'D' => 'Option D'];
+            $res = [];
+            foreach ($keys as $k) {
+                $res[$k] = "Option {$k}";
+            }
+            return $res;
         }
 
-        // If sequential array [0 => '...', 1 => '...', 2 => '...', 3 => '...']
+        // If sequential array [0 => '...', 1 => '...', 2 => '...']
         if (array_is_list($options)) {
-            $keys = ['A', 'B', 'C', 'D'];
             $res = [];
             foreach ($keys as $idx => $k) {
                 $res[$k] = isset($options[$idx]) ? (string) $options[$idx] : "Option {$k}";
@@ -409,19 +425,20 @@ PROMPT;
 
         // If associative array
         $res = [];
-        foreach (['A', 'B', 'C', 'D'] as $k) {
+        foreach ($keys as $k) {
             $res[$k] = isset($options[$k]) ? (string) $options[$k] : (isset($options[strtolower($k)]) ? (string) $options[strtolower($k)] : "Option {$k}");
         }
         return $res;
     }
 
     /**
-     * Normalize correct answer key to A, B, C, or D.
+     * Normalize correct answer key to A, B, C, D, or E.
      */
-    protected function normalizeCorrectAnswerKey(string $keyOrText, array $options): string
+    protected function normalizeCorrectAnswerKey(string $keyOrText, array $options, int $optionsCount = 4): string
     {
+        $allowed = array_slice(['A', 'B', 'C', 'D', 'E'], 0, $optionsCount);
         $clean = strtoupper(trim($keyOrText));
-        if (in_array($clean, ['A', 'B', 'C', 'D'], true)) {
+        if (in_array($clean, $allowed, true)) {
             return $clean;
         }
 

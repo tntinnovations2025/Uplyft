@@ -1567,9 +1567,13 @@
                     <span class="icon"><x-icon name="file-pen" /></span>
                     <span>Assessment Creator</span>
                 </a>
-                <a href="{{ route('lms.mocks.create') }}" class="glossy-nav-item {{ (request()->routeIs('lms.mocks.*') || request()->is('lms/mocks*')) ? 'active' : '' }}">
+                <a href="{{ route('lms.mocks.create') }}" class="glossy-nav-item {{ (request()->routeIs('lms.mocks.create') || request()->routeIs('teacher.mocks.create')) ? 'active' : '' }}">
                     <span class="icon"><x-icon name="bullseye" /></span>
-                    <span>🎯 O/A Level Mock Engine</span>
+                    <span>🎯 Generate Mocks</span>
+                </a>
+                <a href="{{ route('lms.mocks.index') }}" class="glossy-nav-item {{ (request()->routeIs('lms.mocks.index') || request()->routeIs('teacher.mocks.index') || request()->routeIs('lms.mocks.show') || request()->routeIs('teacher.mocks.show')) ? 'active' : '' }}">
+                    <span class="icon"><x-icon name="list-check" /></span>
+                    <span>📋 View Mocks</span>
                 </a>
                 <a href="{{ route('lms.test-results.index') }}" class="glossy-nav-item {{ (request()->routeIs('lms.test-results.*') || request()->is('lms/test-results*')) ? 'active' : '' }}">
                     <span class="icon"><x-icon name="square-poll-vertical" /></span>

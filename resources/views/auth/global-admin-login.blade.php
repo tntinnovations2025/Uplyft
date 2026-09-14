@@ -69,7 +69,7 @@
             <label for="credential" class="input-label">Master Administrator Email</label>
             <div class="input-wrapper">
                 <input id="credential" class="custom-input" type="text" name="credential" value="{{ old('credential') }}" required autofocus autocomplete="username"
-                    placeholder="e.g. admin@uplyft.com" />
+                    placeholder="Enter master administrator email" />
                 <span class="input-icon">✉️</span>
             </div>
             <x-input-error :messages="$errors->get('credential')" class="mt-1 text-xs text-red-500" />

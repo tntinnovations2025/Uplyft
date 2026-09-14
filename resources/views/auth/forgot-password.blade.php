@@ -134,7 +134,7 @@
             <label for="credential" class="input-label">Email Address or Account ID</label>
             <div class="input-wrapper">
                 <input id="credential" class="custom-input" type="text" name="credential" value="{{ old('credential') }}" required autofocus
-                    placeholder="e.g. teacher@apex.edu.pk, TCH-APEX-01" />
+                    placeholder="Enter registered email address or account ID" />
                 <span class="input-icon">✉️</span>
             </div>
             <x-input-error :messages="$errors->get('credential')" class="mt-1 text-xs text-red-500" />

@@ -110,4 +110,9 @@ class Subject extends Model
     {
         return $this->hasMany(StudentSubjectEnrollment::class, 'subject_id');
     }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(ClassSection::class, 'institute_class_id', 'institute_class_id');
+    }
 }

@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // ── Port-Based Multi-Portal Session Cookie Isolation ───────────────
-        $port = request()->getPort() ?? (int) ($_SERVER['SERVER_PORT'] ?? 8000);
+        $port = app()->bound('request') ? (request()->getPort() ?? (int) ($_SERVER['SERVER_PORT'] ?? 8000)) : (int) ($_SERVER['SERVER_PORT'] ?? 8000);
         $cookieName = 'uplyft_session_port_' . $port;
         config(['session.cookie' => $cookieName]);
 

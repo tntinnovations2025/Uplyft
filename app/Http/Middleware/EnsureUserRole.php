@@ -32,7 +32,7 @@ class EnsureUserRole
         if (! in_array($user->role, $roles)) {
             if ($request->is('global-admin*')) {
                 return redirect()->route('global-admin.login')
-                    ->with('error', 'Please sign in with Global Administrator credentials (admin@uplyft.com) to access the Global Admin Control Tower.');
+                    ->with('error', 'Please sign in with Global Administrator credentials to access the Global Admin Control Tower.');
             }
 
             // Redirect to their own dashboard if they try to access a different role's area

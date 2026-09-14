@@ -83,13 +83,34 @@ Route::middleware(['auth'])->prefix('lms')->name('lms.')->group(function () {
         Route::post('/{assessment}/auto-grade-mcqs', [AssessmentController::class, 'bulkAutoGradeMcqs'])->name('autoGradeMcqs');
     });
 
-    // ── Dedicated O/A Levels Mock Examination Engine ────────────────────────
+    // ── Dedicated O/A Levels Mock Examination Engine & Review/In-Place Editor ──
     Route::middleware(['feature:assessment_engine', 'active.term'])->prefix('mocks')->name('mocks.')->group(function () {
+        Route::get('/', [MockAssessmentController::class, 'index'])->name('index');
         Route::get('/create', [MockAssessmentController::class, 'create'])->name('create');
         Route::get('/subject-status/{subjectId}', [MockAssessmentController::class, 'subjectStatus'])->name('subjectStatus');
         Route::post('/upload-past-papers', [MockAssessmentController::class, 'uploadPastPapers'])->name('uploadPastPapers');
         Route::post('/generate', [MockAssessmentController::class, 'generate'])->middleware('throttle:10,1')->name('generate');
         Route::post('/publish', [MockAssessmentController::class, 'publish'])->name('publish');
+        Route::get('/{assessment}', [MockAssessmentController::class, 'show'])->name('show');
+        Route::get('/{assessment}/print', [MockAssessmentController::class, 'printPaper'])->name('print');
+        Route::get('/{assessment}/pdf', [MockAssessmentController::class, 'downloadPdf'])->name('pdf');
+        Route::post('/{assessment}/toggle-portal', [MockAssessmentController::class, 'togglePortalDelivery'])->name('togglePortal');
+        Route::patch('/questions/{question}', [MockAssessmentController::class, 'updateQuestion'])->name('questions.update');
+        Route::delete('/{assessment}', [MockAssessmentController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Teacher Portal Mocks Alias ──────────────────────────────────────────
+    Route::middleware(['feature:assessment_engine', 'active.term'])->prefix('teacher/mocks')->name('teacher.mocks.')->group(function () {
+        Route::get('/', [MockAssessmentController::class, 'index'])->name('index');
+        Route::get('/create', [MockAssessmentController::class, 'create'])->name('create');
+        Route::post('/generate', [MockAssessmentController::class, 'generate'])->middleware('throttle:10,1')->name('generate');
+        Route::get('/{assessment}', [MockAssessmentController::class, 'show'])->name('show');
+        Route::get('/{assessment}/print', [MockAssessmentController::class, 'printPaper'])->name('print');
+        Route::get('/{assessment}/pdf', [MockAssessmentController::class, 'downloadPdf'])->name('pdf');
+        Route::post('/{assessment}/toggle-portal', [MockAssessmentController::class, 'togglePortalDelivery'])->name('togglePortal');
+        Route::patch('/questions/{question}', [MockAssessmentController::class, 'updateQuestion'])->name('questions.update');
+        Route::post('/{assessment}/publish', [MockAssessmentController::class, 'publish'])->name('publish');
+        Route::delete('/{assessment}', [MockAssessmentController::class, 'destroy'])->name('destroy');
     });
 
     // ── Practice Tests (Gated by fee payment) ────────────────────────────
@@ -140,3 +161,18 @@ Route::middleware(['auth'])->prefix('lms')->name('lms.')->group(function () {
         Route::post('/{assessment}/save-marks', [ExamReportController::class, 'storeMarks'])->name('storeMarks');
     });
 });
+
+// ── Teacher Portal Mocks Dedicated Group (Standard Teacher Prefix) ───────────
+Route::middleware(['auth', 'role:teacher,principal', 'feature:assessment_engine'])->prefix('teacher/mocks')->name('teacher.mocks.')->group(function () {
+    Route::get('/', [MockAssessmentController::class, 'index'])->name('index');
+    Route::get('/create', [MockAssessmentController::class, 'create'])->name('create');
+    Route::post('/generate', [MockAssessmentController::class, 'generate'])->middleware('throttle:10,1')->name('generate');
+    Route::get('/{assessment}', [MockAssessmentController::class, 'show'])->name('show');
+    Route::get('/{assessment}/print', [MockAssessmentController::class, 'printPaper'])->name('print');
+    Route::get('/{assessment}/pdf', [MockAssessmentController::class, 'downloadPdf'])->name('pdf');
+    Route::post('/{assessment}/toggle-portal', [MockAssessmentController::class, 'togglePortalDelivery'])->name('togglePortal');
+    Route::patch('/questions/{question}', [MockAssessmentController::class, 'updateQuestion'])->name('questions.update');
+    Route::post('/{assessment}/publish', [MockAssessmentController::class, 'publish'])->name('publish');
+    Route::delete('/{assessment}', [MockAssessmentController::class, 'destroy'])->name('destroy');
+});
+

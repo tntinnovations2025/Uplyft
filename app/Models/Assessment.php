@@ -66,8 +66,10 @@ class Assessment extends Model
     protected $fillable = [
         'subject_id',
         'academic_term_id',
+        'institute_class_id',
         'class_section_id',
         'creator_id',
+        'teacher_id',
         'title',
         'type',
         'total_marks',
@@ -76,10 +78,12 @@ class Assessment extends Model
         'end_time',
         'has_time_limit',
         'duration_minutes',
+        'scheduled_date',
         'result_deadline',
         'evaluation_mode',
         'is_paper_test',
         'status',
+        'is_published',
         'is_marksheet_saved',
         'saved_at',
         'instructions',
@@ -89,6 +93,8 @@ class Assessment extends Model
         'is_mock',
         'exam_standard',
         'total_mcqs',
+        'total_questions',
+        'options_per_mcq',
     ];
 
     protected $casts = [
@@ -96,17 +102,29 @@ class Assessment extends Model
         'weightage_percentage' => 'float',
         'has_time_limit' => 'boolean',
         'is_paper_test' => 'boolean',
+        'is_published' => 'boolean',
         'is_published_teacher' => 'boolean',
         'is_published_student' => 'boolean',
         'is_mock' => 'boolean',
         'total_mcqs' => 'integer',
+        'total_questions' => 'integer',
+        'options_per_mcq' => 'integer',
         'duration_minutes' => 'integer',
+        'scheduled_date' => 'date',
         'is_marksheet_saved' => 'boolean',
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'result_deadline' => 'datetime',
         'saved_at' => 'datetime',
     ];
+
+    /**
+     * Helper accessor to indicate if this assessment is delivered/visible on the student portal.
+     */
+    public function getIsPortalVisibleAttribute(): bool
+    {
+        return (bool) ($this->is_published_student ?? false);
+    }
 
     // ── Relationships ────────────────────────────────────────────────────────
 
@@ -120,6 +138,11 @@ class Assessment extends Model
         return $this->belongsTo(AcademicTerm::class);
     }
 
+    public function instituteClass(): BelongsTo
+    {
+        return $this->belongsTo(InstituteClass::class);
+    }
+
     public function classSection(): BelongsTo
     {
         return $this->belongsTo(ClassSection::class);
@@ -130,9 +153,19 @@ class Assessment extends Model
         return $this->belongsTo(User::class, 'creator_id');
     }
 
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
+
     public function questions(): HasMany
     {
         return $this->hasMany(AssessmentQuestion::class)->orderBy('sort_order');
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(AssessmentSubmission::class);
     }
 
     // ── Scopes ───────────────────────────────────────────────────────────────
