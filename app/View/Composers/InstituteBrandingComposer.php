@@ -142,35 +142,68 @@ class InstituteBrandingComposer
             }
         }
 
-        // 6. Default to the primary tenant institute (Superior University)
+        // 6. If no institute context is resolved (e.g. /login on master domain), default to Uplyft Platform branding
         if (!$institute) {
-            $institute = Institute::withoutGlobalScopes()->find(1)
-                      ?? Institute::withoutGlobalScopes()->whereNotNull('logo_path')->first()
-                      ?? Institute::withoutGlobalScopes()->first();
+            $platformLogoPath = PlatformSetting::get('platform_logo_path');
+            $logoUrl = null;
+            if ($platformLogoPath && file_exists(public_path('storage/' . $platformLogoPath))) {
+                $logoUrl = asset('storage/' . $platformLogoPath);
+            } elseif (file_exists(public_path('images/uplyft-logo.png'))) {
+                $logoUrl = asset('images/uplyft-logo.png');
+            } elseif ($platformLogoPath) {
+                $logoUrl = asset('storage/' . $platformLogoPath);
+            } else {
+                $logoUrl = asset('images/uplyft-logo.png');
+            }
+
+            $branding = (object) [
+                'is_tenant'        => false,
+                'institute_id'     => null,
+                'name'             => 'Uplyft',
+                'slug'             => 'uplyft',
+                'logo_url'         => $logoUrl,
+                'icon_url'         => $logoUrl,
+                'has_custom_logo'  => (bool) $logoUrl,
+                'has_custom_icon'  => (bool) $logoUrl,
+                'initial'          => 'U',
+                'powered_by'       => 'TNT Innovations',
+                'powered_by_title' => 'POWERED BY TNT INNOVATIONS',
+                'currency_symbol'  => 'PKR',
+                'currency'         => 'PKR',
+                'bg_url'           => asset('images/default_campus_bg.jpg'),
+            ];
+
+            static::$cachedTenantBranding[$cacheKey] = [
+                'branding' => $branding,
+                'currency' => 'PKR',
+            ];
+
+            $view->with('instituteBranding', $branding);
+            $view->with('currencySymbol', 'PKR');
+            $view->with('currency', 'PKR');
+            return;
         }
 
         $setting = null;
-        if ($institute) {
-            try {
-                $setting = \App\Models\InstituteSetting::getForInstitute($institute->id);
-            } catch (\Throwable $e) {
-                // Fallback
-            }
+        try {
+            $setting = \App\Models\InstituteSetting::getForInstitute($institute->id);
+        } catch (\Throwable $e) {
+            // Fallback
         }
         $currencySymbol = $setting?->currency_symbol ?? 'PKR';
 
-        $bgUrl = $institute?->bg_url ?? asset('images/default_campus_bg.jpg');
+        $bgUrl = $institute->bg_url ?? asset('images/default_campus_bg.jpg');
 
         $branding = (object) [
-            'is_tenant'        => (bool) $institute,
-            'institute_id'     => $institute?->id,
-            'name'             => $institute?->name ?? 'Superior University',
-            'slug'             => $institute?->slug ?? 'superior',
-            'logo_url'         => $institute?->logo_url,
-            'icon_url'         => $institute?->icon_url,
-            'has_custom_logo'  => (bool) ($institute && $institute->logo_path),
-            'has_custom_icon'  => (bool) ($institute && ($institute->icon_path || $institute->logo_path)),
-            'initial'          => $institute ? $institute->display_initial : 'S',
+            'is_tenant'        => true,
+            'institute_id'     => $institute->id,
+            'name'             => $institute->name ?? 'Uplyft',
+            'slug'             => $institute->slug ?? 'uplyft',
+            'logo_url'         => $institute->logo_url,
+            'icon_url'         => $institute->icon_url,
+            'has_custom_logo'  => (bool) $institute->logo_path,
+            'has_custom_icon'  => (bool) ($institute->icon_path || $institute->logo_path),
+            'initial'          => $institute->display_initial ?? 'U',
             'powered_by'       => 'TNT Innovations',
             'powered_by_title' => 'POWERED BY TNT INNOVATIONS',
             'currency_symbol'  => $currencySymbol,
