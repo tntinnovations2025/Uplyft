@@ -561,6 +561,59 @@ class StudentPortalController extends Controller
     }
 
     /**
+     * Download Enrolled Class Timetable (.xlsx)
+     * Strictly restricted to the authenticated student's enrolled class section.
+     * Route: /student/timetable/download
+     */
+    public function downloadTimetable()
+    {
+        $student = $this->getStudentForAuthUser();
+
+        if (! $student || ! $student->class_section_id) {
+            return back()->with('error', 'No enrolled class found for your profile. Please contact administration.');
+        }
+
+        $classSection = $student->classSection;
+        if (! $classSection) {
+            $classSection = \App\Models\ClassSection::with('instituteClass')->find($student->class_section_id);
+        }
+
+        if (! $classSection) {
+            return back()->with('error', 'Enrolled class details could not be found.');
+        }
+
+        $instituteId = $student->institute_id ?? auth()->user()->institute_id;
+        $academicTermId = $student->academic_term_id;
+        if (! $academicTermId) {
+            $activeTerm = \App\Models\AcademicTerm::where('institute_id', $instituteId)->where('is_active', true)->first();
+            $academicTermId = $activeTerm?->id;
+        }
+
+        if (! $academicTermId) {
+            return back()->with('error', 'No active academic session found for timetable export.');
+        }
+
+        try {
+            $excelService = new \App\Services\TimetableMultiSheetExcelService();
+            $filePath = $excelService->generateClassTimetable($instituteId, $academicTermId, $student->class_section_id);
+
+            $className = $classSection->instituteClass?->custom_name ?: ($classSection->instituteClass?->class_name ?: 'Class');
+            $secName = $classSection->section_name ?: 'A';
+            $sanitized = preg_replace('/[^A-Za-z0-9_]/', '_', "{$className}_{$secName}");
+            $filename = "{$sanitized}_Timetable.xlsx";
+
+            return response()->download($filePath, $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ])->deleteFileAfterSend(true);
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Failed to generate Timetable Excel: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * My Enrolled Subjects
      * Route: /student/courses
      */

@@ -39,6 +39,8 @@ class TeacherAvailabilityController extends Controller
             'availabilities.*.day_of_week'  => 'required|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
             'availabilities.*.start_time'   => 'nullable|string',
             'availabilities.*.end_time'     => 'nullable|string',
+            'availabilities.*.break_start_time' => 'nullable|string',
+            'availabilities.*.break_end_time'   => 'nullable|string',
             'availabilities.*.is_available' => 'nullable',
         ]);
 
@@ -51,15 +53,26 @@ class TeacherAvailabilityController extends Controller
             $startTime = !empty($dayData['start_time']) ? date('H:i:s', strtotime($dayData['start_time'])) : '08:00:00';
             $endTime   = !empty($dayData['end_time'])   ? date('H:i:s', strtotime($dayData['end_time']))   : '14:30:00';
 
+            $breakStart = !empty($dayData['break_start_time']) ? date('H:i:s', strtotime($dayData['break_start_time'])) : null;
+            $breakEnd   = !empty($dayData['break_end_time'])   ? date('H:i:s', strtotime($dayData['break_end_time']))   : null;
+
+            // Only set break if both start and end are provided
+            if (!$breakStart || !$breakEnd) {
+                $breakStart = null;
+                $breakEnd = null;
+            }
+
             TeacherAvailability::updateOrCreate(
                 [
                     'teacher_id'  => $teacher->id,
                     'day_of_week' => strtolower($dayData['day_of_week']),
                 ],
                 [
-                    'start_time'   => $startTime,
-                    'end_time'     => $endTime,
-                    'is_available' => $isAvailable,
+                    'start_time'         => $startTime,
+                    'end_time'           => $endTime,
+                    'break_start_time'   => $breakStart,
+                    'break_end_time'     => $breakEnd,
+                    'is_available'       => $isAvailable,
                 ]
             );
         }

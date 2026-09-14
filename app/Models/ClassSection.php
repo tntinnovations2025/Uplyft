@@ -48,6 +48,11 @@ class ClassSection extends Model
         return $this->hasMany(Timetable::class);
     }
 
+    public function breaks(): HasMany
+    {
+        return $this->hasMany(ClassBreak::class, 'class_section_id');
+    }
+
     public function teacherAssignments(): HasMany
     {
         return $this->hasMany(TeacherSubjectSection::class);

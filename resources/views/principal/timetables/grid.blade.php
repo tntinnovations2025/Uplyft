@@ -5,87 +5,143 @@
 @section('content')
 @php
     $routePrefix = request()->routeIs('teacher.*') ? 'teacher.' : 'principal.';
+    $selectedDay = strtolower(request()->get('day', 'all'));
+    $displayDays = $selectedDay === 'all' ? $days : [$selectedDay];
+
+    $timeOverlap = function (string $s1, string $e1, string $s2, string $e2): bool {
+        return ($s1 < $e2) && ($e1 > $s2);
+    };
 @endphp
+
 <style>
-    .horiz-matrix-table {
+    .excel-timetable-container {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        margin-bottom: 32px;
+    }
+
+    .excel-timetable-table {
         width: 100%;
         border-collapse: collapse;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        overflow: hidden;
-        table-layout: fixed;
+        table-layout: auto;
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-    .horiz-matrix-table th {
-        background: #f1f5f9;
-        color: #0f172a;
-        text-align: center;
-        padding: 14px 10px;
-        font-size: 12px;
-        font-weight: 800;
-        border: 1px solid #e2e8f0;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-    .horiz-matrix-table td {
-        padding: 10px 8px;
+
+    .excel-timetable-table th,
+    .excel-timetable-table td {
+        border: 1px solid #cbd5e1;
+        padding: 8px 10px;
         text-align: center;
         vertical-align: middle;
-        border: 1px solid #e2e8f0;
-        min-height: 70px;
-        font-size: 12px;
-        background: #ffffff;
-        transition: background 0.15s ease;
     }
-    .horiz-matrix-table td:hover {
-        background: #fdf2f8;
-    }
-    .horiz-matrix-table .section-col {
+
+    .excel-timetable-table thead th {
         background: #f8fafc;
-        font-weight: 800;
         color: #0f172a;
-        font-size: 13px;
-        width: 160px;
+        font-size: 12.5px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        padding: 12px 10px;
+        border-bottom: 2px solid #94a3b8;
+    }
+
+    .excel-timetable-table .col-day-hdr {
+        width: 130px;
+        min-width: 110px;
+        background: #f1f5f9;
         text-align: left;
         padding-left: 14px;
     }
-    .tt-slot {
-        background: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-left: 4px solid #e1306c;
-        border-radius: 8px;
-        padding: 8px 6px;
-        min-height: 60px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 3px;
+
+    .excel-timetable-table .col-room-hdr {
+        width: 140px;
+        min-width: 130px;
+        background: #f1f5f9;
         text-align: left;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        padding-left: 14px;
     }
-    .tt-slot .subject {
+
+    .excel-timetable-table .col-time-hdr {
+        min-width: 150px;
+        color: #1e1b4b;
+    }
+
+    .excel-timetable-table tbody tr:hover td {
+        background-color: #fdf2f8 !important;
+    }
+
+    .day-cell {
+        background: #ffffff;
         font-weight: 800;
-        font-size: 12px;
+        font-size: 13.5px;
         color: #0f172a;
+        text-align: left !important;
+        padding-left: 14px !important;
+        border-right: 2px solid #cbd5e1 !important;
     }
-    .tt-slot .teacher {
-        font-size: 11px;
-        color: #475569;
-        font-weight: 600;
-    }
-    .tt-slot .room {
-        font-size: 10px;
-        color: #059669;
+
+    .room-cell {
+        background: #ffffff;
         font-weight: 700;
+        font-size: 12.5px;
+        color: #1e293b;
+        text-align: left !important;
+        padding-left: 14px !important;
+        border-right: 2px solid #cbd5e1 !important;
+    }
+
+    .room-cell .room-type {
+        font-size: 10px;
+        font-weight: 600;
+        color: #64748b;
+        display: block;
         margin-top: 2px;
     }
-    .empty-cell {
-        color: #94a3b8;
-        font-size: 18px;
-        font-weight: 300;
+
+    .slot-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        padding: 6px 4px;
+        min-height: 72px;
+        line-height: 1.35;
+    }
+
+    .slot-subject {
+        font-weight: 800;
+        font-size: 12.5px;
+        color: #0f172a;
+        text-align: center;
+    }
+
+    .slot-class {
+        font-weight: 800;
+        font-size: 12px;
+        color: #4338ca;
+        text-align: center;
+    }
+
+    .slot-teacher {
+        font-weight: 700;
+        font-size: 11.5px;
+        color: #e11d48;
+        text-align: center;
+    }
+
+    .empty-slot {
+        color: #cbd5e1;
+        font-weight: 600;
+        font-size: 14px;
     }
 
     .day-tab {
-        padding: 10px 18px;
+        padding: 9px 18px;
         border-radius: 10px;
         font-size: 13px;
         font-weight: 700;
@@ -95,6 +151,7 @@
         cursor: pointer;
         text-decoration: none;
         transition: all 0.2s ease;
+        white-space: nowrap;
     }
     .day-tab:hover {
         border-color: #e1306c;
@@ -107,324 +164,217 @@
         box-shadow: 0 4px 14px rgba(225, 48, 108, 0.25);
     }
 
-    .grade-header-row td {
-        background: #f1f5f9 !important;
-        color: #0f172a !important;
-        font-weight: 800 !important;
-        text-align: left !important;
-        padding-left: 14px !important;
-        font-size: 13px !important;
-        letter-spacing: 0.5px;
-        border-bottom: 1px solid #e2e8f0;
-    }
-
     @media print {
         body { background: #fff !important; color: #000 !important; }
         .sidebar, .topbar, .no-print { display: none !important; }
         .main { margin: 0; }
-        .content { padding: 10px; }
-        .horiz-matrix-table th { background: #f0f0f0 !important; color: #000 !important; }
-        .horiz-matrix-table td { background: #fff !important; color: #000 !important; }
-        .tt-slot { background: #f9f9f9 !important; border-color: #ccc !important; }
-        .tt-slot .subject { color: #000 !important; }
-        .tt-slot .teacher { color: #444 !important; }
-        .tt-slot .room { color: #666 !important; }
+        .content { padding: 8px; }
+        .excel-timetable-table th { background: #f0f0f0 !important; color: #000 !important; }
+        .excel-timetable-table td { background: #fff !important; color: #000 !important; }
+        .slot-subject { color: #000 !important; }
+        .slot-class { color: #000 !important; }
+        .slot-teacher { color: #333 !important; }
     }
 </style>
 
+<!-- Top Action Header -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px" class="no-print">
     <div>
-        <h1 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;letter-spacing:-0.5px">📋 Master Tabular Timetable Grid</h1>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;letter-spacing:-0.5px">
+            📊 Excel-Style Timetable Master Sheet
+        </h1>
         <p style="color:#64748b;font-size:13px;margin-top:4px;font-weight:500">
-            Single unified timetable showing <strong>All Class Sections on the left Y-axis</strong> and <strong>Time Slots across top X-axis</strong> for <strong>{{ $activeTerm?->name }}</strong>.
+            Official Timetable Grid structured as <strong>Day &bull; Room &bull; Horizontal Time Slots</strong> for <strong>{{ $activeTerm?->name ?? 'Active Session' }}</strong>.
         </p>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <a href="{{ route($routePrefix . 'timetables.index', ['view_type' => 'class']) }}" class="btn btn-ghost" style="font-size:12.5px;font-weight:700">
-            🏫 Class-Wise
+            🏫 Class-Wise View
         </a>
         <a href="{{ route($routePrefix . 'timetables.index', ['view_type' => 'teacher']) }}" class="btn btn-ghost" style="font-size:12.5px;font-weight:700">
-            👨‍🏫 Teacher-Wise
+            👨‍🏫 Teacher-Wise View
         </a>
-        <a href="{{ route($routePrefix . 'timetables.export') }}" class="btn btn-primary" style="font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px">
-            📗 Download Excel (.xlsx)
-        </a>
+        <!-- Professional Export Excel Dropdown -->
+        <div style="position:relative;display:inline-block">
+            <button type="button" id="btnExportMenu" class="btn btn-primary" onclick="toggleExportMenu(event)" style="font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px">
+                📗 Export Excel (.xlsx) ▾
+            </button>
+            <div id="exportDropdownMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1);min-width:260px;z-index:100;padding:6px 0;">
+                <a href="{{ route($routePrefix . 'timetables.export') }}" style="display:flex;align-items:center;gap:8px;padding:10px 16px;color:#0f172a;text-decoration:none;font-size:12.5px;font-weight:700;transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                    <span style="font-size:14px">🏛️</span>
+                    <div>
+                        <div>Whole Institute Timetable</div>
+                        <div style="font-size:10.5px;font-weight:500;color:#64748b">Complete multi-sheet workbook (.xlsx)</div>
+                    </div>
+                </a>
+                @if(isset($sections) && $sections->isNotEmpty())
+                    <div style="border-top:1px solid #f1f5f9;margin:4px 0;padding:8px 16px 3px;font-size:10.5px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.5px">
+                        Download Specific Class:
+                    </div>
+                    <div style="max-height:220px;overflow-y:auto">
+                        @foreach($sections as $sec)
+                            @php
+                                $cName = $sec->instituteClass?->custom_name ?: ($sec->instituteClass?->class_name ?: 'Class');
+                                $sName = $sec->section_name ?: 'A';
+                            @endphp
+                            <a href="{{ route($routePrefix . 'timetables.export', ['class_section_id' => $sec->id]) }}" style="display:flex;align-items:center;justify-content:space-between;padding:7px 16px;color:#334155;text-decoration:none;font-size:12px;font-weight:600;transition:background 0.15s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                                <span>🏫 {{ $cName }} ({{ $sName }})</span>
+                                <span style="font-size:10px;color:#4f46e5;font-weight:700">.xlsx</span>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
         <button type="button" onclick="window.print()" class="btn btn-ghost" style="font-size:12.5px;font-weight:700">
             🖨️ Print
         </button>
     </div>
 </div>
 
+<script>
+function toggleExportMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('exportDropdownMenu');
+    if (menu) {
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    }
+}
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('exportDropdownMenu');
+    const btn = document.getElementById('btnExportMenu');
+    if (menu && menu.style.display === 'block' && (!btn || !btn.contains(e.target)) && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+    }
+});
+</script>
+
 <!-- Day Selector Tabs -->
 <div style="display:flex;gap:10px;margin-bottom:24px;overflow-x:auto;padding-bottom:6px" class="no-print">
+    <a href="{{ route('principal.timetables.grid', ['day' => 'all']) }}" 
+       class="day-tab {{ $selectedDay === 'all' ? 'active' : '' }}">
+        📑 All Weekdays
+    </a>
     @foreach($days as $day)
         <a href="{{ route('principal.timetables.grid', ['day' => $day]) }}" 
-           class="day-tab {{ strtolower($selectedDay) === strtolower($day) ? 'active' : '' }}">
+           class="day-tab {{ $selectedDay === strtolower($day) ? 'active' : '' }}">
             📅 {{ ucfirst($day) }}
         </a>
     @endforeach
 </div>
 
-@if($timeSlots->isEmpty())
-<div class="card" style="text-align:center;padding:48px 24px">
-    <p style="color:#64748b;font-size:16px;margin-bottom:16px">No timetable slots have been generated yet.</p>
-    <a href="{{ route('principal.timetables.index') }}" class="btn btn-primary">
-        ← Go to Timetable Matrix to Generate
-    </a>
-</div>
-@else
-@php
-    $hasUnassignedRoom = isset($roomTimeGrid[0][strtolower($selectedDay)]) && count($roomTimeGrid[0][strtolower($selectedDay)]) > 0;
-
-    // 1. Determine timeline bounds from timeSlots
-    $minStartSec = null;
-    $maxEndSec = null;
-    foreach($timeSlots as $ts) {
-        $st = strtotime($ts['start']);
-        $et = strtotime($ts['end']);
-        if ($minStartSec === null || $st < $minStartSec) $minStartSec = $st;
-        if ($maxEndSec === null || $et > $maxEndSec) $maxEndSec = $et;
-    }
-    $minStartSec = $minStartSec ?? strtotime('08:00');
-    $maxEndSec = $maxEndSec ?? strtotime('16:00');
-
-    $timelineStartMin = (int) date('H', $minStartSec) * 60 + (int) date('i', $minStartSec);
-    $timelineEndMin = (int) date('H', $maxEndSec) * 60 + (int) date('i', $maxEndSec);
-    if ($timelineEndMin <= $timelineStartMin) {
-        $timelineEndMin = $timelineStartMin + 480;
-    }
-    $totalTimelineMins = $timelineEndMin - $timelineStartMin;
-@endphp
-
-<div class="card" style="margin-bottom:32px;padding:24px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid #e2e8f0;padding-bottom:14px">
-        <h2 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#0f172a;margin:0">
-            📅 Master Daily Schedule — <span style="color:#e1306c;text-transform:capitalize">{{ $selectedDay }}</span>
-        </h2>
-        <span style="font-size:12px;color:#64748b;font-weight:600">
-            Timeline Schedule across {{ $timeSlots->count() }} Time Slots
-        </span>
+@if(empty($allSlots) || count($allSlots) === 0)
+    <div class="card" style="text-align:center;padding:48px 24px">
+        <div style="font-size:36px;margin-bottom:12px">🗓️</div>
+        <h3 style="font-family:'Outfit',sans-serif;font-weight:800;color:#0f172a">No Timetable Generated Yet</h3>
+        <p style="color:#64748b;font-size:14px;max-width:460px;margin:8px auto 20px">
+            Generate an AI conflict-free timetable matrix using your configured faculty hours, class breaks, and course allocations.
+        </p>
+        <form method="POST" action="{{ route('principal.timetables.generate') }}" style="display:inline-block">
+            @csrf
+            <button type="submit" class="btn btn-primary" style="font-size:13px;padding:10px 24px">
+                ⚡ Generate AI Timetable Now
+            </button>
+        </form>
     </div>
-
-    <!-- HORIZONTAL GANTT TIMELINE TRACK -->
-    <div style="overflow-x:auto;border-radius:12px;border:1px solid #e2e8f0;background:#ffffff">
-        <div style="min-width:1400px">
-            
-            <!-- TIMELINE HEADER TRACK -->
-            <div style="display:flex;width:100%;background:#f8fafc;border-bottom:2px solid #e2e8f0">
-                <div style="width:170px;flex-shrink:0;padding:14px;font-size:12px;font-weight:800;color:#0f172a;border-right:1px solid #e2e8f0;text-transform:uppercase">
-                    ROOM NUMBER
-                </div>
-                <div style="flex:1;position:relative;display:flex;align-items:center;height:48px">
-                    @foreach($timeSlots as $ts)
-                        @php
-                            $tsStartSec = strtotime($ts['start']);
-                            $tsEndSec = strtotime($ts['end']);
-                            $tsStartMin = (int) date('H', $tsStartSec) * 60 + (int) date('i', $tsStartSec);
-                            $tsEndMin = (int) date('H', $tsEndSec) * 60 + (int) date('i', $tsEndSec);
-                            $tsWidthPct = (($tsEndMin - $tsStartMin) / $totalTimelineMins) * 100;
-                        @endphp
-                        <div style="width:{{ $tsWidthPct }}%;height:100%;border-right:1px dashed #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#e1306c">
-                            ⏰ {{ $ts['start'] }} – {{ $ts['end'] }}
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- ROOM ROWS -->
-            @forelse($rooms as $rm)
-                @php
-                    $rawRoomSlots = $allSlots->filter(fn($s) => $s->room_id == $rm->id && strtolower($s->day_of_week) === strtolower($selectedDay));
-                    $mergedRoomSlots = \App\Models\Timetable::mergeContiguousSlots($rawRoomSlots);
-                @endphp
-                <div style="display:flex;width:100%;border-bottom:1px solid #e2e8f0;background:#ffffff;min-height:104px">
-                    <!-- Room Info Column -->
-                    <div style="width:170px;flex-shrink:0;padding:14px;background:#f8fafc;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;justify-content:center">
-                        <div style="font-size:15px;font-weight:800;color:#0f172a">📍 {{ $rm->room_number }}</div>
-                        <div style="font-size:11px;color:#0284c7;font-weight:700;margin-top:2px">{{ $rm->room_type }}</div>
-                    </div>
-
-                    <!-- Room Timeline Track Area -->
-                    <div style="flex:1;position:relative;min-height:104px">
-                        <!-- Hour Column Grid Lines background -->
-                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;pointer-events:none">
-                            @foreach($timeSlots as $ts)
-                                @php
-                                    $tsStartSec = strtotime($ts['start']);
-                                    $tsEndSec = strtotime($ts['end']);
-                                    $tsStartMin = (int) date('H', $tsStartSec) * 60 + (int) date('i', $tsStartSec);
-                                    $tsEndMin = (int) date('H', $tsEndSec) * 60 + (int) date('i', $tsEndSec);
-                                    $tsWidthPct = (($tsEndMin - $tsStartMin) / $totalTimelineMins) * 100;
-                                @endphp
-                                <div style="width:{{ $tsWidthPct }}%;height:100%;border-right:1px dashed #e2e8f0"></div>
-                            @endforeach
-                        </div>
-
-                        <!-- Lecture Horizontal Rectangle Bars -->
-                        @forelse($mergedRoomSlots as $slot)
-                            @php
-                                $sStartSec = strtotime($slot->start_time);
-                                $sEndSec = strtotime($slot->end_time);
-                                $sStartMin = (int) date('H', $sStartSec) * 60 + (int) date('i', $sStartSec);
-                                $sEndMin = (int) date('H', $sEndSec) * 60 + (int) date('i', $sEndSec);
-
-                                $durMins = max(15, $sEndMin - $sStartMin);
-                                $leftPct = max(0, (($sStartMin - $timelineStartMin) / $totalTimelineMins) * 100);
-                                $widthPct = min(100 - $leftPct, ($durMins / $totalTimelineMins) * 100);
-
-                                // Format as "Grade 10 - A"
-                                $cName = $slot->section->instituteClass->custom_name ?? 'Class';
-                                $sName = $slot->section->section_name ?? 'A';
-                                $sClean = trim(str_replace(['Sec', 'Section', 'sec', 'section'], '', $sName));
-                                if (str_contains($sClean, '-')) {
-                                    $parts = explode('-', $sClean);
-                                    $sClean = trim(end($parts));
-                                }
-                                preg_match_all('/\d+/', $cName, $cMatches);
-                                foreach ($cMatches[0] ?? [] as $num) {
-                                    if (str_starts_with($sClean, $num)) {
-                                        $sClean = trim(substr($sClean, strlen($num)));
-                                    }
-                                }
-                                $sClean = trim($sClean, ' -_');
-                                $shortClassCode = !empty($sClean) ? ($cName . ' - ' . strtoupper($sClean)) : $cName;
-
-                                // Duration label
-                                $h = floor($durMins / 60);
-                                $m = $durMins % 60;
-                                $durLabel = ($h > 0 ? $h . 'h ' : '') . ($m > 0 ? $m . 'm' : '');
-                                $durLabel = trim($durLabel) ?: '1h';
-                            @endphp
-
-                            <div class="tt-horizontal-rect-card" 
-                                 style="position:absolute;left:calc({{ $leftPct }}% + 4px);width:calc({{ $widthPct }}% - 8px);top:9px;height:86px;background:#ffffff;border:1px solid #e2e8f0;border-left:5px solid #e1306c;border-radius:12px;padding:9px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;z-index:2;transition:all 0.15s ease;"
-                                 onmouseover="this.style.transform='scale(1.02)';this.style.zIndex='10';this.style.boxShadow='0 8px 24px rgba(225,48,108,0.2)';"
-                                 onmouseout="this.style.transform='scale(1)';this.style.zIndex='2';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)';">
-                                
-                                <!-- LINE 1: CLASS & SUBJECT -->
-                                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-                                    <span style="font-size:11px;font-weight:800;color:#0284c7;background:#f0f9ff;border:1px solid #bae6fd;padding:2px 7px;border-radius:6px;white-space:nowrap">
-                                        🎓 {{ $shortClassCode }}
-                                    </span>
-                                    <span style="font-size:12.5px;font-weight:800;color:#0f172a;white-space:nowrap;text-overflow:ellipsis;overflow:hidden">
-                                        📚 {{ $slot->subject->subject_name }}
-                                    </span>
-                                </div>
-
-                                <!-- LINE 2: TEACHER NAME -->
-                                <div style="font-size:11.5px;font-weight:700;color:#334155;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:flex;align-items:center;gap:4px">
-                                    <span>👨‍🏫</span>
-                                    <span style="text-overflow:ellipsis;overflow:hidden">{{ $slot->teacher->name }}</span>
-                                </div>
-
-                                <!-- LINE 3: EXACT TIME RANGE & DURATION PILL -->
-                                <div style="display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:800;color:#e1306c">
-                                    <span>⏰ {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i') }} – {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}</span>
-                                    <span style="background:#fdf2f8;border:1px solid #fbcfe8;color:#be185d;padding:1.5px 6px;border-radius:5px;font-size:10px">{{ $durLabel }}</span>
-                                </div>
-                            </div>
-                        @empty
-                            <div style="display:flex;align-items:center;justify-content:center;height:104px;color:#94a3b8;font-size:13px">
-                                — No lectures scheduled —
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-            @empty
-                <div style="text-align:center;padding:24px;color:#64748b">
-                    No rooms configured yet.
-                </div>
-            @endforelse
-
-            <!-- UNASSIGNED ROOM ROW (IF ANY) -->
-            @if($hasUnassignedRoom)
-                @php
-                    $rawUnassignedSlots = $allSlots->filter(fn($s) => empty($s->room_id) && strtolower($s->day_of_week) === strtolower($selectedDay));
-                    $mergedUnassignedSlots = \App\Models\Timetable::mergeContiguousSlots($rawUnassignedSlots);
-                @endphp
-                <div style="display:flex;width:100%;border-bottom:1px solid #e2e8f0;background:#fef2f2;min-height:104px">
-                    <div style="width:170px;flex-shrink:0;padding:14px;background:#fee2e2;border-right:1px solid #fecaca;display:flex;flex-direction:column;justify-content:center">
-                        <div style="font-size:15px;font-weight:800;color:#ef4444">📍 Unassigned</div>
-                        <div style="font-size:11px;color:#dc2626;font-weight:700;margin-top:2px">No Room Allocated</div>
-                    </div>
-                    <div style="flex:1;position:relative;min-height:104px">
-                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;pointer-events:none">
-                            @foreach($timeSlots as $ts)
-                                @php
-                                    $tsStartSec = strtotime($ts['start']);
-                                    $tsEndSec = strtotime($ts['end']);
-                                    $tsStartMin = (int) date('H', $tsStartSec) * 60 + (int) date('i', $tsStartSec);
-                                    $tsEndMin = (int) date('H', $tsEndSec) * 60 + (int) date('i', $tsEndSec);
-                                    $tsWidthPct = (($tsEndMin - $tsStartMin) / $totalTimelineMins) * 100;
-                                @endphp
-                                <div style="width:{{ $tsWidthPct }}%;height:100%;border-right:1px dashed #fecaca"></div>
-                            @endforeach
-                        </div>
-
-                        @foreach($mergedUnassignedSlots as $uSlot)
-                            @php
-                                $sStartSec = strtotime($uSlot->start_time);
-                                $sEndSec = strtotime($uSlot->end_time);
-                                $sStartMin = (int) date('H', $sStartSec) * 60 + (int) date('i', $sStartSec);
-                                $sEndMin = (int) date('H', $sEndSec) * 60 + (int) date('i', $sEndSec);
-
-                                $durMins = max(15, $sEndMin - $sStartMin);
-                                $leftPct = max(0, (($sStartMin - $timelineStartMin) / $totalTimelineMins) * 100);
-                                $widthPct = min(100 - $leftPct, ($durMins / $totalTimelineMins) * 100);
-
-                                $cName = $uSlot->section->instituteClass->custom_name ?? 'Class';
-                                $sName = $uSlot->section->section_name ?? 'A';
-                                $sClean = trim(str_replace(['Sec', 'Section', 'sec', 'section'], '', $sName));
-                                if (str_contains($sClean, '-')) {
-                                    $parts = explode('-', $sClean);
-                                    $sClean = trim(end($parts));
-                                }
-                                preg_match_all('/\d+/', $cName, $cMatches);
-                                foreach ($cMatches[0] ?? [] as $num) {
-                                    if (str_starts_with($sClean, $num)) {
-                                        $sClean = trim(substr($sClean, strlen($num)));
-                                    }
-                                }
-                                $sClean = trim($sClean, ' -_');
-                                $shortClassCode = !empty($sClean) ? ($cName . ' - ' . strtoupper($sClean)) : $cName;
-
-                                $h = floor($durMins / 60);
-                                $m = $durMins % 60;
-                                $durLabel = ($h > 0 ? $h . 'h ' : '') . ($m > 0 ? $m . 'm' : '');
-                                $durLabel = trim($durLabel) ?: '1h';
-                            @endphp
-
-                            <div class="tt-horizontal-rect-card" 
-                                 style="position:absolute;left:calc({{ $leftPct }}% + 4px);width:calc({{ $widthPct }}% - 8px);top:9px;height:86px;background:#ffffff;border:1px solid #fca5a5;border-left:5px solid #ef4444;border-radius:12px;padding:9px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;z-index:2;transition:all 0.15s ease;">
-                                
-                                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-                                    <span style="font-size:11px;font-weight:800;color:#dc2626;background:#fee2e2;border:1px solid #fecaca;padding:2px 7px;border-radius:6px;white-space:nowrap">
-                                        🎓 {{ $shortClassCode }}
-                                    </span>
-                                    <span style="font-size:12.5px;font-weight:800;color:#0f172a;white-space:nowrap;text-overflow:ellipsis;overflow:hidden">
-                                        📚 {{ $uSlot->subject->subject_name }}
-                                    </span>
-                                </div>
-
-                                <div style="font-size:11.5px;font-weight:700;color:#334155;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:flex;align-items:center;gap:4px">
-                                    <span>👨‍🏫</span>
-                                    <span style="text-overflow:ellipsis;overflow:hidden">{{ $uSlot->teacher->name }}</span>
-                                </div>
-
-                                <div style="display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:800;color:#ef4444">
-                                    <span>⏰ {{ \Carbon\Carbon::parse($uSlot->start_time)->format('g:i') }} – {{ \Carbon\Carbon::parse($uSlot->end_time)->format('g:i A') }}</span>
-                                    <span style="background:#fee2e2;color:#dc2626;padding:1.5px 6px;border-radius:5px;font-size:10px">{{ $durLabel }}</span>
-                                </div>
-                            </div>
+@else
+    <!-- EXCEL-STYLE TIMETABLE MASTER SHEET (Day | Room | Time 1 | Time 2 | ...) -->
+    <div class="excel-timetable-container">
+        <div style="overflow-x:auto">
+            <table class="excel-timetable-table">
+                <thead>
+                    <tr>
+                        <th class="col-day-hdr">Day</th>
+                        <th class="col-room-hdr">Room</th>
+                        @foreach($timeSlots as $ts)
+                            <th class="col-time-hdr">
+                                {{ date('g:i', strtotime($ts['start'])) }} - {{ date('g:i A', strtotime($ts['end'])) }}
+                            </th>
                         @endforeach
-                    </div>
-                </div>
-            @endif
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $slotsByDayAndRoom = $allSlots->groupBy(function ($s) {
+                            $d = strtolower($s->day_of_week);
+                            $r = $s->room_id ?: 0;
+                            return "{$d}_{$r}";
+                        });
+                    @endphp
 
+                    @foreach($displayDays as $day)
+                        @php
+                            $cleanDay = strtolower($day);
+                            $roomList = $rooms->isNotEmpty() ? $rooms : collect([(object)['id' => 0, 'room_number' => 'Main Room', 'room_type' => 'Default']]);
+                        @endphp
+
+                        @foreach($roomList as $rIdx => $rm)
+                            @php
+                                $rId = $rm->id;
+                                $drKey = "{$cleanDay}_{$rId}";
+                                $roomSlots = $slotsByDayAndRoom->get($drKey) ?? collect();
+                            @endphp
+
+                            <tr>
+                                <!-- Column 1: Day (on left) -->
+                                @if($rIdx === 0)
+                                    <td class="day-cell" rowspan="{{ $roomList->count() }}">
+                                        {{ ucfirst($day) }}
+                                    </td>
+                                @endif
+
+                                <!-- Column 2: Room (next to Day) -->
+                                <td class="room-cell">
+                                    {{ $rm->room_number }}
+                                    @if(!empty($rm->room_type) && $rm->room_type !== 'Standard')
+                                        <span class="room-type">{{ $rm->room_type }}</span>
+                                    @endif
+                                </td>
+
+                                <!-- Columns 3+: Horizontal Time Slots -->
+                                @foreach($timeSlots as $ts)
+                                    @php
+                                        $tsStart = $ts['start'];
+                                        $tsEnd   = $ts['end'];
+
+                                        // Find matching slot for this room, day and time window
+                                        $matchedSlot = $roomSlots->first(function ($s) use ($tsStart, $tsEnd, $timeOverlap) {
+                                            $sStart = substr($s->start_time, 0, 5);
+                                            $sEnd   = substr($s->end_time, 0, 5);
+                                            return $timeOverlap($sStart, $sEnd, $tsStart, $tsEnd);
+                                        });
+                                    @endphp
+
+                                    <td style="background: {{ $matchedSlot ? '#ffffff' : '#fafafa' }};">
+                                        @if($matchedSlot)
+                                            <div class="slot-card">
+                                                <!-- Subject Name -->
+                                                <div class="slot-subject">
+                                                    {{ $matchedSlot->subject->subject_name ?? 'Subject' }}
+                                                </div>
+
+                                                <!-- Class / Section Name -->
+                                                <div class="slot-class">
+                                                    {{ $matchedSlot->section->instituteClass->custom_name ?? 'Class' }} - {{ $matchedSlot->section->section_name ?? 'A' }}
+                                                </div>
+
+                                                <!-- Teacher Name -->
+                                                <div class="slot-teacher">
+                                                    {{ $matchedSlot->teacher->name ?? 'Teacher' }}
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="empty-slot">-</span>
+                                        @endif
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
 @endif
 
-@include('principal.timetables._chat')
 @endsection

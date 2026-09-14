@@ -34,6 +34,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role:principal', 'institute.member'])->prefix('settings')->name('settings.')->group(function () {
     Route::get('/', [InstituteSettingController::class, 'index'])->name('index');
     Route::put('/', [InstituteSettingController::class, 'update'])->name('update');
+    Route::post('/class-breaks', [InstituteSettingController::class, 'storeClassBreak'])->name('class-breaks.store');
+    Route::delete('/class-breaks/{classBreak}', [InstituteSettingController::class, 'destroyClassBreak'])->name('class-breaks.destroy');
     Route::get('/staff/{staff}/payroll', [InstituteSettingController::class, 'showStaffPayroll'])->name('staff-payroll.show');
     Route::post('/payroll/{staff}', [InstituteSettingController::class, 'updateStaffPayroll'])->name('payroll.update');
     Route::put('/staff/{staff}/payroll', [InstituteSettingController::class, 'updateStaffPayroll'])->name('staff-payroll.update');

@@ -271,30 +271,50 @@ class TimetableController extends Controller
             $allSlots = $query->get();
         }
 
-        // Standard 1-hour time slots matrix header columns (08:00 - 15:00)
-        $timeSlots = collect();
-        $defaultSlots = ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00', '14:00-15:00'];
-        foreach ($defaultSlots as $ds) {
-            [$s, $e] = explode('-', $ds);
-            $timeSlots->push(['start' => $s, 'end' => $e, 'key' => $ds]);
+        // Dynamically compute unique time slots from actual scheduled timetable slots
+        $timeSlots = $allSlots->map(function ($s) {
+            $st = substr($s->start_time, 0, 5);
+            $et = substr($s->end_time, 0, 5);
+            return [
+                'start' => $st,
+                'end'   => $et,
+                'key'   => "{$st}-{$et}",
+                'sort'  => $st . '_' . $et,
+            ];
+        })->unique('key')->sortBy('sort')->values();
+
+        if ($timeSlots->isEmpty()) {
+            $defaultSlots = ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00'];
+            foreach ($defaultSlots as $ds) {
+                [$s, $e] = explode('-', $ds);
+                $timeSlots->push(['start' => $s, 'end' => $e, 'key' => $ds, 'sort' => $s . '_' . $e]);
+            }
         }
 
         $rooms = Room::where('institute_id', $instituteId)->orderBy('room_number')->get();
 
-        // Build grid data: grid[section_id][day][timeKey] = slot info
+        // Build Excel-sheet style grid matrix: excelGrid[day][room_id][timeKey] = slot
+        // Also build standard grid[section_id][day][timeKey] = slot
         $grid = [];
         $roomGrid = [];
         $roomTimeGrid = [];
+        $excelGrid = [];
+
         foreach ($allSlots as $slot) {
             $secId = $slot->class_section_id;
             $day = strtolower($slot->day_of_week);
-            $timeKey = substr($slot->start_time, 0, 5).'-'.substr($slot->end_time, 0, 5);
+            $st = substr($slot->start_time, 0, 5);
+            $et = substr($slot->end_time, 0, 5);
+            $timeKey = "{$st}-{$et}";
 
             $grid[$secId][$day][$timeKey] = $slot;
 
             $roomId = $slot->room_id ?: 0;
             $roomGrid[$secId][$day][$roomId][] = $slot;
             $roomTimeGrid[$roomId][$day][$timeKey][] = $slot;
+
+            // Map slot to exact timeKey or overlapping timeSlots
+            $excelGrid[$day][$roomId][$timeKey] = $slot;
         }
 
         // Group sections that have slots
@@ -303,7 +323,7 @@ class TimetableController extends Controller
             $activeSections = $sections->filter(fn ($s) => $s->id == $selectedSectionId);
         }
 
-        $selectedDay = strtolower($request->get('day', 'monday'));
+        $selectedDay = strtolower($request->get('day', 'all'));
 
         return view('principal.timetables.grid', compact(
             'activeTerm',
@@ -317,6 +337,7 @@ class TimetableController extends Controller
             'rooms',
             'roomGrid',
             'roomTimeGrid',
+            'excelGrid',
             'allSlots'
         ));
     }
@@ -334,13 +355,26 @@ class TimetableController extends Controller
             return back()->with('error', 'No active academic term found.');
         }
 
+        $classSectionId = $request->get('class_section_id');
+
         try {
             $excelService = new \App\Services\TimetableMultiSheetExcelService();
-            $filePath = $excelService->generate($instituteId, $activeTerm->id);
 
-            $instSlug = \Illuminate\Support\Str::slug($institute?->name ?? 'Institute');
-            $termSlug = \Illuminate\Support\Str::slug($activeTerm->name ?? 'Session');
-            $filename = "{$instSlug}_Timetable_{$termSlug}_" . date('Y-m-d') . ".xlsx";
+            if ($classSectionId) {
+                $section = ClassSection::whereHas('instituteClass', function ($q) use ($instituteId) {
+                    $q->where('institute_id', $instituteId);
+                })->with('instituteClass')->findOrFail($classSectionId);
+
+                $filePath = $excelService->generateClassTimetable($instituteId, $activeTerm->id, $section->id);
+
+                $className = $section->instituteClass?->custom_name ?: ($section->instituteClass?->class_name ?: 'Class');
+                $secName = $section->section_name ?: 'A';
+                $sanitized = preg_replace('/[^A-Za-z0-9_]/', '_', "{$className}_{$secName}");
+                $filename = "{$sanitized}_Timetable.xlsx";
+            } else {
+                $filePath = $excelService->generateCompleteInstitute($instituteId, $activeTerm->id);
+                $filename = "Institute_Complete_Timetable.xlsx";
+            }
 
             return response()->download($filePath, $filename, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

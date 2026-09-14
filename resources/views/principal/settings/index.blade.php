@@ -233,6 +233,7 @@
             $tabs = [
                 'financial'     => ['💰', 'Financial & Bank'],
                 'payroll'       => ['💵', 'Staff Payroll'],
+                'breaks'        => ['☕', 'Class & Faculty Breaks'],
                 'academic'      => ['🏛️', 'Academic & Profile'],
                 'branding'      => ['🎨', 'Branding'],
                 'notifications' => ['📧', 'Notifications & Contact'],
@@ -529,6 +530,107 @@
                     <div class="form-group">
                         <label class="form-label" for="payment_instructions">Payment Instructions (Shown to Students)</label>
                         <textarea id="payment_instructions" name="payment_instructions" rows="2" class="form-input" placeholder="Please upload a photo of your deposit slip or ATM receipt after transfer.">{{ old('payment_instructions', $setting->payment_instructions) }}</textarea>
+                    </div>
+                </div>
+            @endif
+
+            <!-- CARD: ☕ Class Breaks & Faculty Break Timings -->
+            @if($activeTab === 'breaks' || $activeTab === 'all')
+                <div class="settings-card" id="card-breaks" style="{{ $activeTab === 'breaks' ? 'grid-column: 1 / -1;' : '' }}">
+                    <div class="settings-card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                        <div style="display:flex;align-items:center;gap:14px">
+                            <div class="settings-card-icon" style="background:#fff1f2;color:#e11d48;border:1px solid #fecdd3">
+                                ☕
+                            </div>
+                            <div>
+                                <h3 style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:#0f172a">
+                                    Class Breaks &amp; Faculty Break Timings
+                                </h3>
+                                <p style="font-size:12px;color:#64748b;margin-top:2px">
+                                    Configure day-specific recess / break hours for classes and view faculty break rules. The AI Timetable Generator will never schedule lectures during these periods.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:10px">
+                            <button type="button" onclick="openAddClassBreakModal()" class="btn btn-primary" style="font-size:12.5px;padding:8px 16px;border-radius:10px">
+                                ➕ Add Class Break
+                            </button>
+                            <a href="{{ route('principal.teachers.availability.index') }}" class="btn btn-secondary" style="font-size:12.5px;padding:8px 16px;border-radius:10px">
+                                👨‍🏫 Faculty Work Hours &rarr;
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Active Class Breaks Table -->
+                    <div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                            <h4 style="font-size:13.5px;font-weight:800;color:#0f172a;margin:0">
+                                🏫 Configured Class Breaks ({{ $classBreaks->count() }})
+                            </h4>
+                            <span style="font-size:11.5px;color:#64748b">Applied automatically during AI timetable generation</span>
+                        </div>
+
+                        @if($classBreaks->isEmpty())
+                            <div style="background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:12px;padding:24px;text-align:center">
+                                <span style="font-size:24px">☕</span>
+                                <p style="font-size:13px;color:#64748b;margin:6px 0 12px">No class breaks configured yet. Set break timings per class and day.</p>
+                                <button type="button" onclick="openAddClassBreakModal()" class="btn btn-secondary btn-sm" style="font-size:12px">
+                                    ➕ Set First Class Break
+                                </button>
+                            </div>
+                        @else
+                            <div style="overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px">
+                                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                                    <thead>
+                                        <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0;text-align:left">
+                                            <th style="padding:10px 14px;font-weight:800;color:#0f172a;font-size:11px;text-transform:uppercase">Class &amp; Section</th>
+                                            <th style="padding:10px 14px;font-weight:800;color:#0f172a;font-size:11px;text-transform:uppercase">Day of Week</th>
+                                            <th style="padding:10px 14px;font-weight:800;color:#0f172a;font-size:11px;text-transform:uppercase">Break Window</th>
+                                            <th style="padding:10px 14px;font-weight:800;color:#0f172a;font-size:11px;text-transform:uppercase;text-align:right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($classBreaks as $cBreak)
+                                            <tr style="border-bottom:1px solid #f1f5f9;background:#ffffff">
+                                                <td style="padding:10px 14px;font-weight:700;color:#0f172a">
+                                                    {{ $cBreak->section?->instituteClass?->custom_name ?? 'Class' }} — {{ $cBreak->section?->section_name ?? 'Section' }}
+                                                </td>
+                                                <td style="padding:10px 14px;color:#475569;text-transform:capitalize;font-weight:600">
+                                                    📅 {{ $cBreak->day_of_week }}
+                                                </td>
+                                                <td style="padding:10px 14px">
+                                                    <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#fff1f2;color:#e11d48;border-radius:20px;font-size:12px;font-weight:700;border:1px solid #fecdd3">
+                                                        ⏰ {{ date('g:i A', strtotime($cBreak->break_start_time)) }} – {{ date('g:i A', strtotime($cBreak->break_end_time)) }}
+                                                    </span>
+                                                </td>
+                                                <td style="padding:10px 14px;text-align:right">
+                                                    <button type="button" onclick="deleteClassBreak({{ $cBreak->id }})" class="btn btn-ghost btn-sm" style="color:#ef4444;font-size:12px;padding:4px 8px" title="Delete Break">
+                                                        🗑️ Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Quick Faculty Break Overview -->
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-top:8px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+                            <div style="display:flex;align-items:center;gap:8px">
+                                <span style="font-size:16px">👨‍🏫</span>
+                                <h4 style="font-size:13.5px;font-weight:800;color:#0f172a;margin:0">Faculty Break &amp; Shift Schedule</h4>
+                            </div>
+                            <a href="{{ route('principal.teachers.availability.index') }}" style="font-size:12px;font-weight:700;color:#4f46e5;text-decoration:none">
+                                Edit All Faculty Breaks &rarr;
+                            </a>
+                        </div>
+                        <p style="font-size:12px;color:#64748b;margin:0">
+                            Faculty-specific breaks and working windows are configured per teacher in <strong>Faculty Work Hours</strong>. The Timetable Generator strictly enforces these breaks during AI slot allocation.
+                        </p>
                     </div>
                 </div>
             @endif
@@ -1256,7 +1358,83 @@
     </div>
 </div>
 
+<!-- Modal: Add / Configure Class Break -->
+<div id="classBreakModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px">
+    <div style="background:#ffffff;border-radius:20px;max-width:480px;width:100%;box-shadow:0 20px 40px rgba(15,23,42,0.2);overflow:hidden;border:1px solid #cbd5e1">
+        <div style="padding:20px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between">
+            <h3 style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;color:#0f172a;margin:0">☕ Schedule Class Break</h3>
+            <button type="button" onclick="closeAddClassBreakModal()" style="border:none;background:transparent;font-size:18px;cursor:pointer;color:#64748b">&times;</button>
+        </div>
+        <form method="POST" action="{{ route('principal.settings.class-breaks.store') }}" style="padding:24px">
+            @csrf
+            <div style="display:flex;flex-direction:column;gap:16px">
+                <div class="form-group">
+                    <label class="form-label">Select Class &amp; Section *</label>
+                    <select name="class_section_id" required class="form-input">
+                        @if(isset($classSections))
+                            @foreach($classSections as $sec)
+                                <option value="{{ $sec->id }}">
+                                    {{ $sec->instituteClass->custom_name ?? 'Class' }} — {{ $sec->section_name ?? 'Section' }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Day of Week *</label>
+                    <select name="day_of_week" required class="form-input">
+                        @foreach(['monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday', 'sunday' => 'Sunday'] as $dKey => $dLabel)
+                            <option value="{{ $dKey }}">{{ $dLabel }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <div class="form-group">
+                        <label class="form-label">Break Start Time *</label>
+                        <input type="time" name="break_start_time" value="12:30" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Break End Time *</label>
+                        <input type="time" name="break_end_time" value="13:00" required class="form-input">
+                    </div>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px">
+                    <button type="button" onclick="closeAddClassBreakModal()" class="btn btn-secondary" style="padding:8px 16px;font-size:12.5px">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="padding:8px 18px;font-size:12.5px">💾 Save Class Break</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form id="deleteClassBreakForm" method="POST" style="display:none">
+    @csrf
+    @method('DELETE')
+</form>
+
 <script>
+    function openAddClassBreakModal() {
+        const modal = document.getElementById('classBreakModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAddClassBreakModal() {
+        const modal = document.getElementById('classBreakModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function deleteClassBreak(breakId) {
+        if (!confirm('Are you sure you want to remove this class break timing?')) {
+            return;
+        }
+        const form = document.getElementById('deleteClassBreakForm');
+        form.action = "{{ url('/principal/settings/class-breaks') }}/" + breakId;
+        form.submit();
+    }
+
     function openStaffPayrollFromElem(elem) {
         if (!elem) return;
         const staffId = elem.getAttribute('data-staff-id');

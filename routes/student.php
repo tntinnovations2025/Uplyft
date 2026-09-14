@@ -26,6 +26,8 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::middleware(['student.fee_paid'])->group(function () {
         Route::get('/attendance', [StudentPortalController::class, 'attendance'])->name('attendance');
         Route::get('/timetable', [StudentPortalController::class, 'timetable'])->name('timetable');
+        Route::get('/timetable/download', [StudentPortalController::class, 'downloadTimetable'])->name('timetable.download');
+        Route::get('/timetable/export', [StudentPortalController::class, 'downloadTimetable'])->name('timetable.export');
         Route::get('/schedule', [StudentPortalController::class, 'timetable'])->name('schedule');
         Route::get('/courses', [StudentPortalController::class, 'courses'])->name('courses');
         Route::get('/subjects', [StudentPortalController::class, 'courses'])->name('subjects');

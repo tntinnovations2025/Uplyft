@@ -86,6 +86,9 @@ class Assessment extends Model
         'room',
         'is_published_teacher',
         'is_published_student',
+        'is_mock',
+        'exam_standard',
+        'total_mcqs',
     ];
 
     protected $casts = [
@@ -95,6 +98,8 @@ class Assessment extends Model
         'is_paper_test' => 'boolean',
         'is_published_teacher' => 'boolean',
         'is_published_student' => 'boolean',
+        'is_mock' => 'boolean',
+        'total_mcqs' => 'integer',
         'duration_minutes' => 'integer',
         'is_marksheet_saved' => 'boolean',
         'start_time' => 'datetime',

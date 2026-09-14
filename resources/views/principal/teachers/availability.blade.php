@@ -252,7 +252,7 @@
         </button>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #cbd5e1">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;margin-bottom:18px;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #cbd5e1">
         <div>
             <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Shift Start Time *</label>
             <input type="time" id="global_start_time" value="08:00" class="time-picker-input">
@@ -260,6 +260,14 @@
         <div>
             <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Shift End Time *</label>
             <input type="time" id="global_end_time" value="14:30" class="time-picker-input">
+        </div>
+        <div>
+            <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Break Start (Optional)</label>
+            <input type="time" id="global_break_start" value="13:00" class="time-picker-input">
+        </div>
+        <div>
+            <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Break End (Optional)</label>
+            <input type="time" id="global_break_end" value="13:30" class="time-picker-input">
         </div>
     </div>
 
@@ -332,6 +340,8 @@
                         $isAvailable = $avail ? (bool)$avail->is_available : ($day !== 'sunday');
                         $startTime = $avail ? date('H:i', strtotime($avail->start_time)) : '08:00';
                         $endTime   = $avail ? date('H:i', strtotime($avail->end_time))   : '14:30';
+                        $breakStartTime = $avail && $avail->break_start_time ? date('H:i', strtotime($avail->break_start_time)) : '';
+                        $breakEndTime   = $avail && $avail->break_end_time ? date('H:i', strtotime($avail->break_end_time)) : '';
                     @endphp
 
                     <div class="day-box {{ $isAvailable ? 'active' : 'disabled' }}" id="day-box-{{ $teacher->id }}-{{ $day }}">
@@ -352,14 +362,14 @@
 
                         <!-- Preset Chips -->
                         <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
-                            <span class="preset-chip" onclick="setPreset('{{ $teacher->id }}', '{{ $day }}', '08:00', '14:30')">Standard</span>
-                            <span class="preset-chip" onclick="setPreset('{{ $teacher->id }}', '{{ $day }}', '08:00', '12:30')">Half-Day</span>
-                            <span class="preset-chip" onclick="setPreset('{{ $teacher->id }}', '{{ $day }}', '09:00', '16:00')">Late Shift</span>
+                            <span class="preset-chip" onclick="setPreset('{{ $teacher->id }}', '{{ $day }}', '08:00', '14:30', '13:00', '13:30')">Standard</span>
+                            <span class="preset-chip" onclick="setPreset('{{ $teacher->id }}', '{{ $day }}', '08:00', '12:30', '', '')">Half-Day</span>
+                            <span class="preset-chip" onclick="setPreset('{{ $teacher->id }}', '{{ $day }}', '09:00', '16:00', '13:00', '14:00')">Late Shift</span>
                         </div>
 
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
                             <div>
-                                <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase">Start Time</label>
+                                <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase">Shift Start</label>
                                 <input type="time" 
                                        name="availabilities[{{ $idx }}][start_time]" 
                                        id="start-{{ $teacher->id }}-{{ $day }}" 
@@ -368,12 +378,36 @@
                             </div>
 
                             <div>
-                                <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase">End Time</label>
+                                <label style="font-size:10px;font-weight:700;color:#64748b;display:block;margin-bottom:4px;text-transform:uppercase">Shift End</label>
                                 <input type="time" 
                                        name="availabilities[{{ $idx }}][end_time]" 
                                        id="end-{{ $teacher->id }}-{{ $day }}" 
                                        value="{{ $endTime }}" 
                                        class="time-picker-input">
+                            </div>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8fafc;padding:6px 8px;border-radius:8px;border:1px dashed #cbd5e1">
+                            <div>
+                                <label style="font-size:9.5px;font-weight:700;color:#e11d48;display:block;margin-bottom:3px;text-transform:uppercase">☕ Break Start</label>
+                                <input type="time" 
+                                       name="availabilities[{{ $idx }}][break_start_time]" 
+                                       id="break-start-{{ $teacher->id }}-{{ $day }}" 
+                                       value="{{ $breakStartTime }}" 
+                                       placeholder="--:--"
+                                       class="time-picker-input"
+                                       style="padding:6px 8px;font-size:12px">
+                            </div>
+
+                            <div>
+                                <label style="font-size:9.5px;font-weight:700;color:#e11d48;display:block;margin-bottom:3px;text-transform:uppercase">☕ Break End</label>
+                                <input type="time" 
+                                       name="availabilities[{{ $idx }}][break_end_time]" 
+                                       id="break-end-{{ $teacher->id }}-{{ $day }}" 
+                                       value="{{ $breakEndTime }}" 
+                                       placeholder="--:--"
+                                       class="time-picker-input"
+                                       style="padding:6px 8px;font-size:12px">
                             </div>
                         </div>
                     </div>
@@ -432,9 +466,11 @@
         }
     }
 
-    function setPreset(teacherId, day, start, end) {
+    function setPreset(teacherId, day, start, end, breakStart = '', breakEnd = '') {
         const startInput = document.getElementById(`start-${teacherId}-${day}`);
         const endInput = document.getElementById(`end-${teacherId}-${day}`);
+        const breakStartInput = document.getElementById(`break-start-${teacherId}-${day}`);
+        const breakEndInput = document.getElementById(`break-end-${teacherId}-${day}`);
         const checkbox = document.querySelector(`#day-box-${teacherId}-${day} input[type="checkbox"]`);
         
         if (startInput && endInput) {
@@ -444,12 +480,16 @@
             }
             startInput.value = start;
             endInput.value = end;
+            if (breakStartInput) breakStartInput.value = breakStart;
+            if (breakEndInput) breakEndInput.value = breakEnd;
         }
     }
 
     function applyGlobalWorkHoursToAll() {
         const startTime = document.getElementById('global_start_time').value;
         const endTime = document.getElementById('global_end_time').value;
+        const breakStart = document.getElementById('global_break_start') ? document.getElementById('global_break_start').value : '';
+        const breakEnd = document.getElementById('global_break_end') ? document.getElementById('global_break_end').value : '';
         const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
         weekdays.forEach(day => {
@@ -459,6 +499,8 @@
                 const checkbox = box.querySelector('input[type="checkbox"][name*="[is_available]"]');
                 const startInput = box.querySelector('input[name*="[start_time]"]');
                 const endInput = box.querySelector('input[name*="[end_time]"]');
+                const breakStartInput = box.querySelector('input[name*="[break_start_time]"]');
+                const breakEndInput = box.querySelector('input[name*="[break_end_time]"]');
 
                 if (checkbox) {
                     checkbox.checked = isDayChecked;
@@ -469,6 +511,8 @@
 
                 if (startInput) startInput.value = startTime;
                 if (endInput) endInput.value = endTime;
+                if (breakStartInput) breakStartInput.value = breakStart;
+                if (breakEndInput) breakEndInput.value = breakEnd;
             });
         });
 

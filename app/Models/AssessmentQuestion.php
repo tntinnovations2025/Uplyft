@@ -34,10 +34,12 @@ class AssessmentQuestion extends Model
         'sort_order',
         'chapter_reference',
         'question_hash',
+        'embedding',
     ];
 
     protected $casts = [
         'options' => 'array',
+        'embedding' => 'array',
         'marks' => 'integer',
         'sort_order' => 'integer',
     ];

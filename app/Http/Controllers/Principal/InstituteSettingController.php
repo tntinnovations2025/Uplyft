@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Principal;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicTerm;
 use App\Models\AttendanceSetting;
+use App\Models\ClassBreak;
+use App\Models\ClassSection;
 use App\Models\InstituteSetting;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -38,12 +41,26 @@ class InstituteSettingController extends Controller
 
         $staffMembers = User::whereIn('institute_id', $authorizedCampuses)
             ->whereIn('role', [User::ROLE_TEACHER, User::ROLE_PRINCIPAL])
-            ->with(['teacherProfile'])
+            ->with(['teacherProfile', 'availabilities'])
             ->orderBy('role')
             ->orderBy('name')
             ->get();
 
-        return view('principal.settings.index', compact('setting', 'institute', 'staffMembers'));
+        $activeTerm = AcademicTerm::where('institute_id', $user->institute_id)->where('is_active', true)->first();
+
+        $classSections = ClassSection::whereHas('instituteClass', function ($q) use ($user, $activeTerm) {
+            $q->where('institute_id', $user->institute_id);
+            if ($activeTerm) {
+                $q->where('academic_term_id', $activeTerm->id);
+            }
+        })->with(['instituteClass', 'breaks'])->get();
+
+        $classBreaks = ClassBreak::where('institute_id', $user->institute_id)
+            ->with(['section.instituteClass'])
+            ->orderBy('class_section_id')
+            ->get();
+
+        return view('principal.settings.index', compact('setting', 'institute', 'staffMembers', 'classSections', 'classBreaks', 'activeTerm'));
     }
 
     /**
@@ -337,5 +354,56 @@ class InstituteSettingController extends Controller
         }
 
         return redirect()->back()->with('success', "Salary & leave allowance settings updated for '{$staff->name}' successfully.");
+    }
+
+    /**
+     * Store or update a Class Break in Principal Settings.
+     */
+    public function storeClassBreak(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        abort_if(! $user->isPrincipal() && $user->role !== User::ROLE_PRINCIPAL, 403, 'Unauthorized');
+
+        $validated = $request->validate([
+            'class_section_id' => 'required|exists:class_sections,id',
+            'day_of_week'      => 'required|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+            'break_start_time' => 'required|string',
+            'break_end_time'   => 'required|string',
+        ]);
+
+        $activeTerm = AcademicTerm::where('institute_id', $user->institute_id)->where('is_active', true)->first();
+
+        $breakStart = date('H:i:s', strtotime($validated['break_start_time']));
+        $breakEnd   = date('H:i:s', strtotime($validated['break_end_time']));
+
+        ClassBreak::updateOrCreate(
+            [
+                'institute_id'     => $user->institute_id,
+                'class_section_id' => $validated['class_section_id'],
+                'day_of_week'      => strtolower($validated['day_of_week']),
+            ],
+            [
+                'academic_term_id' => $activeTerm?->id,
+                'break_start_time' => $breakStart,
+                'break_end_time'   => $breakEnd,
+                'is_active'        => true,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Class break scheduled successfully.');
+    }
+
+    /**
+     * Delete a Class Break.
+     */
+    public function destroyClassBreak(ClassBreak $classBreak): RedirectResponse
+    {
+        $user = Auth::user();
+        abort_if(! $user->isPrincipal() && $user->role !== User::ROLE_PRINCIPAL, 403, 'Unauthorized');
+        abort_if($classBreak->institute_id !== $user->institute_id, 403, 'Unauthorized');
+
+        $classBreak->delete();
+
+        return redirect()->back()->with('success', 'Class break removed successfully.');
     }
 }

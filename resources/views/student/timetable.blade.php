@@ -461,6 +461,12 @@
                 </button>
             </div>
 
+            <!-- Download Excel Button -->
+            <a href="{{ route('student.timetable.download') }}" class="btn-view-switch" style="background:#4f46e5;color:#ffffff;border:1px solid #4338ca;padding:8px 14px;text-decoration:none;box-shadow:0 2px 6px rgba(79,70,229,0.25)">
+                <i class="fa-solid fa-file-excel text-emerald-300"></i>
+                <span style="color:#ffffff;font-weight:700">Download Timetable</span>
+            </a>
+
             <!-- Print Button -->
             <button type="button" onclick="window.print()" class="btn-view-switch" style="background:#ffffff;border:1px solid #cbd5e1;padding:8px 14px">
                 <i class="fa-solid fa-print text-slate-500"></i>

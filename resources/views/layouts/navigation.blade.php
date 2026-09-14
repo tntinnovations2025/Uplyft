@@ -12,7 +12,7 @@
                         $roleSubGroup = 'students';
                     } elseif (request()->is('*/schedule*') || request()->is('*/classes-subjects*') || request()->is('*/timetables*') || request()->is('*/rooms*') || request()->routeIs('lms.subjects.*') || request()->routeIs('lms.materials.*') || request()->is('lms/subjects*') || request()->is('lms/materials*')) {
                         $roleSubGroup = 'academics';
-                    } elseif (request()->routeIs('lms.assessments.*') || request()->routeIs('lms.test-results.*') || request()->routeIs('lms.datesheet.*') || request()->routeIs('lms.exam-report.*') || request()->routeIs('lms.grades.*') || request()->is('lms/assessments*') || request()->is('lms/test-results*') || request()->is('lms/datesheet*') || request()->is('lms/exam-report*') || request()->is('lms/grades*')) {
+                    } elseif (request()->routeIs('lms.assessments.*') || request()->routeIs('lms.mocks.*') || request()->routeIs('lms.test-results.*') || request()->routeIs('lms.datesheet.*') || request()->routeIs('lms.exam-report.*') || request()->routeIs('lms.grades.*') || request()->is('lms/assessments*') || request()->is('lms/mocks*') || request()->is('lms/test-results*') || request()->is('lms/datesheet*') || request()->is('lms/exam-report*') || request()->is('lms/grades*')) {
                         $roleSubGroup = 'exams';
                     } elseif (request()->routeIs('lms.chatbot.*') || request()->routeIs('lms.practice-test.*') || request()->is('lms/chatbot*') || request()->is('lms/practice-test*')) {
                         $roleSubGroup = 'ai';
@@ -46,7 +46,7 @@
                         $roleSubGroup = 'academic';
                     } elseif (request()->routeIs('lms.chatbot.*') || request()->routeIs('lms.practice-test.*') || request()->routeIs('lms.subjects.*') || request()->routeIs('lms.materials.*') || request()->is('lms/chatbot*') || request()->is('lms/practice-test*') || request()->is('lms/subjects*') || request()->is('lms/materials*')) {
                         $roleSubGroup = 'ai';
-                    } elseif (request()->routeIs('lms.assessments.*') || request()->routeIs('lms.test-results.*') || request()->routeIs('lms.datesheet.*') || request()->routeIs('lms.exam-report.*') || request()->routeIs('lms.grades.*') || request()->is('lms/assessments*') || request()->is('lms/test-results*') || request()->is('lms/datesheet*') || request()->is('lms/exam-report*') || request()->is('lms/grades*')) {
+                    } elseif (request()->routeIs('lms.assessments.*') || request()->routeIs('lms.mocks.*') || request()->routeIs('lms.test-results.*') || request()->routeIs('lms.datesheet.*') || request()->routeIs('lms.exam-report.*') || request()->routeIs('lms.grades.*') || request()->is('lms/assessments*') || request()->is('lms/mocks*') || request()->is('lms/test-results*') || request()->is('lms/datesheet*') || request()->is('lms/exam-report*') || request()->is('lms/grades*')) {
                         $roleSubGroup = 'exams';
                     } elseif (request()->routeIs('principal.settings.*') || request()->routeIs('principal.organization.campuses.*') || request()->routeIs('principal.attendance-settings.*') || request()->routeIs('principal.security.*') || request()->routeIs('profile.*') || request()->is('principal/settings*') || request()->is('principal/organization/campuses*') || request()->is('principal/attendance-settings*') || request()->is('principal/security*')) {
                         $roleSubGroup = 'settings';
@@ -275,6 +275,10 @@
                             <a href="{{ route('lms.assessments.index') }}" class="glossy-nav-item {{ request()->routeIs('lms.assessments.*') ? 'active' : '' }}">
                                 <span class="icon"><x-icon name="file-pen" /></span>
                                 <span>Assessment Creator</span>
+                            </a>
+                            <a href="{{ route('lms.mocks.create') }}" class="glossy-nav-item {{ request()->routeIs('lms.mocks.*') ? 'active' : '' }}">
+                                <span class="icon"><x-icon name="bullseye" /></span>
+                                <span>🎯 O/A Level Mock Engine</span>
                             </a>
                             <a href="{{ route('lms.test-results.index') }}" class="glossy-nav-item {{ request()->routeIs('lms.test-results.*') ? 'active' : '' }}">
                                 <span class="icon"><x-icon name="square-poll-vertical" /></span>
@@ -838,6 +842,10 @@
                         <a href="{{ route('lms.assessments.index') }}" class="glossy-nav-item {{ (request()->routeIs('lms.assessments.*') || request()->is('lms/assessments*')) ? 'active' : '' }}">
                             <span class="icon"><x-icon name="file-pen" /></span>
                             <span>Assessment Creator</span>
+                        </a>
+                        <a href="{{ route('lms.mocks.create') }}" class="glossy-nav-item {{ (request()->routeIs('lms.mocks.*') || request()->is('lms/mocks*')) ? 'active' : '' }}">
+                            <span class="icon"><x-icon name="bullseye" /></span>
+                            <span>🎯 O/A Level Mock Engine</span>
                         </a>
                         <a href="{{ route('lms.test-results.index') }}" class="glossy-nav-item {{ (request()->routeIs('lms.test-results.*') || request()->is('lms/test-results*')) ? 'active' : '' }}">
                             <span class="icon"><x-icon name="square-poll-vertical" /></span>

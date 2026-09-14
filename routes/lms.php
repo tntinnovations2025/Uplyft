@@ -5,6 +5,7 @@ use App\Http\Controllers\Lms\ChatbotController;
 use App\Http\Controllers\Lms\DatesheetController;
 use App\Http\Controllers\Lms\ExamReportController;
 use App\Http\Controllers\Lms\GradeController;
+use App\Http\Controllers\Lms\MockAssessmentController;
 use App\Http\Controllers\Lms\PracticeTestController;
 use App\Http\Controllers\Lms\SubjectMaterialController;
 use App\Http\Controllers\Lms\TestResultController;
@@ -80,6 +81,15 @@ Route::middleware(['auth'])->prefix('lms')->name('lms.')->group(function () {
         // Grading
         Route::post('/{assessment}/grade', [AssessmentController::class, 'gradeStudent'])->name('grade');
         Route::post('/{assessment}/auto-grade-mcqs', [AssessmentController::class, 'bulkAutoGradeMcqs'])->name('autoGradeMcqs');
+    });
+
+    // ── Dedicated O/A Levels Mock Examination Engine ────────────────────────
+    Route::middleware(['feature:assessment_engine', 'active.term'])->prefix('mocks')->name('mocks.')->group(function () {
+        Route::get('/create', [MockAssessmentController::class, 'create'])->name('create');
+        Route::get('/subject-status/{subjectId}', [MockAssessmentController::class, 'subjectStatus'])->name('subjectStatus');
+        Route::post('/upload-past-papers', [MockAssessmentController::class, 'uploadPastPapers'])->name('uploadPastPapers');
+        Route::post('/generate', [MockAssessmentController::class, 'generate'])->middleware('throttle:10,1')->name('generate');
+        Route::post('/publish', [MockAssessmentController::class, 'publish'])->name('publish');
     });
 
     // ── Practice Tests (Gated by fee payment) ────────────────────────────
