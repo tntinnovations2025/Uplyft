@@ -8,8 +8,8 @@ echo - LMS, Faculty and Staff Portal (Port 8002)
 echo - Student Portal (Port 8003)
 echo ===================================================
 echo.
-set "PHP=d:\UPLYFT\php-8.3.31\php.exe"
-set "DIR=d:\UPLYFT\uplifyt"
+set "PHP=d:\UPLYFT\php\php.exe"
+set "DIR=d:\UPLYFT"
 echo Launching Port 8000 (Global Admin)...
 start "Uplyft Global Admin" cmd.exe /k "cd /d %DIR% && "%PHP%" artisan serve --host=127.0.0.1 --port=8000 --no-reload"
 echo Launching Port 8001 (Principal Portal)...

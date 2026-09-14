@@ -1,7 +1,20 @@
-# ── OS / Editor ──────────────────────────────────────────────────────────────
+# ── OS / Editor / Temporary Files ──────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 *.log
+*.err
+*.bak
+*.tmp
+*.temp
+*.swp
+*~
+*.zip
+*.tar.gz
+*.7z
+*.rar
+*.sql
+*.sqlite
+*.dump
 .phpactor.json
 /.codex
 /.cursor/
@@ -28,9 +41,16 @@ yarn-error.log
 
 # Local credentials/operational tooling that must never enter version control.
 /open-mysql-cli.cmd
+/start-mysql.cmd
+/stop-mysql.cmd
 /update_user.php
 /scratch/
 /.scratch/
+/php/
+/mysql/
+/git/
+/composer/
+/design-system/b2b-saas-dashboard/
 
 # ── Dependencies / Build Artifacts ───────────────────────────────────────────
 /vendor
@@ -74,6 +94,22 @@ yarn-error.log
 /storage/app/security/*
 
 # ── AI / Tooling Cache ───────────────────────────────────────────────────────
+/.github/
+/.agents/
+/.augment/
+/.claude/
+/.codebuddy/
+/.codewhale/
+/.continue/
+/.factory/
+/.gemini/
+/.kilocode/
+/.kiro/
 /.opencode/
+/.qoder/
+/.roo/
+/.trae/
+/.warp/
+/.windsurf/
 /.turbo
 /.cache
