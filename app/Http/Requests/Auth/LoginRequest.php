@@ -161,18 +161,15 @@ class LoginRequest extends FormRequest
             return User::ROLE_GLOBAL_ADMIN;
         }
 
-        $roleInput = strtolower(trim((string) $this->input('role')));
-        if ($roleInput === 'principal') {
-            return User::ROLE_PRINCIPAL;
-        }
-        if ($roleInput === 'faculty' || $roleInput === 'teacher') {
-            return User::ROLE_TEACHER;
-        }
-        if ($roleInput === 'student') {
-            return User::ROLE_STUDENT;
-        }
-        if ($roleInput === 'global_admin' || $roleInput === 'globaladmin') {
-            return User::ROLE_GLOBAL_ADMIN;
+        $inputRole = $this->input('role');
+        if ($inputRole) {
+            return match (strtolower(trim((string) $inputRole))) {
+                'principal'                            => User::ROLE_PRINCIPAL,
+                'faculty', 'teacher'                   => User::ROLE_TEACHER,
+                'student'                              => User::ROLE_STUDENT,
+                'globaladmin', 'global_admin', 'admin' => User::ROLE_GLOBAL_ADMIN,
+                default                                => null,
+            };
         }
 
         return null;
@@ -442,40 +439,6 @@ class LoginRequest extends FormRequest
         return $this->routeIs('student.login') || $this->routeIs('student.login.store');
     }
 
-    /**
-     * Determine the target role required by the portal or form submission.
-     */
-    public function getTargetRole(): ?string
-    {
-        if ($this->routeIs('principal.login') || $this->routeIs('principal.login.store')) {
-            return User::ROLE_PRINCIPAL;
-        }
-
-        if ($this->routeIs('faculty.login') || $this->routeIs('faculty.login.store') || $this->routeIs('teacher.login')) {
-            return User::ROLE_TEACHER;
-        }
-
-        if ($this->routeIs('student.login') || $this->routeIs('student.login.store')) {
-            return User::ROLE_STUDENT;
-        }
-
-        if ($this->routeIs('globaladmin.login') || $this->routeIs('globaladmin.login.store') || $this->routeIs('global-admin.login') || $this->routeIs('global-admin.login.store')) {
-            return User::ROLE_GLOBAL_ADMIN;
-        }
-
-        $inputRole = $this->input('role');
-        if ($inputRole) {
-            return match (strtolower(trim($inputRole))) {
-                'principal'            => User::ROLE_PRINCIPAL,
-                'faculty', 'teacher'   => User::ROLE_TEACHER,
-                'student'              => User::ROLE_STUDENT,
-                'globaladmin', 'global_admin', 'admin' => User::ROLE_GLOBAL_ADMIN,
-                default                => null,
-            };
-        }
-
-        return null;
-    }
 
     /**
      * Maximum allowed failed attempts within the account lockout window.

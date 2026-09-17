@@ -37,7 +37,7 @@ class StrictRoleIsolationLoginTest extends TestCase
         $this->principal = User::create([
             'name' => 'Principal Tariq',
             'email' => 'principal@apex.edu.pk',
-            'password' => bcrypt('Password123!'),
+            'password' => 'Password123!',
             'role' => User::ROLE_PRINCIPAL,
             'institute_id' => $this->institute->id,
         ]);
@@ -45,7 +45,7 @@ class StrictRoleIsolationLoginTest extends TestCase
         $this->faculty = User::create([
             'name' => 'Teacher Noman',
             'email' => 'teacher@apex.edu.pk',
-            'password' => bcrypt('Password123!'),
+            'password' => 'Password123!',
             'role' => User::ROLE_TEACHER,
             'institute_id' => $this->institute->id,
         ]);
@@ -53,7 +53,7 @@ class StrictRoleIsolationLoginTest extends TestCase
         $this->student = User::create([
             'name' => 'Student Ahmed',
             'email' => 'student@apex.edu.pk',
-            'password' => bcrypt('Password123!'),
+            'password' => 'Password123!',
             'role' => User::ROLE_STUDENT,
             'institute_id' => $this->institute->id,
         ]);
@@ -61,7 +61,7 @@ class StrictRoleIsolationLoginTest extends TestCase
         $this->globalAdmin = User::create([
             'name' => 'Super Admin',
             'email' => 'admin@uplyft.com',
-            'password' => bcrypt('Password123!'),
+            'password' => 'Password123!',
             'role' => User::ROLE_GLOBAL_ADMIN,
         ]);
     }
