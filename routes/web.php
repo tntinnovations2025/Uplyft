@@ -23,40 +23,21 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (Request $request) {
-    $port = $request->getPort();
-
-    if ($port == 8000) {
-        if (Auth::check() && Auth::user()->isGlobalAdmin()) {
-            return redirect()->route('global-admin.dashboard');
-        }
-        return redirect()->route('global-admin.login');
-    }
-
-    if ($port == 8001) {
-        if (Auth::check() && (Auth::user()->isPrincipal() || Auth::user()->isGlobalAdmin())) {
-            return redirect()->route('principal.dashboard');
-        }
-        return redirect()->route('principal.login');
-    }
-
-    // Ports 8002 & 8003 -> Academic LMS (Teacher & Student)
     if (Auth::check()) {
         $user = Auth::user();
+        if ($user->isGlobalAdmin()) {
+            return redirect()->route('global-admin.dashboard');
+        }
+        if ($user->isPrincipal()) {
+            return redirect()->route('principal.dashboard');
+        }
         if ($user->role === 'teacher') {
             return redirect($user->dashboardRoute());
         }
         if ($user->role === 'student') {
             return redirect()->route('student.dashboard');
         }
-        if ($user->isPrincipal()) {
-            return redirect()->route('principal.dashboard');
-        }
         return redirect($user->dashboardRoute());
-    }
-
-    // Guest on the Student portal (8003) → dedicated email-only login.
-    if ($port == 8003) {
-        return redirect()->route('student.login');
     }
 
     return redirect()->route('login');
@@ -64,13 +45,12 @@ Route::get('/', function (Request $request) {
 
 Route::get('/dashboard', function (Request $request) {
     $user = Auth::user();
-    $port = $request->getPort();
 
-    if ($port == 8000 && $user->isGlobalAdmin()) {
+    if ($user->isGlobalAdmin()) {
         return redirect()->route('global-admin.dashboard');
     }
 
-    if ($port == 8001 && ($user->isPrincipal() || $user->isGlobalAdmin())) {
+    if ($user->isPrincipal()) {
         return redirect()->route('principal.dashboard');
     }
 
@@ -80,14 +60,6 @@ Route::get('/dashboard', function (Request $request) {
 
     if ($user->role === 'student') {
         return redirect()->route('student.dashboard');
-    }
-
-    if ($user->isPrincipal()) {
-        return redirect()->route('principal.dashboard');
-    }
-
-    if ($user->isGlobalAdmin()) {
-        return redirect()->route('global-admin.dashboard');
     }
 
     return view('dashboard');

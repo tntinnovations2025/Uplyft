@@ -111,8 +111,8 @@ class StudentLoginRequest extends LoginRequest
                 } else {
                     RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                     throw ValidationException::withMessages([
-                        'identifier' => trans('auth.failed'),
-                        'credential' => trans('auth.failed'),
+                        'identifier' => 'Wrong credentials!',
+                        'credential' => 'Wrong credentials!',
                     ]);
                 }
             } else {
@@ -150,8 +150,8 @@ class StudentLoginRequest extends LoginRequest
             RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
 
             throw ValidationException::withMessages([
-                'identifier' => trans('auth.failed'),
-                'credential' => trans('auth.failed'),
+                'identifier' => 'Wrong credentials!',
+                'credential' => 'Wrong credentials!',
             ]);
         }
 

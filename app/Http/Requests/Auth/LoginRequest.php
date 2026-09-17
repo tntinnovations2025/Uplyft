@@ -141,6 +141,44 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Resolve the intended target role for strict role isolation.
+     */
+    public function getTargetRole(): ?string
+    {
+        if ($this->routeIs('principal.login*') || $this->is('principal/login*')) {
+            return User::ROLE_PRINCIPAL;
+        }
+
+        if ($this->routeIs('faculty.login*') || $this->routeIs('teacher.login*') || $this->is('faculty/login*') || $this->is('teacher/login*')) {
+            return User::ROLE_TEACHER;
+        }
+
+        if ($this->routeIs('student.login*') || $this->is('student/login*') || $this->isStudentLogin()) {
+            return User::ROLE_STUDENT;
+        }
+
+        if ($this->routeIs('globaladmin.login*') || $this->routeIs('global-admin.login*') || $this->is('globaladmin*') || $this->is('global-admin*')) {
+            return User::ROLE_GLOBAL_ADMIN;
+        }
+
+        $roleInput = strtolower(trim((string) $this->input('role')));
+        if ($roleInput === 'principal') {
+            return User::ROLE_PRINCIPAL;
+        }
+        if ($roleInput === 'faculty' || $roleInput === 'teacher') {
+            return User::ROLE_TEACHER;
+        }
+        if ($roleInput === 'student') {
+            return User::ROLE_STUDENT;
+        }
+        if ($roleInput === 'global_admin' || $roleInput === 'globaladmin') {
+            return User::ROLE_GLOBAL_ADMIN;
+        }
+
+        return null;
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws ValidationException
@@ -187,7 +225,7 @@ class LoginRequest extends FormRequest
                         if ($crossUser && !$crossUser->isGlobalAdmin()) {
                             RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                             throw ValidationException::withMessages([
-                                'credential' => trans('auth.failed'),
+                                'credential' => 'Wrong credentials!',
                             ]);
                         }
                     }
@@ -214,7 +252,7 @@ class LoginRequest extends FormRequest
                         // Ambiguous collision across tenants or not found: reject with clean unrevealing error
                         RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                         throw ValidationException::withMessages([
-                            'credential' => trans('auth.failed'),
+                            'credential' => 'Wrong credentials!',
                         ]);
                     }
                 }
@@ -226,10 +264,39 @@ class LoginRequest extends FormRequest
         if ($user) {
             if (Hash::check($password, $user->password)) {
 
+                // ── Strict Role Isolation Check ──
+                $targetRole = $this->getTargetRole();
+
+                if ($targetRole !== null) {
+                    $matches = match ($targetRole) {
+                        User::ROLE_PRINCIPAL    => $user->isPrincipal(),
+                        User::ROLE_TEACHER      => $user->isTeacher(),
+                        User::ROLE_STUDENT      => $user->isStudent(),
+                        User::ROLE_GLOBAL_ADMIN => $user->isGlobalAdmin(),
+                        default                 => false,
+                    };
+
+                    if (! $matches) {
+                        RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                        throw ValidationException::withMessages([
+                            'credential' => 'Wrong credentials!',
+                        ]);
+                    }
+                } else {
+                    // Global admin cannot use default gateway form
+                    if ($user->isGlobalAdmin()) {
+                        RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
+                        throw ValidationException::withMessages([
+                            'credential' => 'Wrong credentials!',
+                        ]);
+                    }
+                }
+
                 // Student portal: credential must belong to a student
                 if ($this->isStudentLogin() && ! $user->isStudent()) {
+                    RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
                     throw ValidationException::withMessages([
-                        'credential' => 'This account is not registered as a Student. Please use the correct portal.',
+                        'credential' => 'Wrong credentials!',
                     ]);
                 }
 
@@ -284,7 +351,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey(), $this->accountDecaySeconds());
 
             throw ValidationException::withMessages([
-                'credential' => trans('auth.failed'),
+                'credential' => 'Wrong credentials!',
             ]);
         }
 
@@ -373,6 +440,41 @@ class LoginRequest extends FormRequest
     protected function isStudentLogin(): bool
     {
         return $this->routeIs('student.login') || $this->routeIs('student.login.store');
+    }
+
+    /**
+     * Determine the target role required by the portal or form submission.
+     */
+    public function getTargetRole(): ?string
+    {
+        if ($this->routeIs('principal.login') || $this->routeIs('principal.login.store')) {
+            return User::ROLE_PRINCIPAL;
+        }
+
+        if ($this->routeIs('faculty.login') || $this->routeIs('faculty.login.store') || $this->routeIs('teacher.login')) {
+            return User::ROLE_TEACHER;
+        }
+
+        if ($this->routeIs('student.login') || $this->routeIs('student.login.store')) {
+            return User::ROLE_STUDENT;
+        }
+
+        if ($this->routeIs('globaladmin.login') || $this->routeIs('globaladmin.login.store') || $this->routeIs('global-admin.login') || $this->routeIs('global-admin.login.store')) {
+            return User::ROLE_GLOBAL_ADMIN;
+        }
+
+        $inputRole = $this->input('role');
+        if ($inputRole) {
+            return match (strtolower(trim($inputRole))) {
+                'principal'            => User::ROLE_PRINCIPAL,
+                'faculty', 'teacher'   => User::ROLE_TEACHER,
+                'student'              => User::ROLE_STUDENT,
+                'globaladmin', 'global_admin', 'admin' => User::ROLE_GLOBAL_ADMIN,
+                default                => null,
+            };
+        }
+
+        return null;
     }
 
     /**

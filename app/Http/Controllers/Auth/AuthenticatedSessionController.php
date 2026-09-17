@@ -13,26 +13,19 @@ use Illuminate\View\View;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the portal login view based on port / route.
+     * Display the unified multi-role portal login view (Principal, Faculty, Student).
      */
     public function create(Request $request): View
     {
-        $port = $request->getPort();
-
-        if ($port == 8000) {
-            return view('auth.global-admin-login');
+        $selectedRole = $request->query('role');
+        if (! in_array($selectedRole, ['principal', 'faculty', 'student'], true)) {
+            $selectedRole = null;
         }
 
-        if ($port == 8001) {
-            return view('auth.principal-login');
-        }
-
-        // Port 8003 → Student portal (email-only dedicated login).
-        if ($port == 8003) {
-            return view('auth.login', ['studentPortal' => true]);
-        }
-
-        return view('auth.login');
+        return view('auth.login', [
+            'selectedRole' => $selectedRole,
+            'studentPortal' => ($selectedRole === 'student'),
+        ]);
     }
 
     /**
@@ -44,19 +37,36 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Display the Principal portal dedicated login view.
+     * Display the Principal portal on the unified login view.
      */
     public function createPrincipal(): View
     {
-        return view('auth.principal-login');
+        return view('auth.login', [
+            'selectedRole' => 'principal',
+            'studentPortal' => false,
+        ]);
     }
 
     /**
-     * Display the Student portal dedicated login view (email-only).
+     * Display the Faculty portal on the unified login view.
+     */
+    public function createFaculty(): View
+    {
+        return view('auth.login', [
+            'selectedRole' => 'faculty',
+            'studentPortal' => false,
+        ]);
+    }
+
+    /**
+     * Display the Student portal on the unified login view.
      */
     public function createStudent(): View
     {
-        return view('auth.login', ['studentPortal' => true]);
+        return view('auth.login', [
+            'selectedRole' => 'student',
+            'studentPortal' => true,
+        ]);
     }
 
     /**
@@ -79,13 +89,44 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerateToken();
 
             return redirect()->route('student.login')
-                ->withErrors(['credential' => 'Access Denied: This login portal is reserved exclusively for Students.']);
+                ->withInput($request->only('credential', 'remember', 'role'))
+                ->withErrors(['credential' => 'Wrong credentials!']);
         }
 
         $request->session()->regenerate();
         $request->session()->forget('url.intended');
 
         return redirect()->route('student.dashboard');
+    }
+
+    /**
+     * Handle Faculty portal login with strict role verification.
+     */
+    public function storeFaculty(LoginRequest $request): RedirectResponse
+    {
+        if (Auth::check()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        $request->authenticate();
+
+        $user = Auth::user();
+        if (! $user->isTeacher()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('faculty.login')
+                ->withInput($request->only('credential', 'remember', 'role'))
+                ->withErrors(['credential' => 'Wrong credentials!']);
+        }
+
+        $request->session()->regenerate();
+        $request->session()->forget('url.intended');
+
+        return redirect($user->dashboardRoute());
     }
 
     /**
@@ -100,10 +141,32 @@ class AuthenticatedSessionController extends Controller
         }
 
         $request->authenticate();
+        $user = Auth::user();
+
+        // Enforce role matching if role was selected on the gateway
+        $targetRole = $request->getTargetRole();
+        if ($targetRole !== null) {
+            $matches = match ($targetRole) {
+                User::ROLE_PRINCIPAL    => $user->isPrincipal(),
+                User::ROLE_TEACHER      => $user->isTeacher(),
+                User::ROLE_STUDENT      => $user->isStudent(),
+                User::ROLE_GLOBAL_ADMIN => $user->isGlobalAdmin(),
+                default                 => false,
+            };
+
+            if (! $matches) {
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->withInput($request->only('credential', 'remember', 'role'))
+                    ->withErrors(['credential' => 'Wrong credentials!']);
+            }
+        }
+
         $request->session()->regenerate();
         $request->session()->forget('url.intended');
-
-        $user = Auth::user();
 
         return match ($user->role) {
             'global_admin' => redirect()->route('global-admin.dashboard'),
@@ -134,7 +197,8 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerateToken();
 
             return redirect()->route('global-admin.login')
-                ->withErrors(['credential' => 'Access Denied: This login portal is reserved exclusively for Global SaaS Administrators.']);
+                ->withInput($request->only('credential', 'remember'))
+                ->withErrors(['credential' => 'Wrong credentials!']);
         }
 
         $request->session()->regenerate();
@@ -157,23 +221,20 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $user = Auth::user();
-        if (! $user->isPrincipal() && ! $user->hasAnyDelegatedPermission() && ! $user->isGlobalAdmin()) {
+        if (! $user->isPrincipal()) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return redirect()->route('principal.login')
-                ->withErrors(['credential' => 'Access Denied: This login portal is reserved exclusively for Institute Principals and Delegated Administrators.']);
+                ->withInput($request->only('credential', 'remember', 'role'))
+                ->withErrors(['credential' => 'Wrong credentials!']);
         }
 
         $request->session()->regenerate();
         $request->session()->forget('url.intended');
 
-        if ($user->isPrincipal() || $user->isGlobalAdmin()) {
-            return redirect()->route('principal.dashboard');
-        }
-
-        return redirect($user->dashboardRoute());
+        return redirect()->route('principal.dashboard');
     }
 
     /**

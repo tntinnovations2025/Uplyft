@@ -18,8 +18,9 @@
         (isset($branding) && isset($branding->is_tenant) && !$branding->is_tenant) ||
         (auth()->check() && auth()->user()->isGlobalAdmin()) ||
         request()->is('global-admin*') ||
+        request()->is('globaladmin*') ||
         request()->routeIs('global-admin.*') ||
-        (request()->getPort() == 8000 && !request()->routeIs('principal.*') && !request()->routeIs('student.*') && !request()->routeIs('teacher.*'))
+        request()->routeIs('globaladmin.*')
     );
 
     // Resolve dynamic logo for current tenant vs Global Admin platform:

@@ -13,18 +13,28 @@ use Illuminate\Support\Facades\Route;
 // Dedicated Portal Login Routes (accessible to guests & switching sessions)
 // Login POST endpoints share the dual-tier limiter: Tier A (40 req/min/IP)
 // + Tier B (5 failed attempts / 15 min per email+institute, via LoginRequest).
+// Unified Multi-Role Portal Login Routes (Principal, Faculty, Student)
 Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
 Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:login');
 
-Route::get('global-admin/login', [AuthenticatedSessionController::class, 'createGlobalAdmin'])->name('global-admin.login');
-Route::post('global-admin/login', [AuthenticatedSessionController::class, 'storeGlobalAdmin'])->middleware('throttle:login');
-
 Route::get('principal/login', [AuthenticatedSessionController::class, 'createPrincipal'])->name('principal.login');
-Route::post('principal/login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:login');
+Route::post('principal/login', [AuthenticatedSessionController::class, 'storePrincipal'])->middleware('throttle:login')->name('principal.login.store');
 
-// Student Portal — strict email-only authentication (no roll numbers / IDs).
+Route::get('faculty/login', [AuthenticatedSessionController::class, 'createFaculty'])->name('faculty.login');
+Route::get('teacher/login', [AuthenticatedSessionController::class, 'createFaculty'])->name('teacher.login');
+Route::post('faculty/login', [AuthenticatedSessionController::class, 'storeFaculty'])->middleware('throttle:login')->name('faculty.login.store');
+
 Route::get('student/login', [AuthenticatedSessionController::class, 'createStudent'])->name('student.login');
 Route::post('student/login', [AuthenticatedSessionController::class, 'storeStudent'])->middleware('throttle:login')->name('student.login.store');
+
+// Global Admin Access (Dedicated Secure URL)
+Route::get('globaladmin/login', [AuthenticatedSessionController::class, 'createGlobalAdmin'])->name('globaladmin.login');
+Route::post('globaladmin/login', [AuthenticatedSessionController::class, 'storeGlobalAdmin'])->middleware('throttle:login')->name('globaladmin.login.store');
+Route::get('globaladmin', fn () => redirect()->route('globaladmin.login'));
+
+Route::get('global-admin/login', [AuthenticatedSessionController::class, 'createGlobalAdmin'])->name('global-admin.login');
+Route::post('global-admin/login', [AuthenticatedSessionController::class, 'storeGlobalAdmin'])->middleware('throttle:login')->name('global-admin.login.store');
+Route::get('global-admin', fn () => redirect()->route('globaladmin.login'));
 
 Route::middleware('guest')->group(function () {
 

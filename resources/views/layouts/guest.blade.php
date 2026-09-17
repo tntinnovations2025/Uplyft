@@ -7,6 +7,12 @@
 
     <title>{{ $instituteBranding->name ?? config('app.name', 'UPLYFT') }} — Portal Authentication</title>
 
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v={{ file_exists(public_path('favicon-32x32.png')) ? filemtime(public_path('favicon-32x32.png')) : 2 }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}?v={{ file_exists(public_path('favicon-16x16.png')) ? filemtime(public_path('favicon-16x16.png')) : 2 }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v={{ file_exists(public_path('favicon.ico')) ? filemtime(public_path('favicon.ico')) : 2 }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/uplyft-logo.png') }}?v={{ file_exists(public_path('images/uplyft-logo.png')) ? filemtime(public_path('images/uplyft-logo.png')) : 2 }}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,7 +122,7 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 290px;
+            max-width: 320px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -130,11 +136,11 @@
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid rgba(226, 232, 240, 0.95);
             box-shadow: 
-                0 16px 36px -8px rgba(15, 23, 42, 0.14),
-                0 3px 12px rgba(15, 23, 42, 0.04),
+                0 18px 36px -8px rgba(15, 23, 42, 0.16),
+                0 3px 10px rgba(15, 23, 42, 0.05),
                 inset 0 1px 0 #ffffff;
             border-radius: 14px;
-            padding: 16px;
+            padding: 14px 16px;
             width: 100%;
             position: relative;
             overflow: hidden;
@@ -176,23 +182,58 @@
             }
         }
 
+        /* Default input padding: spacious left offset ensures placeholder and cursor NEVER collide with icon */
+        .input-wrapper input,
+        .input-wrapper .custom-input,
+        .custom-input {
+            width: 100% !important;
+            padding-left: 34px !important;
+            padding-right: 30px !important;
+            box-sizing: border-box !important;
+        }
+
+        .input-wrapper .input-icon-left,
+        .input-wrapper .input-icon {
+            position: absolute !important;
+            left: 10px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 14px !important;
+            height: 14px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: none !important;
+            z-index: 5 !important;
+            transition: opacity 0.12s ease, visibility 0.12s ease !important;
+        }
+
         /* Hide input leading icon dynamically when input has value or browser autofill */
         .input-wrapper.has-value .input-icon,
+        .input-wrapper.has-value .input-icon-left,
+        .input-wrapper.has-value .input-icon-left svg,
         .input-wrapper input:-webkit-autofill ~ .input-icon,
+        .input-wrapper input:-webkit-autofill ~ .input-icon-left,
         .input-wrapper input:autofill ~ .input-icon,
+        .input-wrapper input:autofill ~ .input-icon-left,
         .input-wrapper input:not(:placeholder-shown) ~ .input-icon,
+        .input-wrapper input:not(:placeholder-shown) ~ .input-icon-left,
         .input-wrapper:has(input:-webkit-autofill) .input-icon,
-        .input-wrapper:has(input:not(:placeholder-shown)) .input-icon {
+        .input-wrapper:has(input:-webkit-autofill) .input-icon-left,
+        .input-wrapper:has(input:not(:placeholder-shown)) .input-icon,
+        .input-wrapper:has(input:not(:placeholder-shown)) .input-icon-left {
             display: none !important;
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
         }
 
+        /* When value exists, adjust padding so text starts from comfortable left edge */
         .input-wrapper.has-value input,
+        .input-wrapper.has-value .custom-input,
         .input-wrapper input:-webkit-autofill,
         .input-wrapper input:not(:placeholder-shown) {
-            padding-left: 8px !important;
+            padding-left: 10px !important;
         }
 
         /* Detect WebKit autofill animation */
@@ -240,15 +281,9 @@
     {{-- Top Left Institute Logo & Name Badge --}}
     <div class="top-left-brand-header">
         <div class="top-left-logo-badge">
-            @if(!empty($instituteBranding->logo_url))
-                <img src="{{ $instituteBranding->logo_url }}" alt="{{ $instituteBranding->name }} Logo" />
-            @elseif(!empty($instituteBranding->icon_url))
-                <img src="{{ $instituteBranding->icon_url }}" alt="{{ $instituteBranding->name }} Emblem" />
-            @else
-                <div class="top-left-logo-fallback">
-                    {{ $instituteBranding->initial ?? 'U' }}
-                </div>
-            @endif
+            <img src="{{ !empty($instituteBranding->logo_url) ? $instituteBranding->logo_url : asset('images/uplyft-logo.png') }}" 
+                 alt="{{ $instituteBranding->name ?? 'Uplyft' }} Logo"
+                 onerror="this.onerror=null; this.src='{{ asset('images/uplyft-logo.png') }}';" />
         </div>
         <span class="top-left-brand-name">{{ $instituteBranding->name ?? config('app.name', 'UPLYFT') }}</span>
     </div>

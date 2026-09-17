@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // No demo accounts are seeded. Environment-specific data should be
-        // provisioned via dedicated seeders or factory/CLI tooling.
+        $this->call([
+            GlobalAdminSeeder::class,
+        ]);
     }
 }

@@ -33,15 +33,13 @@ class InstituteBrandingComposer
         
         // Global Admin Master Platform branding applies if:
         // 1) Authenticated user is Global Admin
-        // 2) Route path is 'global-admin*' or named 'global-admin.*'
+        // 2) Route path is 'global-admin*' or 'globaladmin*' or named 'global-admin.*' or 'globaladmin.*'
         // 3) View is 'auth.global-admin-login' or inside 'global-admin.*'
-        // 4) Accessing on Port 8000 (dedicated Global Admin portal port)
         $isGlobalAdminRoute = (
             ($user && $user->isGlobalAdmin()) ||
-            (request() && (request()->is('global-admin*') || request()->routeIs('global-admin.*'))) ||
+            (request() && (request()->is('global-admin*') || request()->is('globaladmin*') || request()->routeIs('global-admin.*') || request()->routeIs('globaladmin.*'))) ||
             $viewName === 'auth.global-admin-login' ||
-            str_starts_with($viewName, 'global-admin.') ||
-            ($port == 8000 && !str_starts_with($viewName, 'principal.') && !str_starts_with($viewName, 'student.') && !str_starts_with($viewName, 'teacher.'))
+            str_starts_with($viewName, 'global-admin.')
         );
 
         if ($isGlobalAdminRoute) {
@@ -194,13 +192,34 @@ class InstituteBrandingComposer
 
         $bgUrl = $institute->bg_url ?? asset('images/default_campus_bg.jpg');
 
+        $defaultLogoUrl = asset('images/uplyft-logo.png');
+        $resolvedLogoUrl = $institute->logo_url;
+        if ($resolvedLogoUrl) {
+            $parsedPath = parse_url($resolvedLogoUrl, PHP_URL_PATH);
+            if (!file_exists(public_path(ltrim($parsedPath, '/')))) {
+                $resolvedLogoUrl = $defaultLogoUrl;
+            }
+        } else {
+            $resolvedLogoUrl = $defaultLogoUrl;
+        }
+
+        $resolvedIconUrl = $institute->icon_url;
+        if ($resolvedIconUrl) {
+            $parsedPath = parse_url($resolvedIconUrl, PHP_URL_PATH);
+            if (!file_exists(public_path(ltrim($parsedPath, '/')))) {
+                $resolvedIconUrl = $resolvedLogoUrl;
+            }
+        } else {
+            $resolvedIconUrl = $resolvedLogoUrl;
+        }
+
         $branding = (object) [
             'is_tenant'        => true,
             'institute_id'     => $institute->id,
             'name'             => $institute->name ?? 'Uplyft',
             'slug'             => $institute->slug ?? 'uplyft',
-            'logo_url'         => $institute->logo_url,
-            'icon_url'         => $institute->icon_url,
+            'logo_url'         => $resolvedLogoUrl,
+            'icon_url'         => $resolvedIconUrl,
             'has_custom_logo'  => (bool) $institute->logo_path,
             'has_custom_icon'  => (bool) ($institute->icon_path || $institute->logo_path),
             'initial'          => $institute->display_initial ?? 'U',
