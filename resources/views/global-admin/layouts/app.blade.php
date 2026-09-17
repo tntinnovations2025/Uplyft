@@ -831,12 +831,7 @@
             <span style="color:var(--amber);font-weight:700">GOVERNANCE</span> &#8250; <span>@yield('breadcrumb', 'Overview')</span>
         </div>
         <div class="topbar-actions">
-            <span class="status-pill">
-                <span style="width:6px;height:6px;background:var(--success-text);border-radius:50%;display:inline-block"></span>
-                ISOLATION ACTIVE
-            </span>
-            <span class="admin-badge">SUPER ADMIN</span>
-            <div style="font-size:13px;font-weight:600;color:var(--text-primary)">{{ auth()->user()->name ?? 'Global Admin' }}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-primary)">Global Admin</div>
         </div>
     </header>
 

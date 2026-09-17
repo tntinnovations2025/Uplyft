@@ -241,7 +241,7 @@
 
             <!-- Submit Button -->
             <button type="submit" class="admin-submit-btn">
-                <span>Authenticate to Control Tower</span>
+                <span>Login</span>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
         </form>
