@@ -4,6 +4,12 @@
 @section('page-header', ($user->staff_role ? $user->staff_role . ' Portal' : 'Faculty & Staff Portal'))
 
 @section('content')
+@php
+    $isAccountant = strtolower($user->staff_role ?? (auth()->user()->staff_role ?? '')) === 'accountant' || (auth()->user()->hasPermission('accounts') && !auth()->user()->hasPermission('attendance'));
+    $monthsListSafe = !empty($monthsList) ? $monthsList : ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'];
+    $monthlyCollectedSafe = !empty($monthlyCollectedData) ? $monthlyCollectedData : [0, 0, 0, 0, 0, 0];
+    $monthlyUnpaidSafe = !empty($monthlyUnpaidData) ? $monthlyUnpaidData : [0, 0, 0, 0, 0, 0];
+@endphp
 <div class="space-y-6">
 
     <!-- WELCOME BANNER (Ergonomic Daylight Card) -->
@@ -193,11 +199,11 @@
                     new Chart(ctxBar.getContext('2d'), {
                         type: 'bar',
                         data: {
-                            labels: @json($monthsList ?? ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6']),
+                            labels: {!! json_encode($monthsListSafe) !!},
                             datasets: [
                                 {
                                     label: 'Fee Collected (PKR)',
-                                    data: @json($monthlyCollectedData ?? [0,0,0,0,0,0]),
+                                    data: {!! json_encode($monthlyCollectedSafe) !!},
                                     backgroundColor: 'rgba(16, 185, 129, 0.85)',
                                     borderColor: '#059669',
                                     borderWidth: 1.5,
@@ -205,7 +211,7 @@
                                 },
                                 {
                                     label: 'Unpaid Arrears (PKR)',
-                                    data: @json($monthlyUnpaidData ?? [0,0,0,0,0,0]),
+                                    data: {!! json_encode($monthlyUnpaidSafe) !!},
                                     backgroundColor: 'rgba(244, 63, 94, 0.75)',
                                     borderColor: '#e11d48',
                                     borderWidth: 1.5,
@@ -252,7 +258,7 @@
                         data: {
                             labels: ['Paid Invoices', 'Unpaid Invoices'],
                             datasets: [{
-                                data: [{{ $paidCount ?? 0 }}, {{ $unpaidCount ?? 0 }}],
+                                data: [{{ (int) ($paidCount ?? 0) }}, {{ (int) ($unpaidCount ?? 0) }}],
                                 backgroundColor: ['#10b981', '#f43f5e'],
                                 borderWidth: 3,
                                 borderColor: '#ffffff'
@@ -271,10 +277,6 @@
             });
         </script>
     @endif
-
-    @php
-        $isAccountant = strtolower(auth()->user()->staff_role ?? '') === 'accountant' || (auth()->user()->hasPermission('accounts') && !auth()->user()->hasPermission('attendance'));
-    @endphp
 
     <!-- METRICS GRID / WIDGETS -->
     @if(!$isAccountant)
@@ -695,7 +697,7 @@
                 <i class="fa-solid fa-circle-info text-pink-500"></i> Timetable synced with Principal Matrix Engine.
             </span>
             <div class="flex items-center gap-3">
-                <a href="{{ route('teacher.schedule') }}" class="btn-primary px-4 py-2 text-xs font-bold flex items-center gap-1.5">
+                <a href="{{ auth()->user()->staffUrl('schedule') }}" class="btn-primary px-4 py-2 text-xs font-bold flex items-center gap-1.5">
                     <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Full Page View
                 </a>
                 <button type="button" onclick="closeTimetableModal()" class="btn-secondary px-4 py-2 text-xs font-bold">
