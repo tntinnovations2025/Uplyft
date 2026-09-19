@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPLYFT — Next-Gen Academic Management & AI Study Suite</title>
+    <title>UPLYFT — Comprehensive User Manual & Operations Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -12,13 +12,20 @@
     <style>
         @page {
             size: A4;
-            margin: 10mm 10mm 12mm 10mm;
+            margin: 12mm 12mm 14mm 12mm;
             @bottom-right {
-                content: "UPLYFT Platform Guide • Page " counter(page);
+                content: "UPLYFT User Manual • Page " counter(page);
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-size: 7.5pt;
+                color: #64748B;
+                font-weight: 600;
+            }
+            @bottom-left {
+                content: "Confidential • UPLYFT Academic & AI Operations Suite";
                 font-family: 'Plus Jakarta Sans', sans-serif;
                 font-size: 7.5pt;
                 color: #94A3B8;
-                font-weight: 600;
+                font-weight: 500;
             }
         }
 
@@ -63,7 +70,7 @@
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             color: var(--ink);
             background: #FFFFFF;
-            font-size: 8.8pt;
+            font-size: 8.5pt;
             line-height: 1.45;
         }
 
@@ -81,7 +88,7 @@
         }
 
         /* Typography */
-        h1, h2, h3, h4 {
+        h1, h2, h3, h4, h5 {
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
             color: var(--ink);
@@ -94,791 +101,1211 @@
             border-radius: 18px;
             background: radial-gradient(circle at 15% 15%, #1E293B 0%, #0A0F1D 70%);
             color: #FFFFFF;
-            padding: 30px 24px 22px 24px;
+            padding: 32px 28px 24px 28px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
-            border: 2px solid rgba(217, 119, 6, 0.35);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
         }
         .hero-cover::before {
             content: "";
             position: absolute;
-            top: -80px;
-            right: -80px;
-            width: 320px;
-            height: 320px;
+            top: -100px;
+            right: -100px;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(37,99,235,0.22) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(217,119,6,0.2) 0%, rgba(37,99,235,0.05) 70%, transparent 100%);
             pointer-events: none;
         }
-        .hero-top-badge {
+        .hero-cover::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(217,119,6,0.18) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .cover-badge {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            padding: 5px 14px;
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.4);
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 9999px;
-            color: #FBBF24;
             font-size: 8pt;
-            font-weight: 800;
-            letter-spacing: 0.8px;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #60A5FA;
+            backdrop-blur: 8px;
+            width: fit-content;
         }
-        .hero-brand-title {
+
+        .cover-title {
             font-size: 32pt;
+            line-height: 1.05;
             font-weight: 900;
-            color: #FFFFFF;
-            line-height: 1.08;
-            margin-top: 14px;
-            letter-spacing: -0.04em;
-        }
-        .hero-brand-title span {
-            background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
+            margin: 16px 0 10px 0;
+            background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .hero-tagline {
-            font-size: 11.5pt;
+        .cover-subtitle {
+            font-size: 12pt;
             color: #94A3B8;
             font-weight: 500;
-            margin-top: 10px;
-            max-width: 90%;
+            max-width: 600px;
             line-height: 1.4;
         }
-        .hero-stats-row {
+
+        .cover-modules-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 22px 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 24px;
         }
-        .stat-card {
+        .cover-mod-card {
             background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 12px 10px;
-            text-align: center;
-        }
-        .stat-number {
-            font-family: 'Outfit', sans-serif;
-            font-size: 18pt;
-            font-weight: 900;
-            color: #F8FAFC;
-            line-height: 1;
-        }
-        .stat-number.gold { color: #FBBF24; }
-        .stat-number.cyan { color: #38BDF8; }
-        .stat-number.emerald { color: #34D399; }
-        .stat-number.purple { color: #C084FC; }
-        .stat-label {
-            font-size: 7.5pt;
-            color: #94A3B8;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-        }
-        .hero-modules-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .hero-module-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.09);
             border-radius: 12px;
             padding: 12px 14px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
         }
-        .hero-module-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 9px;
+        .cover-mod-card i {
+            font-size: 14pt;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .cover-mod-card h4 {
+            color: #F8FAFC;
+            font-size: 9.5pt;
+            margin-bottom: 2px;
+        }
+        .cover-mod-card p {
+            color: #94A3B8;
+            font-size: 7.5pt;
+            line-height: 1.3;
+        }
+
+        .cover-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 8pt;
+            color: #94A3B8;
+        }
+
+        /* ── SECTION HEADERS & CALLOUTS ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+        .section-header .icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #FFFFFF;
             font-size: 13pt;
             flex-shrink: 0;
         }
-        .hero-module-title {
-            font-size: 9.5pt;
-            font-weight: 800;
-            color: #FFFFFF;
-            font-family: 'Outfit', sans-serif;
+        .section-header h2 {
+            font-size: 15pt;
+            color: var(--ink);
+            line-height: 1.2;
         }
-        .hero-module-desc {
-            font-size: 7.8pt;
-            color: #94A3B8;
-            margin-top: 2px;
-            line-height: 1.3;
-        }
-        .hero-footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 7.8pt;
-            color: #64748B;
-            font-weight: 600;
+        .section-header p {
+            font-size: 8pt;
+            color: var(--ink-muted);
+            margin-top: 1px;
         }
 
-        /* ── SECTION BANNERS ── */
-        .section-banner {
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            display: flex;
+        .role-pill {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            border: 1px solid transparent;
-        }
-        .banner-navy {
-            background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%);
-            color: #FFFFFF;
-            border-color: #1E3A8A;
-        }
-        .banner-amber {
-            background: linear-gradient(135deg, #78350F 0%, #D97706 100%);
-            color: #FFFFFF;
-            border-color: #D97706;
-        }
-        .banner-emerald {
-            background: linear-gradient(135deg, #064E3B 0%, #059669 100%);
-            color: #FFFFFF;
-            border-color: #059669;
-        }
-        .banner-purple {
-            background: linear-gradient(135deg, #4C1D95 0%, #7C3AED 100%);
-            color: #FFFFFF;
-            border-color: #7C3AED;
-        }
-        .section-banner h2 {
-            font-size: 13pt;
-            color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .section-tag {
-            font-size: 7.5pt;
+            gap: 5px;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 7pt;
             font-weight: 800;
-            padding: 2.5px 9px;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.35);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
+        }
+        .role-principal { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+        .role-coordinator { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
+        .role-teacher { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+        .role-accountant { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+        .role-student { background: #FCE7F3; color: #9D174D; border: 1px solid #FBCFE8; }
+
+        /* ── BUTTON BREAKDOWN TABLES ── */
+        .manual-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 10px 0 14px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            font-size: 7.8pt;
+        }
+        .manual-table th {
+            background: #F1F5F9;
+            color: #334155;
+            font-weight: 800;
+            text-align: left;
+            padding: 7px 10px;
+            border-bottom: 1.5px solid var(--border-subtle);
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .manual-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #F1F5F9;
+            color: #1E293B;
+            vertical-align: top;
+            line-height: 1.35;
+        }
+        .manual-table tr:last-child td {
+            border-bottom: none;
+        }
+        .manual-table tr:nth-child(even) td {
+            background: #FAFAFA;
         }
 
-        /* ── CARDS & FEATURE GRIDS ── */
-        .grid-2 {
+        .btn-ui {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 7.2pt;
+            white-space: nowrap;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .btn-primary { background: #2563EB; color: #FFFFFF; border: 1px solid #1D4ED8; }
+        .btn-secondary { background: #FFFFFF; color: #334155; border: 1px solid #CBD5E1; }
+        .btn-emerald { background: #059669; color: #FFFFFF; border: 1px solid #047857; }
+        .btn-amber { background: #D97706; color: #FFFFFF; border: 1px solid #B45309; }
+        .btn-rose { background: #E11D48; color: #FFFFFF; border: 1px solid #BE123C; }
+        .btn-purple { background: #7C3AED; color: #FFFFFF; border: 1px solid #6D28D9; }
+
+        .path-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7pt;
+            background: #F8FAFC;
+            border: 1px solid var(--border-subtle);
+            padding: 2px 7px;
+            border-radius: 5px;
+            color: #0F172A;
+            font-weight: 700;
+        }
+
+        /* ── TUTORIAL STEP CARDS ── */
+        .step-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 10px;
+            margin: 8px 0 12px 0;
         }
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 9px;
-            margin-bottom: 10px;
-        }
-        .feature-card {
+        .step-card {
             background: #FFFFFF;
             border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 11px 12px;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-        .feature-card.primary-border { border-top: 3.5px solid var(--primary); background: #F8FAFC; }
-        .feature-card.amber-border { border-top: 3.5px solid var(--amber); background: #FFFDF9; }
-        .feature-card.emerald-border { border-top: 3.5px solid var(--emerald); background: #F9FDFB; }
-        .feature-card.purple-border { border-top: 3.5px solid var(--purple); background: #FAF8FF; }
-        .feature-card.rose-border { border-top: 3.5px solid var(--rose); background: #FFFBFB; }
-        .feature-card.cyan-border { border-top: 3.5px solid var(--cyan); background: #F8FCFD; }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .card-title {
-            font-size: 9.5pt;
-            font-weight: 800;
-            color: var(--ink);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .card-title i {
-            font-size: 10pt;
-        }
-        .card-badge {
-            font-size: 6.8pt;
-            font-weight: 800;
-            padding: 1.5px 6px;
-            border-radius: 6px;
-            text-transform: uppercase;
-        }
-        .badge-blue { background: #DBEAFE; color: #1E40AF; }
-        .badge-amber { background: #FEF3C7; color: #92400E; }
-        .badge-emerald { background: #D1FAE5; color: #065F46; }
-        .badge-purple { background: #EDE9FE; color: #5B21B6; }
-
-        .card-text {
-            font-size: 8.2pt;
-            color: var(--ink-secondary);
-            line-height: 1.38;
-            margin-bottom: 5px;
-        }
-        .feature-bullets {
-            list-style: none;
-            padding: 0;
-            margin-top: 4px;
-        }
-        .feature-bullets li {
-            font-size: 7.8pt;
-            color: var(--ink-secondary);
-            position: relative;
-            padding-left: 14px;
-            margin-bottom: 3px;
-            line-height: 1.3;
-        }
-        .feature-bullets li::before {
-            content: "•";
-            position: absolute;
-            left: 3px;
-            top: -1px;
-            color: var(--primary);
-            font-weight: 900;
-            font-size: 9pt;
-        }
-        .feature-bullets.amber-bullet li::before { color: var(--amber); }
-        .feature-bullets.emerald-bullet li::before { color: var(--emerald); }
-        .feature-bullets.purple-bullet li::before { color: var(--purple); }
-
-        /* ── HIGHLIGHT PILL STRIP ── */
-        .highlight-strip {
-            background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
-            border: 1px solid #CBD5E1;
             border-radius: 10px;
+            padding: 9px 12px;
+            position: relative;
+        }
+        .step-number {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0F172A;
+            color: #FFFFFF;
+            font-size: 7.5pt;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        .step-card h4 {
+            font-size: 8.5pt;
+            margin-bottom: 3px;
+            color: var(--ink);
+        }
+        .step-card p {
+            font-size: 7.5pt;
+            color: var(--ink-secondary);
+            line-height: 1.35;
+        }
+
+        .alert-box {
+            border-radius: 8px;
             padding: 8px 12px;
             margin: 8px 0;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            align-items: flex-start;
             gap: 8px;
-        }
-        .strip-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 8pt;
-            font-weight: 700;
-            color: #1E293B;
-        }
-        .strip-item i {
-            font-size: 9.5pt;
-        }
-
-        /* ── WORKFLOW CALLOUT ── */
-        .workflow-box {
-            background: #F8FAFC;
-            border: 1px dashed #94A3B8;
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin: 6px 0 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             font-size: 7.8pt;
-            color: #334155;
+            line-height: 1.35;
         }
-        .workflow-step {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 700;
-        }
-        .workflow-step-num {
-            width: 17px;
-            height: 17px;
-            border-radius: 50%;
-            background: var(--navy);
-            color: #FFFFFF;
-            font-size: 7pt;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .workflow-arrow {
-            color: #94A3B8;
-            font-weight: 900;
-        }
+        .alert-info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+        .alert-success { background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; }
+        .alert-warning { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+        .alert-danger { background: #FFF1F2; border: 1px solid #FECDD3; color: #9F1239; }
 
-        .footer-bar {
-            text-align: center;
-            font-size: 7.3pt;
-            color: #94A3B8;
-            font-weight: 600;
-            padding-top: 8px;
-            border-top: 1px solid #E2E8F0;
-            margin-top: 8px;
+        .feature-box {
+            background: #F8FAFC;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- =================================================================== -->
-    <!-- PAGE 1: COVER & EXECUTIVE SUITE OVERVIEW -->
-    <!-- =================================================================== -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- COVER PAGE                                                          -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
     <div class="page">
         <div class="hero-cover">
             <div>
-                <div class="hero-top-badge">
-                    <i class="fa-solid fa-sparkles"></i> 2026 Enterprise Edition
+                <div class="cover-badge">
+                    <i class="fa-solid fa-graduation-cap"></i> Complete Operations Manual
                 </div>
-                <h1 class="hero-brand-title">
-                    UPLYFT <span>Suite</span><br>
-                    Next-Gen Academic Engine
-                </h1>
-                <p class="hero-tagline">
-                    An all-in-one AI-powered institutional ecosystem built for Cambridge O/A Levels, ACCA Professional, Matric/FSc Colleges, and K-12 School Networks.
+                <h1 class="cover-title">UPLYFT ACADEMIC<br>& AI OPERATIONS SUITE</h1>
+                <p class="cover-subtitle">
+                    The exhaustive operational reference manual covering all platform portals, role authorities, screen navigation, button functionalities, and step-by-step institutional workflows.
                 </p>
 
-                <div class="hero-stats-row">
-                    <div class="stat-card">
-                        <div class="stat-number gold">100%</div>
-                        <div class="stat-label">Clash-Free Timetables</div>
+                <div class="cover-modules-grid">
+                    <div class="cover-mod-card">
+                        <i class="fa-solid fa-crown" style="color:#F59E0B;"></i>
+                        <h4>Principal Leadership</h4>
+                        <p>Campus setup, term lifecycle, AI timetable matrix, staff delegations & master controls.</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number cyan">RAG AI</div>
-                        <div class="stat-label">Lecture Study Bot</div>
+                    <div class="cover-mod-card">
+                        <i class="fa-solid fa-shield-halved" style="color:#A855F7;"></i>
+                        <h4>Coordinator & Staff</h4>
+                        <p>Dynamic assigned rights, student admissions, class-subject architecture & roster oversight.</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number emerald">1-Click</div>
-                        <div class="stat-label">Payroll &amp; Fee Ledger</div>
+                    <div class="cover-mod-card">
+                        <i class="fa-solid fa-chalkboard-user" style="color:#3B82F6;"></i>
+                        <h4>Faculty & Teaching</h4>
+                        <p>Interactive attendance, daily diary, LMS content repository & Cambridge mock exam generator.</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number purple">Real-Time</div>
-                        <div class="stat-label">Rosters &amp; SMS Diaries</div>
+                    <div class="cover-mod-card">
+                        <i class="fa-solid fa-calculator" style="color:#10B981;"></i>
+                        <h4>Accounts & Finance</h4>
+                        <p>Fee voucher generation, 3-part bank challans, AI expense calculation, ledger & salary disburser.</p>
                     </div>
-                </div>
-
-                <div class="hero-modules-grid">
-                    <div class="hero-module-box">
-                        <div class="hero-module-icon" style="background:rgba(37,99,235,0.15); color:#60A5FA;">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
-                        <div>
-                            <div class="hero-module-title">Executive Leadership &amp; Dean Portal</div>
-                            <div class="hero-module-desc">Autonomous timetable matrix solver, faculty delegations, scholarship policies, and financial accounts.</div>
-                        </div>
+                    <div class="cover-mod-card">
+                        <i class="fa-solid fa-user-graduate" style="color:#EC4899;"></i>
+                        <h4>Student & Parent</h4>
+                        <p>Class schedules, fee challan downloads, 24/7 RAG AI tutor, practice quizzes & report cards.</p>
                     </div>
-
-                    <div class="hero-module-box">
-                        <div class="hero-module-icon" style="background:rgba(217,119,6,0.15); color:#FBBF24;">
-                            <i class="fa-solid fa-chalkboard-user"></i>
-                        </div>
-                        <div>
-                            <div class="hero-module-title">Faculty &amp; Staff Operations</div>
-                            <div class="hero-module-desc">Rapid roster attendance, daily diary homework with attachments, and assessment grading marksheet.</div>
-                        </div>
-                    </div>
-
-                    <div class="hero-module-box">
-                        <div class="hero-module-icon" style="background:rgba(124,58,237,0.15); color:#C084FC;">
-                            <i class="fa-solid fa-robot"></i>
-                        </div>
-                        <div>
-                            <div class="hero-module-title">LMS &amp; AI-Powered Study Suite</div>
-                            <div class="hero-module-desc">Conversational textbook chatbot, automated past-paper mock exam generator, and instant MCQ evaluation.</div>
-                        </div>
-                    </div>
-
-                    <div class="hero-module-box">
-                        <div class="hero-module-icon" style="background:rgba(5,150,105,0.15); color:#34D399;">
-                            <i class="fa-solid fa-user-graduate"></i>
-                        </div>
-                        <div>
-                            <div class="hero-module-title">Student &amp; Parent Digital Hub</div>
-                            <div class="hero-module-desc">Live class timelines, interactive practice tests, online fee voucher clearance, and official digital grade cards.</div>
-                        </div>
+                    <div class="cover-mod-card">
+                        <i class="fa-solid fa-folder-tree" style="color:#06B6D4;"></i>
+                        <h4>Master Directory</h4>
+                        <p>Unified fast search, student dossiers, teacher portfolios, salary slips & password reset desk.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="hero-footer">
-                <span>Platform Architecture: <strong>Multi-Tenant Campus Network</strong></span>
-                <span>Supported Curriculums: <strong>Cambridge (O/A), ACCA, Matric/Inter</strong></span>
-                <span>Edition: <strong>Enterprise 2026</strong></span>
+            <div class="cover-footer">
+                <div>
+                    <strong>Version:</strong> Production v3.2 Enterprise &nbsp;•&nbsp; <strong>Engine:</strong> Laravel 12 & AI Engine
+                </div>
+                <div>
+                    <strong>Target Audiences:</strong> Principals, Coordinators, Teachers, Accountants, Students & Staff
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- PAGE 2: EXECUTIVE PRINCIPAL & DEAN LEADERSHIP HUB -->
-    <!-- =================================================================== -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 2: ROLE-BASED ACCESS CONTROL (RBAC) & AUTHORITIES MATRIX       -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
     <div class="page">
-        <div class="section-banner banner-navy">
-            <h2><i class="fa-solid fa-building-columns"></i> 1. Executive Principal &amp; Academic Dean Hub</h2>
-            <span class="section-tag">Campus Leadership &amp; Governance</span>
+        <div class="section-header">
+            <div class="icon-box" style="background:#0F172A;">
+                <i class="fa-solid fa-users-gear"></i>
+            </div>
+            <div>
+                <h2>1. Institutional Architecture & Role Authorities</h2>
+                <p>Security hierarchy, dynamic permission inheritance, and portal URL prefixes.</p>
+            </div>
         </div>
 
-        <p style="margin-bottom: 8px;">
-            The Principal Portal provides comprehensive administrative control over academic sessions, scheduling algorithms, staff delegations, and campus finances.
+        <p style="font-size: 8pt; color: #475569; margin-bottom: 10px;">
+            UPLYFT employs a high-security Role-Based Access Control (RBAC) system with multi-tenant isolation. Every user is authenticated, associated with an active campus/institute, and bound to a specific URL prefix and granular permission set.
         </p>
 
-        <div class="grid-2">
-            <!-- Feature 1: AI Clash-Free Timetables -->
-            <div class="feature-card amber-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-calendar-check" style="color:var(--amber);"></i> AI Clash-Free Timetable Engine</span>
-                    <span class="card-badge badge-amber">Core AI Solver</span>
-                </div>
-                <p class="card-text">Autonomous timetable generator that builds complete weekly schedules across all sections and grades with <strong>zero teacher, room, or student batch overlaps</strong>.</p>
-                <ul class="feature-bullets amber-bullet">
-                    <li>Teacher weekly period limits &amp; subject allocation balancing</li>
-                    <li>Science labs, computer rooms &amp; executive hall capacity management</li>
-                    <li>1-Click Excel export &amp; real-time timetable grid visualization</li>
-                    <li>Smart substitution assistant for faculty on leave</li>
-                </ul>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+            <div class="feature-box">
+                <span class="role-pill role-principal"><i class="fa-solid fa-crown"></i> Principal / Executive</span>
+                <p style="font-size:7.5pt; color:#334155; margin-top:4px;"><strong>Prefix:</strong> <code>/principal</code><br>Unrestricted master authority across all campuses, academic terms, timetable generator, payroll, and staff rights delegation.</p>
             </div>
-
-            <!-- Feature 2: Delegated Rights Management -->
-            <div class="feature-card primary-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Granular Role &amp; Rights Delegation</span>
-                    <span class="card-badge badge-blue">Security Core</span>
-                </div>
-                <p class="card-text">Dynamically grant or revoke administrative rights to Academic Coordinators, Teachers, and Accountants with granular <strong>View-Only</strong> vs <strong>Edit/Manage</strong> toggles.</p>
-                <ul class="feature-bullets">
-                    <li>Student registration &amp; admission approval delegations</li>
-                    <li>Course catalog, class structure &amp; section management</li>
-                    <li>Security oversight &amp; administrative password resets</li>
-                    <li>Instant live permission synchronization without re-login</li>
-                </ul>
+            <div class="feature-box">
+                <span class="role-pill role-coordinator"><i class="fa-solid fa-shield-halved"></i> Delegated Admin / Coordinator</span>
+                <p style="font-size:7.5pt; color:#334155; margin-top:4px;"><strong>Prefix:</strong> <code>/staff</code><br>Master delegated staff empowered with granular administrative rights (admissions, timetable, staff, invoices, directory, security).</p>
+            </div>
+            <div class="feature-box">
+                <span class="role-pill role-teacher"><i class="fa-solid fa-chalkboard-user"></i> Faculty / Teacher</span>
+                <p style="font-size:7.5pt; color:#334155; margin-top:4px;"><strong>Prefix:</strong> <code>/teacher</code><br>Classroom operations: assigned timetable, attendance rosters, daily diary postings, LMS materials, mock exam generation, and grading.</p>
+            </div>
+            <div class="feature-box">
+                <span class="role-pill role-accountant"><i class="fa-solid fa-calculator"></i> Accountant / Bursar</span>
+                <p style="font-size:7.5pt; color:#334155; margin-top:4px;"><strong>Prefix:</strong> <code>/accountant</code><br>Financial hub: fee vouchers, bank challan printing, payment reconciliation, general ledger, AI expense calculation, and salary sheets.</p>
+            </div>
+            <div class="feature-box">
+                <span class="role-pill role-student"><i class="fa-solid fa-user-graduate"></i> Student & Guardian</span>
+                <p style="font-size:7.5pt; color:#334155; margin-top:4px;"><strong>Prefix:</strong> <code>/student</code><br>Personal learning portal: fee challan downloads, schedule viewer, learning materials, 24/7 AI tutor, practice quizzes, and report cards.</p>
+            </div>
+            <div class="feature-box">
+                <span class="role-pill role-coordinator"><i class="fa-solid fa-building-user"></i> Front Office / Admin Staff</span>
+                <p style="font-size:7.5pt; color:#334155; margin-top:4px;"><strong>Prefix:</strong> <code>/admin</code><br>Front desk operations: student admissions registration, staff onboarding, visitor logs, and preliminary fee voucher collections.</p>
             </div>
         </div>
 
-        <div class="grid-2">
-            <!-- Feature 3: Financial Accounts & Payroll -->
-            <div class="feature-card emerald-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--emerald);"></i> Financial Ledger &amp; Payroll Auto-Disbursement</span>
-                    <span class="card-badge badge-emerald">Finance Engine</span>
-                </div>
-                <p class="card-text">Full double-entry campus ledger and automated faculty salary disbursement engine designed for tax compliance and attendance policies.</p>
-                <ul class="feature-bullets emerald-bullet">
-                    <li>Configurable Filer (5%) and Non-Filer (10%) income tax deductions</li>
-                    <li>Pro-rata deduction calculation based on absent days per month</li>
-                    <li>1-Click batch salary disbursement with downloadable pay-slips</li>
-                    <li>Custom chart of account heads for fees, fines, and operational expenses</li>
-                </ul>
-            </div>
+        <h3 style="font-size: 10pt; color: var(--ink); margin-bottom: 6px;">Granular Permission Tokens & Capabilities Matrix</h3>
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 22%;">Permission Key</th>
+                    <th style="width: 28%;">Functional Scope</th>
+                    <th style="width: 25%;">View Authority</th>
+                    <th style="width: 25%;">Edit / Manage Authority</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>student_registration</code></td>
+                    <td>Admissions & student onboarding</td>
+                    <td>View application forms & draft profiles</td>
+                    <td>Create, enroll, and issue student IDs</td>
+                </tr>
+                <tr>
+                    <td><code>students</code></td>
+                    <td>Student directory & dossiers</td>
+                    <td>Browse student roster & profiles</td>
+                    <td>Update profile details & change status</td>
+                </tr>
+                <tr>
+                    <td><code>timetables</code></td>
+                    <td>Timetable matrix & scheduling</td>
+                    <td>View weekly grid & room allocations</td>
+                    <td>Run AI generator, edit slots, export</td>
+                </tr>
+                <tr>
+                    <td><code>classes</code> / <code>subjects</code></td>
+                    <td>Curriculum structure & tracks</td>
+                    <td>View classes, sections & subject lists</td>
+                    <td>Create classes, section incharge, tracks</td>
+                </tr>
+                <tr>
+                    <td><code>rooms</code></td>
+                    <td>Campus facilities & physical rooms</td>
+                    <td>Browse room capacity & lab flags</td>
+                    <td>Create, update room specs, delete rooms</td>
+                </tr>
+                <tr>
+                    <td><code>attendance</code></td>
+                    <td>Daily classroom attendance</td>
+                    <td>View attendance history & stats</td>
+                    <td>Mark roster, submit attendance records</td>
+                </tr>
+                <tr>
+                    <td><code>invoices</code></td>
+                    <td>Fee vouchers & bank challans</td>
+                    <td>View invoices, search payment logs</td>
+                    <td>Generate vouchers, print challans, mark paid</td>
+                </tr>
+                <tr>
+                    <td><code>accounts</code></td>
+                    <td>Campus ledger & financial audit</td>
+                    <td>View profit/loss, expense graphs</td>
+                    <td>Record transactions, run AI audit, disburse</td>
+                </tr>
+                <tr>
+                    <td><code>staff</code> / <code>staff_onboard</code></td>
+                    <td>Faculty & staff management</td>
+                    <td>View staff directory & roles</td>
+                    <td>Onboard staff, toggle delegations & rights</td>
+                </tr>
+                <tr>
+                    <td><code>security</code></td>
+                    <td>Credential resets & IP logs</td>
+                    <td>View reset queue & security alerts</td>
+                    <td>Approve/deny password resets, direct reset</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-            <!-- Feature 4: Scholarships & Fee Policies -->
-            <div class="feature-card purple-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-award" style="color:var(--purple);"></i> Scholarship Policies &amp; Discount Rules</span>
-                    <span class="card-badge badge-purple">Admissions</span>
-                </div>
-                <p class="card-text">Create institutional scholarship programs (Merit-based, Need-based, Kinship, Sports) with automated percentage discounts applied to student fee vouchers.</p>
-                <ul class="feature-bullets purple-bullet">
-                    <li>Dynamic fee calculation with transparent discount line items</li>
-                    <li>Academic term prerequisite enforcement on discounts</li>
-                    <li>Scholarship audit logs and beneficiary reporting</li>
-                </ul>
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 3: PRINCIPAL PORTAL (ACADEMIC TERMS, CAMPUSES, SETTINGS)      -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <div class="page">
+        <div class="section-header">
+            <div class="icon-box" style="background:#D97706;">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <div>
+                <h2>2. Principal & Executive Leadership Portal</h2>
+                <p>Campus organization, academic term lifecycle, working hours, breaks, and payroll settings.</p>
             </div>
         </div>
 
-        <!-- Workflow Bar -->
-        <div class="workflow-box">
-            <span class="workflow-step"><span class="workflow-step-num">1</span> Academic Term</span>
-            <span class="workflow-arrow">&rarr;</span>
-            <span class="workflow-step"><span class="workflow-step-num">2</span> Classes &amp; Rooms</span>
-            <span class="workflow-arrow">&rarr;</span>
-            <span class="workflow-step"><span class="workflow-step-num">3</span> Faculty Allocations</span>
-            <span class="workflow-arrow">&rarr;</span>
-            <span class="workflow-step"><span class="workflow-step-num">4</span> AI Timetable Matrix</span>
-            <span class="workflow-arrow">&rarr;</span>
-            <span class="workflow-step"><span class="workflow-step-num">5</span> Admissions &amp; Billing</span>
-        </div>
+        <h3 style="font-size: 10pt; color: var(--ink); margin-bottom: 4px;">2.1 Multi-Campus Organization Management</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/organization/campuses</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal Role Only. Enables executive multi-branch setup and cross-campus data segregation.
+        </p>
 
-        <div class="footer-bar">
-            UPLYFT Academic Management Suite • Executive Principal &amp; Dean Module
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 55%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Add New Campus</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-plus"></i> Add Campus</span></td>
+                    <td>Opens the campus creation modal. Prompts for Campus Name, Branch Code, City, Address, Contact Phone, and Primary Principal Email. Creates isolated tenant schema.</td>
+                </tr>
+                <tr>
+                    <td><strong>Manage Branch Settings</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-gear"></i> Settings</span></td>
+                    <td>Navigates into campus-specific configurations, operational timings, branding logos, and custom institutional headers.</td>
+                </tr>
+                <tr>
+                    <td><strong>Deactivate / Delete Branch</strong></td>
+                    <td><span class="btn-ui btn-rose"><i class="fa-solid fa-trash"></i> Delete</span></td>
+                    <td>Prompts two-factor confirmation. Archives campus data and prevents any active staff logins until restored.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">2.2 Academic Terms Lifecycle Engine</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/academic-terms</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal & Delegated Admin. All curriculum, timetables, and assessments strictly require an active term.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 55%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Create New Academic Term</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-calendar-plus"></i> New Term</span></td>
+                    <td>Opens term creation dialog. Requires Term Name (e.g., <em>Fall 2026 - Session A</em>), Start Date, End Date, and Assessment Submission Cutoff Date.</td>
+                </tr>
+                <tr>
+                    <td><strong>Set As Active Session</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-circle-check"></i> Set Active</span></td>
+                    <td>Activates selected term across the entire campus. Unlocks operational routes (timetables, classes, LMS, exams) for the whole faculty.</td>
+                </tr>
+                <tr>
+                    <td><strong>Clone Previous Term Data</strong></td>
+                    <td><span class="btn-ui btn-amber"><i class="fa-solid fa-copy"></i> Clone Architecture</span></td>
+                    <td>Copies all class rooms, dynamic tracks, subject pools, and base teacher allocations from an earlier term into the new session to prevent manual data re-entry.</td>
+                </tr>
+                <tr>
+                    <td><strong>Update Deadlines / Lock</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-clock"></i> Deadlines</span></td>
+                    <td>Modifies final date limits for teacher marksheet entry and datesheet publication.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="alert-box alert-warning">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 11pt; margin-top: 1px;"></i>
+            <div>
+                <strong>Prerequisite Engine Rule (active.term):</strong> If no academic term is marked active in the database, operational modules (Timetables, Classes, Marksheets, Assessments) will automatically redirect users to the Academic Terms panel with an activation alert.
+            </div>
         </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- PAGE 3: FACULTY, TEACHER & COORDINATOR SUITE -->
-    <!-- =================================================================== -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 4: TIMETABLE MATRIX & AI COLLISION RESOLVER                    -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
     <div class="page">
-        <div class="section-banner banner-amber">
-            <h2><i class="fa-solid fa-chalkboard-user"></i> 2. Faculty &amp; Academic Operations Suite</h2>
-            <span class="section-tag">Teaching &amp; Classroom Management</span>
+        <div class="section-header">
+            <div class="icon-box" style="background:#2563EB;">
+                <i class="fa-solid fa-calendar-week"></i>
+            </div>
+            <div>
+                <h2>3. AI Timetable Matrix & Dynamic Scheduling Engine</h2>
+                <p>Matrix constraints, auto-generation algorithms, conflict detection, and Excel export.</p>
+            </div>
         </div>
 
-        <p style="margin-bottom: 8px;">
-            A responsive, ergonomic workspace crafted for teachers and academic coordinators to streamline attendance, homework distribution, assessments, and marksheet grading.
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/timetables</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal & Staff with <code>timetables</code> permission. Generates conflict-free scheduling across rooms, faculty, and sections.
         </p>
 
-        <div class="grid-2">
-            <!-- Feature 1: Quick Attendance -->
-            <div class="feature-card primary-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-clipboard-user" style="color:var(--primary);"></i> Real-Time Attendance Roster</span>
-                    <span class="card-badge badge-blue">Interactive</span>
-                </div>
-                <p class="card-text">Launch class rosters with 1-click status toggling (Present, Absent, Late). Real-time calculations update attendance thresholds and alert parents instantly.</p>
-                <ul class="feature-bullets">
-                    <li>Quick "Mark All Present" button with individual exception toggles</li>
-                    <li>Subject-wise and daily attendance recording</li>
-                    <li>Real-time attendance percentage recalculation per student</li>
-                </ul>
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Step-by-Step Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Configure Days & Hours</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-sliders"></i> Days & Hours</span></td>
+                    <td>Opens matrix timing configuration: select active instructional days (Monday–Saturday), daily campus start time (e.g. 08:00 AM), slot duration (45 mins), and recess breaks.</td>
+                </tr>
+                <tr>
+                    <td><strong>+ Add Manual Slot</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-plus"></i> Manual Allocation</span></td>
+                    <td>Manually locks a specific Teacher, Subject, Section, Room, and Day/Time Slot. Overrides algorithmic suggestions.</td>
+                </tr>
+                <tr>
+                    <td><strong>Auto-Generate AI Timetable</strong></td>
+                    <td><span class="btn-ui btn-purple"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Generate</span></td>
+                    <td>Triggers the multi-variable constraint solver. Balances teacher workload, room availability, and subject credit hours without collisions.</td>
+                </tr>
+                <tr>
+                    <td><strong>Allocation Duration Slider</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-arrows-left-right"></i> Drag Slider</span></td>
+                    <td>Dynamically increases/decreases subject weekly lecture frequency and merges contiguous periods (e.g. 90-min double Science Labs).</td>
+                </tr>
+                <tr>
+                    <td><strong>Export Matrix (Excel)</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-file-excel"></i> Export Excel</span></td>
+                    <td>Generates a full institutional spreadsheet containing separate sheets for Master Campus Grid, Section-wise schedules, and Teacher rosters.</td>
+                </tr>
+                <tr>
+                    <td><strong>AI Timetable Chatbot</strong></td>
+                    <td><span class="btn-ui btn-amber"><i class="fa-solid fa-comments"></i> Matrix Assistant</span></td>
+                    <td>Natural language assistant: query <em>"Show all free physics teachers on Thursday period 3"</em> or <em>"Reassign Room 102 to Section A"</em>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 9.5pt; color: var(--ink); margin-top: 10px; margin-bottom: 6px;">Step-by-Step: How to Generate an Institutional Timetable</h3>
+        <div class="step-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h4>Define Campus Days & Hours</h4>
+                <p>Click <strong>Days & Hours</strong>. Select teaching days (e.g. Mon–Fri), specify campus opening time, and define lunch / break intervals.</p>
             </div>
-
-            <!-- Feature 2: Daily Diary -->
-            <div class="feature-card amber-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-book-open" style="color:var(--amber);"></i> Smart Daily Diary &amp; Homework</span>
-                    <span class="card-badge badge-amber">Communication</span>
-                </div>
-                <p class="card-text">Publish class lesson summaries, homework assignments, and deadline reminders. Attach PDF worksheets, reading materials, or lecture slides.</p>
-                <ul class="feature-bullets amber-bullet">
-                    <li>Instant live broadcast to Student and Parent dashboards</li>
-                    <li>Homework submission tracking and assignment deadlines</li>
-                    <li>Archived daily logs for parent-teacher progress reviews</li>
-                </ul>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h4>Assign Teachers to Subjects</h4>
+                <p>Navigate to <strong>Subject-Teacher Allocations</strong>. Assign qualified faculty to each class section and configure weekly period quotas.</p>
             </div>
-        </div>
-
-        <div class="grid-2">
-            <!-- Feature 3: Assessment Engine -->
-            <div class="feature-card purple-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-file-pen" style="color:var(--purple);"></i> Assessment &amp; Exam Creator</span>
-                    <span class="card-badge badge-purple">Evaluation</span>
-                </div>
-                <p class="card-text">Create structured academic evaluations (Quizzes, Assignments, Midterms, Final Exams) with mixed question formats and model answer keys.</p>
-                <ul class="feature-bullets purple-bullet">
-                    <li>Multiple Choice Questions (MCQs), Short Questions &amp; Long Problems</li>
-                    <li>Chapter and syllabus topic tagging for performance insights</li>
-                    <li>Custom passing marks, time limits, and evaluation deadlines</li>
-                </ul>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h4>Execute AI Generation Engine</h4>
+                <p>Click <strong>Auto-Generate AI Timetable</strong>. The system calculates clash-free room, teacher, and section allocations in seconds.</p>
             </div>
-
-            <!-- Feature 4: Marksheet Grading -->
-            <div class="feature-card emerald-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-square-poll-vertical" style="color:var(--emerald);"></i> Instant MCQ &amp; Marksheet Grading</span>
-                    <span class="card-badge badge-emerald">Grading</span>
-                </div>
-                <p class="card-text">Automated evaluation for digital objective tests combined with a fast digital marksheet spreadsheet for manual subjective entry.</p>
-                <ul class="feature-bullets emerald-bullet">
-                    <li>Instant bulk auto-scoring for online MCQ assessments</li>
-                    <li>Digital paper marksheet entry with min/max score guards</li>
-                    <li>Automated grade calculation, GPA normalization &amp; position ranking</li>
-                </ul>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h4>Review Grid & Publish</h4>
+                <p>Inspect the visual grid for highlighted conflicts. Use drag-and-drop or manual adjusters, then click <strong>Export Excel</strong> or broadcast to student portals.</p>
             </div>
-        </div>
-
-        <!-- Highlight Strip -->
-        <div class="highlight-strip">
-            <div class="strip-item"><i class="fa-solid fa-shield-halved" style="color:var(--purple);"></i> <span>Coordinator Roster Control</span></div>
-            <div class="strip-item"><i class="fa-solid fa-calendar-days" style="color:var(--primary);"></i> <span>My Teaching Timetable Grid</span></div>
-            <div class="strip-item"><i class="fa-solid fa-receipt" style="color:var(--emerald);"></i> <span>Accountant Fee &amp; Payroll Hub</span></div>
-        </div>
-
-        <div class="footer-bar">
-            UPLYFT Academic Management Suite • Faculty &amp; Academic Staff Suite
         </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- PAGE 4: LMS, AI STUDY SUITE & EXAM ENGINE -->
-    <!-- =================================================================== -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 5: STAFF ROSTER, DELEGATIONS & PERMISSION MANAGEMENT           -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
     <div class="page">
-        <div class="section-banner banner-purple">
-            <h2><i class="fa-solid fa-brain"></i> 3. LMS &amp; AI-Powered Study Suite</h2>
-            <span class="section-tag">Artificial Intelligence &amp; Testing</span>
+        <div class="section-header">
+            <div class="icon-box" style="background:#7C3AED;">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div>
+                <h2>4. Staff Roster & Master Rights Delegation</h2>
+                <p>Faculty onboarding, role assignments, authority presets, and granular permission toggles.</p>
+            </div>
         </div>
 
-        <p style="margin-bottom: 8px;">
-            Harness the power of Retrieval-Augmented Generation (RAG) and generative AI to create a personalized, 24/7 intelligent tutoring and testing ecosystem.
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/staff</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal Role. Empowers coordinators with scoped administrative rights without sharing root passwords.
         </p>
 
-        <div class="grid-2">
-            <!-- Feature 1: RAG AI Chatbot -->
-            <div class="feature-card purple-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-robot" style="color:var(--purple);"></i> RAG AI Lecture Study Assistant</span>
-                    <span class="card-badge badge-purple">24/7 AI Tutor</span>
-                </div>
-                <p class="card-text">An AI chatbot trained directly on teacher-uploaded lecture slides, syllabus books, and notes. Students can ask questions and receive instant, grounded explanations.</p>
-                <ul class="feature-bullets purple-bullet">
-                    <li>Exact chapter and slide citation references in answers</li>
-                    <li>Socratic explanations for complex mathematics and science concepts</li>
-                    <li>Full-page study suite and embedded quick-ask modal</li>
-                    <li>Session history management with exportable chat notes</li>
-                </ul>
-            </div>
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Onboard New Staff</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-user-plus"></i> Onboard Staff</span></td>
+                    <td>Opens staff registration form. Inputs: Full Name, Email, Phone, Staff Role (Teacher / Coordinator / Accountant), Qualification, Joining Date, and Basic Salary.</td>
+                </tr>
+                <tr>
+                    <td><strong>Master Delegated Admin Toggle</strong></td>
+                    <td><span class="btn-ui btn-amber"><i class="fa-solid fa-crown"></i> Master Delegated</span></td>
+                    <td>Promotes staff member to <em>Master Delegated Admin</em>. Enables coordinator access to the staff portal (<code>/staff/dashboard</code>) with active delegation rights.</td>
+                </tr>
+                <tr>
+                    <td><strong>Role Authority Presets</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-list-check"></i> Apply Preset</span></td>
+                    <td>Instantly applies pre-configured permission sets (e.g. <em>Senior Academic Coordinator</em>, <em>Admissions Officer</em>, <em>Head of Accounts</em>).</td>
+                </tr>
+                <tr>
+                    <td><strong>Granular View/Edit Checkboxes</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-check-square"></i> Checkboxes</span></td>
+                    <td>Allows granular per-module permission assignment (e.g. <code>timetables:view</code> vs <code>timetables:edit</code>, <code>invoices:view</code> vs <code>invoices:edit</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>Save Permissions (Bulk)</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-floppy-disk"></i> Save Rights</span></td>
+                    <td>Commits all permission checkboxes to the database. Updates user sidebar links and dashboard tiles dynamically on their next request.</td>
+                </tr>
+                <tr>
+                    <td><strong>Delete / Terminate Staff</strong></td>
+                    <td><span class="btn-ui btn-rose"><i class="fa-solid fa-trash"></i> Remove Staff</span></td>
+                    <td>Prompts confirmation dialog. Reallocates active classes to prevent unassigned student sections before removing the record.</td>
+                </tr>
+            </tbody>
+        </table>
 
-            <!-- Feature 2: Mock Exam Generator -->
-            <div class="feature-card amber-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-bullseye" style="color:var(--amber);"></i> AI Past-Paper Mock Exam Generator</span>
-                    <span class="card-badge badge-amber">Exam Engine</span>
-                </div>
-                <p class="card-text">Upload past examination papers and let AI generate authentic exam-standard mock test papers matched to official curriculum blueprints.</p>
-                <ul class="feature-bullets amber-bullet">
-                    <li>Full Cambridge (O/A Level), ACCA &amp; Matric exam structures</li>
-                    <li>In-place live question editor with model answer keys</li>
-                    <li>Print-ready A4 PDF exam paper export with official formatting</li>
-                    <li>1-Click deployment to student portals for timed online exams</li>
-                </ul>
+        <h3 style="font-size: 9.5pt; color: var(--ink); margin-top: 10px; margin-bottom: 6px;">How to Delegate Coordinator Rights (Step-by-Step)</h3>
+        <div class="step-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h4>Select Staff Member</h4>
+                <p>Navigate to <strong>Staff Roster</strong> (<code>/principal/staff</code>). Locate the faculty member or coordinator from the list.</p>
             </div>
-        </div>
-
-        <div class="grid-2">
-            <!-- Feature 3: Adaptive Practice Tests -->
-            <div class="feature-card emerald-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-bolt" style="color:var(--emerald);"></i> Adaptive Practice Test Generator</span>
-                    <span class="card-badge badge-emerald">Self-Paced</span>
-                </div>
-                <p class="card-text">On-demand test generation per subject allowing students to practice weak topics. Provides instant scoring and step-by-step explanatory feedback.</p>
-                <ul class="feature-bullets emerald-bullet">
-                    <li>Select difficulty (Foundation, Intermediate, Advanced)</li>
-                    <li>Timer controls and instant result analysis</li>
-                    <li>Historical test score tracking and improvement analytics</li>
-                </ul>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h4>Enable Delegated Admin</h4>
+                <p>Click the <strong>Toggle Delegation</strong> switch to enable Master Delegated Administrator privileges.</p>
             </div>
-
-            <!-- Feature 4: Grade Weightage Normalizer -->
-            <div class="feature-card primary-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-scale-balanced" style="color:var(--primary);"></i> Grade Normalization &amp; Weights</span>
-                    <span class="card-badge badge-blue">Analytics</span>
-                </div>
-                <p class="card-text">Define precise academic weightages (e.g. Assignments 10%, Midterms 30%, Finals 60%) to compute standardized GPA, letter grades, and percentile ranks.</p>
-                <ul class="feature-bullets">
-                    <li>Curriculum-specific grading scales (Cambridge, ACCA, Board)</li>
-                    <li>Automated GPA and percentage computation</li>
-                    <li>Official term report card and marksheet generation</li>
-                </ul>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h4>Select Module Permissions</h4>
+                <p>Check specific checkboxes for modules the coordinator will manage (e.g. Student Registration, Timetables, Fee Invoices, Directory).</p>
             </div>
-        </div>
-
-        <!-- Feature Highlight Box -->
-        <div class="feature-card cyan-border" style="margin-top: 4px;">
-            <div class="card-header">
-                <span class="card-title"><i class="fa-solid fa-file-pdf" style="color:var(--cyan);"></i> Official Exam Datesheet Manager &amp; Hall Notices</span>
-                <span class="card-badge" style="background:#CFFAFE; color:#0E7490;">Exam Center</span>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h4>Verify Coordinator Access</h4>
+                <p>Coordinator can now sign into <code>/staff/dashboard</code> and will see active management cards matching their assigned rights.</p>
             </div>
-            <p class="card-text" style="margin-bottom: 0;">
-                Create conflict-free examination datesheets specifying exam date, paper start/end time, subject code, and assigned examination hall. Publish datesheets directly to student dashboards with printable exam slips.
-            </p>
-        </div>
-
-        <div class="footer-bar">
-            UPLYFT Academic Management Suite • Learning Management &amp; AI Testing Suite
         </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- PAGE 5: STUDENT & PARENT DIGITAL EXPERIENCE -->
-    <!-- =================================================================== -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 6: STUDENT ADMISSIONS, ROSTER & DOSSIER MANAGEMENT             -->
+    <!-- ═════════════════════════════════════════════ -->
     <div class="page">
-        <div class="section-banner banner-emerald">
-            <h2><i class="fa-solid fa-user-graduate"></i> 4. Student &amp; Parent Digital Experience</h2>
-            <span class="section-tag">Learning &amp; Self-Service</span>
+        <div class="section-header">
+            <div class="icon-box" style="background:#059669;">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div>
+                <h2>5. Student Admissions & Dossier Management</h2>
+                <p>Registration workflows, document attachments, dynamic class allocation, and CSV bulk import.</p>
+            </div>
         </div>
 
-        <p style="margin-bottom: 8px;">
-            An intuitive, transparent self-service portal connecting learners and guardians with real-time academic progress, fee billing, and AI tutoring.
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/students</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal, Coordinator & Staff with <code>student_registration</code> / <code>students</code> rights.
         </p>
 
-        <div class="grid-2">
-            <!-- Student Feature 1: Live Timeline -->
-            <div class="feature-card primary-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-calendar-day" style="color:var(--primary);"></i> Live Class Schedule &amp; Timetable</span>
-                    <span class="card-badge badge-blue">Daily Hub</span>
-                </div>
-                <p class="card-text">Personalized daily schedule cards showing current and upcoming lecture slots, subject names, assigned teacher, and classroom location.</p>
-                <ul class="feature-bullets">
-                    <li>Circular attendance health gauge tracking session thresholds</li>
-                    <li>Notification alerts for room changes or teacher substitutions</li>
-                    <li>Weekly timetable matrix view for study planning</li>
-                </ul>
-            </div>
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Register New Student</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-user-plus"></i> Register Student</span></td>
+                    <td>Opens multi-step student admission form. Inputs: Student Full Name, DOB, Gender, Guardian Name, Guardian CNIC/ID, Contact Number, Address, Admission Date, and Admission Fee PKR.</td>
+                </tr>
+                <tr>
+                    <td><strong>Select Class & Section</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-chalkboard"></i> Dropdown</span></td>
+                    <td>Assigns student to active academic class and designated section. Triggers automatic subject enrollment matching class curriculum.</td>
+                </tr>
+                <tr>
+                    <td><strong>Upload Photo & Documents</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-file-arrow-up"></i> Upload</span></td>
+                    <td>Attaches student passport photo, previous school leaving certificate, and birth certificate into secure cloud storage.</td>
+                </tr>
+                <tr>
+                    <td><strong>Save Student Dossier</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-floppy-disk"></i> Submit Registration</span></td>
+                    <td>Generates unique permanent Student Identifier (e.g. <em>STU-2026-0042</em>), creates student portal account, and issues initial admission fee voucher.</td>
+                </tr>
+                <tr>
+                    <td><strong>Update Result / Promotion</strong></td>
+                    <td><span class="btn-ui btn-purple"><i class="fa-solid fa-arrow-up-right-dots"></i> Promote</span></td>
+                    <td>Promotes student to next academic grade (e.g., Grade 9 to Grade 10) or marks academic status (Active / Graduated / Transferred / Suspended).</td>
+                </tr>
+                <tr>
+                    <td><strong>Export Student Roster (CSV)</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-file-csv"></i> Export CSV</span></td>
+                    <td>Exports complete filtered list of enrolled students, guardian phone contacts, and section rosters into a formatted CSV file.</td>
+                </tr>
+            </tbody>
+        </table>
 
-            <!-- Student Feature 2: Daily Diary Feed -->
-            <div class="feature-card amber-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-book-open" style="color:var(--amber);"></i> Daily Diary &amp; Homework Feed</span>
-                    <span class="card-badge badge-amber">Homework</span>
+        <h3 style="font-size: 9.5pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">Universal Bulk CSV Importers</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/bulk-import</span> &nbsp;•&nbsp; 
+            Allows uploading thousands of student profiles or staff records in a single batch operation.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-users text-blue-600"></i> Bulk Students</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:4px 0 6px 0;">Import hundreds of students across multiple sections with automated ID allocation.</p>
+                <div style="display:flex; gap:4px;">
+                    <span class="btn-ui btn-secondary" style="font-size:6.5pt;"><i class="fa-solid fa-download"></i> Sample</span>
+                    <span class="btn-ui btn-primary" style="font-size:6.5pt;"><i class="fa-solid fa-upload"></i> Upload</span>
                 </div>
-                <p class="card-text">Direct access to daily teacher logs, assignments, reading materials, and project deadlines with 1-click document downloads.</p>
-                <ul class="feature-bullets amber-bullet">
-                    <li>Instant filter by subject (Mathematics, Physics, Chemistry, etc.)</li>
-                    <li>Downloadable worksheets, PDF notes, and exemplar answers</li>
-                    <li>Guardian visibility into daily student homework completion</li>
-                </ul>
+            </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-chalkboard-user text-purple-600"></i> Bulk Staff</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:4px 0 6px 0;">Onboard teaching faculty, subjects taught, and base salary structures in one CSV batch.</p>
+                <div style="display:flex; gap:4px;">
+                    <span class="btn-ui btn-secondary" style="font-size:6.5pt;"><i class="fa-solid fa-download"></i> Sample</span>
+                    <span class="btn-ui btn-purple" style="font-size:6.5pt;"><i class="fa-solid fa-upload"></i> Upload</span>
+                </div>
+            </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-coins text-emerald-600"></i> Bulk Ledger</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:4px 0 6px 0;">Import historical financial transactions, opening balances, and account heads.</p>
+                <div style="display:flex; gap:4px;">
+                    <span class="btn-ui btn-secondary" style="font-size:6.5pt;"><i class="fa-solid fa-download"></i> Sample</span>
+                    <span class="btn-ui btn-emerald" style="font-size:6.5pt;"><i class="fa-solid fa-upload"></i> Upload</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 7: FACULTY PORTAL (ATTENDANCE, DIARY, LMS & RAG AI CHATBOT)    -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <div class="page">
+        <div class="section-header">
+            <div class="icon-box" style="background:#2563EB;">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <div>
+                <h2>6. Faculty & Teacher Operations Portal</h2>
+                <p>Interactive classroom attendance, teacher daily diary, LMS materials, and RAG AI study tutor.</p>
             </div>
         </div>
 
-        <div class="grid-2">
-            <!-- Student Feature 3: Fee Invoicing & Receipts -->
-            <div class="feature-card emerald-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-receipt" style="color:var(--emerald);"></i> Fee Vouchers &amp; Digital Receipts</span>
-                    <span class="card-badge badge-emerald">Billing</span>
-                </div>
-                <p class="card-text">Transparent fee invoices with itemized tuition, laboratory, and scholarship discount breakdowns with official verification stamps.</p>
-                <ul class="feature-bullets emerald-bullet">
-                    <li>Download printable 3-part bank challan vouchers</li>
-                    <li>Live payment status indicator (Paid / Unpaid / Pending)</li>
-                    <li>Historical payment receipts for income tax and record keeping</li>
-                </ul>
+        <h3 style="font-size: 10pt; color: var(--ink); margin-bottom: 4px;">6.1 Interactive Classroom Attendance Register</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /teacher/attendance</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Faculty & Teaching Staff. Quick digital roster with attendance lock enforcement.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Select Class & Section</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-filter"></i> Dropdown Filter</span></td>
+                    <td>Loads student roster for selected assigned class and section. Displays student photo, roll number, and name.</td>
+                </tr>
+                <tr>
+                    <td><strong>Mark All Present</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-check-double"></i> All Present</span></td>
+                    <td>Instantly sets all students in the active roster to <em>Present</em> with a single click.</td>
+                </tr>
+                <tr>
+                    <td><strong>Status Radio Buttons</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-circle-dot"></i> P / A / L / Lv</span></td>
+                    <td>Toggles individual student attendance status: <strong>Present (Green)</strong>, <strong>Absent (Red)</strong>, <strong>Late (Amber)</strong>, or <strong>Leave (Purple)</strong>.</td>
+                </tr>
+                <tr>
+                    <td><strong>Submit & Save Attendance</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-floppy-disk"></i> Submit Roster</span></td>
+                    <td>Saves attendance to database. Dispatches instant SMS/app notification to guardians of absent students.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">6.2 Teacher Daily Diary & Homework Logbook</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /teacher/diary</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Faculty. Broadcasts daily homework, classwork covered, and upcoming test announcements to students and parents.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Post Daily Diary Entry</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-plus"></i> Post Diary</span></td>
+                    <td>Opens diary composer. Selects Subject, Class Section, Classwork Covered, Homework Details, and Test Dates.</td>
+                </tr>
+                <tr>
+                    <td><strong>Attach Resource File</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-paperclip"></i> Attach File</span></td>
+                    <td>Uploads homework worksheet PDF or image reference directly attached to the student diary entry.</td>
+                </tr>
+                <tr>
+                    <td><strong>Publish to Student Portals</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-paper-plane"></i> Publish Entry</span></td>
+                    <td>Instantly publishes entry to the student dashboard and daily diary mobile feed for all students enrolled in that section.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">6.3 LMS Course Documents & RAG AI Study Assistant</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /lms/subjects</span> &nbsp;•&nbsp; 
+            Upload textbooks, lecture slides, and notes for Retrieval-Augmented Generation (RAG) AI tutoring.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Course Material Upload</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:3px 0;">Click <strong>+ Upload Material</strong>. Select Chapter Number, Topic Title, and upload PDF/Word documents. The AI engine automatically chunks and embeds text for instant querying.</p>
             </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-robot text-purple-600"></i> Grounded AI Tutor Bot</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:3px 0;">Students and teachers can ask natural language questions in <strong>/lms/chatbot</strong>. The AI responds strictly grounded on uploaded school textbooks and lecture slides.</p>
+            </div>
+        </div>
+    </div>
 
-            <!-- Student Feature 4: Report Cards & Datesheets -->
-            <div class="feature-card purple-border">
-                <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-award" style="color:var(--purple);"></i> Term Report Cards &amp; Exam Slips</span>
-                    <span class="card-badge badge-purple">Academics</span>
-                </div>
-                <p class="card-text">Comprehensive academic performance reports featuring subject grades, GPA score, class rank, attendance rate, and teacher remarks.</p>
-                <ul class="feature-bullets purple-bullet">
-                    <li>Downloadable official PDF result cards with institute branding</li>
-                    <li>Midterm and final examination datesheet schedule slips</li>
-                    <li>Graphical progress breakdown across terms</li>
-                </ul>
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 8: CAMBRIDGE MOCK EXAM GENERATOR & ASSESSMENT SUITE            -->
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <div class="page">
+        <div class="section-header">
+            <div class="icon-box" style="background:#E11D48;">
+                <i class="fa-solid fa-file-circle-check"></i>
+            </div>
+            <div>
+                <h2>7. Assessment Engine & Cambridge Mock Exams</h2>
+                <p>AI test generation, O/A level mock papers, in-place question editor, rubric scoring, and grade normalization.</p>
             </div>
         </div>
 
-        <!-- Security & Notification Strip -->
-        <div class="highlight-strip">
-            <div class="strip-item"><i class="fa-solid fa-bell" style="color:var(--amber);"></i> <span>Real-Time Bell Notifications</span></div>
-            <div class="strip-item"><i class="fa-solid fa-key" style="color:var(--rose);"></i> <span>Secure Password Reset Requests</span></div>
-            <div class="strip-item"><i class="fa-solid fa-mobile-screen" style="color:var(--primary);"></i> <span>Fully Mobile Responsive Design</span></div>
+        <h3 style="font-size: 10pt; color: var(--ink); margin-bottom: 4px;">7.1 Cambridge / O/A Level Mock Examination Engine</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /lms/mocks</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Faculty & Academic Coordinators. Generates authentic examination papers matching Cambridge / Board formats.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Create Mock Exam</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-plus"></i> New Mock Exam</span></td>
+                    <td>Opens exam setup dialog. Selects Subject (e.g. <em>O-Level Physics 5054</em>), Paper Component (Paper 1 MCQs / Paper 2 Theory), and Target Class.</td>
+                </tr>
+                <tr>
+                    <td><strong>Upload Past Papers Pool</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-upload"></i> Past Papers</span></td>
+                    <td>Uploads past exam PDFs and marking schemes to expand the AI's question synthesis database for that subject.</td>
+                </tr>
+                <tr>
+                    <td><strong>Generate AI Mock Blueprint</strong></td>
+                    <td><span class="btn-ui btn-purple"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Paper</span></td>
+                    <td>Generates an authentic mock exam blueprint containing structured MCQs, multi-part structured questions, diagrams, and marking rubrics.</td>
+                </tr>
+                <tr>
+                    <td><strong>In-Place Question Editor</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-pen-to-square"></i> Edit Inline</span></td>
+                    <td>Click any question text or mark allocation directly on the preview to edit wording, replace diagrams, or modify mark schemes in real-time.</td>
+                </tr>
+                <tr>
+                    <td><strong>Print Official Question Paper</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-print"></i> Print Paper</span></td>
+                    <td>Renders a standardized exam booklet with school header, candidate name/roll number boxes, instructions, and formatted questions.</td>
+                </tr>
+                <tr>
+                    <td><strong>Download Exam PDF</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-file-pdf"></i> Download PDF</span></td>
+                    <td>Downloads high-resolution vector PDF ready for high-speed institutional photocopiers and exam hall distribution.</td>
+                </tr>
+                <tr>
+                    <td><strong>Toggle Student Portal Delivery</strong></td>
+                    <td><span class="btn-ui btn-amber"><i class="fa-solid fa-toggle-on"></i> Digital Exam Mode</span></td>
+                    <td>Switches exam delivery from physical print mode to a timed digital assessment accessible directly within the student portal.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">7.2 Grade Weightages & Report Card Normalizer</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /lms/grades/weightages/page</span> &nbsp;•&nbsp; 
+            Configures assessment percentages (e.g. Quizzes 15%, Assignments 15%, Midterm 30%, Final Exam 40%).
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-sliders text-blue-600"></i> Category Weightages</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:3px 0;">Define percentage weightage for each assessment type. System validates that the total equals exactly 100%.</p>
+            </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-table-cells text-emerald-600"></i> Class Marksheets</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:3px 0;">Enter marks directly in a dynamic spreadsheet view with automated total calculation, letter grade, and GPA assignment.</p>
+            </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-award text-purple-600"></i> Term Report Cards</h4>
+                <p style="font-size:7.2pt; color:#475569; margin:3px 0;">Generate beautiful term transcripts with subject marks, teacher remarks, attendance percentages, and principal signatures.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 9: ACCOUNTS, FEE VOUCHERS, AI AUDIT & SALARY DISBURSEMENT      -->
+    <!-- ═════════════════════════════════════════════ -->
+    <div class="page">
+        <div class="section-header">
+            <div class="icon-box" style="background:#059669;">
+                <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div>
+                <h2>8. Accounts, Fee Management & AI Financial Auditing</h2>
+                <p>Fee voucher generation, 3-part bank challans, AI expense calculation, ledger, and salary payroll.</p>
+            </div>
         </div>
 
-        <div class="footer-bar">
-            UPLYFT Academic Management Suite • Complete Institutional Feature Guide
+        <h3 style="font-size: 10pt; color: var(--ink); margin-bottom: 4px;">8.1 Fee Voucher Generation & Bank Challans</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/invoices</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal, Accountant & Staff with <code>invoices</code> rights.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Create Individual Invoice</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-plus"></i> Single Invoice</span></td>
+                    <td>Selects student, tuition fee amount, custom fee heads (Library, Lab, Sports), due date, and fine after due date.</td>
+                </tr>
+                <tr>
+                    <td><strong>+ Bulk Generate Class Invoices</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-layer-group"></i> Bulk Invoices</span></td>
+                    <td>Generates monthly fee vouchers for all enrolled students in a selected class/section with automated scholarship deductions applied.</td>
+                </tr>
+                <tr>
+                    <td><strong>Print 3-Part Bank Challan</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-print"></i> Print Challan</span></td>
+                    <td>Renders standardized 3-part printable voucher: <strong>Student Copy</strong>, <strong>Bank Copy</strong>, and <strong>Institute Copy</strong> with barcode and bank instructions.</td>
+                </tr>
+                <tr>
+                    <td><strong>Mark Invoice As Paid</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-money-bill-wave"></i> Mark Paid</span></td>
+                    <td>Records payment: selects payment channel (Cash / Bank Deposit / Online), enters reference number, marks voucher paid, and generates receipt.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">8.2 Campus Accounts Ledger & AI Financial Auditing</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/accounts</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal & Accountant with <code>accounts</code> rights.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>+ Add Account Head</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-folder-plus"></i> New Head</span></td>
+                    <td>Creates ledger category: selects Head Type (Asset / Liability / Income / Expense) and Head Name (e.g., <em>Generator Fuel</em>, <em>Science Supplies</em>).</td>
+                </tr>
+                <tr>
+                    <td><strong>Record Expense for AI Audit</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-brain"></i> AI Expense Entry</span></td>
+                    <td>Records operational disbursement: inputs amount, vendor name, invoice receipt photo, and triggers AI audit to verify anomalies or duplicate billings.</td>
+                </tr>
+                <tr>
+                    <td><strong>Auto-Disburse Faculty Salaries</strong></td>
+                    <td><span class="btn-ui btn-purple"><i class="fa-solid fa-money-check-dollar"></i> Auto-Disburse</span></td>
+                    <td>Calculates net salary for all active faculty members (Base Pay + Allowances - Deductions) and outputs a bank transfer disbursement sheet.</td>
+                </tr>
+                <tr>
+                    <td><strong>View AI Audit & P&L Statement</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-chart-pie"></i> View P&L</span></td>
+                    <td>Generates real-time financial health audit, historical fee recovery trajectories, net cash flow, and monthly profit/loss reports.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════════════════ -->
+    <!-- PAGE 10: STUDENT PORTAL, MASTER DIRECTORY & SECURITY DESK           -->
+    <!-- ═════════════════════════════════════════════ -->
+    <div class="page">
+        <div class="section-header">
+            <div class="icon-box" style="background:#7C3AED;">
+                <i class="fa-solid fa-folder-tree"></i>
+            </div>
+            <div>
+                <h2>9. Student Portal, Master Directory & Security Desk</h2>
+                <p>Student learning experience, global directory search, salary slips archive, and password reset requests.</p>
+            </div>
         </div>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-bottom: 4px;">9.1 Student & Parent Portal Experience</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /student/dashboard</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Enrolled Students & Guardians. Clean, ergonomic portal for everyday academic life.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-receipt text-emerald-600"></i> Fee Challan Download</h4>
+                <p style="font-size:7.2pt; color:#475569; margin-top:2px;">Students can view unpaid vouchers at <code>/student/fees</code> and download official PDF bank challans directly.</p>
+            </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-book-open text-blue-600"></i> Diary & Homework</h4>
+                <p style="font-size:7.2pt; color:#475569; margin-top:2px;">Daily updates at <code>/student/diary</code> display teacher homework tasks, class notes, and upcoming tests.</p>
+            </div>
+            <div class="feature-box">
+                <h4 style="font-size:8.5pt; color:var(--ink);"><i class="fa-solid fa-brain text-purple-600"></i> 24/7 AI RAG Study Tutor</h4>
+                <p style="font-size:7.2pt; color:#475569; margin-top:2px;">Students chat with an AI tutor at <code>/student/rag/chat</code> grounded strictly on their school syllabus books.</p>
+            </div>
+        </div>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 4px; margin-bottom: 4px;">9.2 Unified Master Directory & Salary Slips</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/directory</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal & Staff with <code>directory</code> permission.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Global Search Input</strong></td>
+                    <td><span class="btn-ui btn-secondary"><i class="fa-solid fa-magnifying-glass"></i> Fast Search</span></td>
+                    <td>Live search across all students and teachers by name, registration ID, contact phone, or guardian CNIC.</td>
+                </tr>
+                <tr>
+                    <td><strong>View Complete Dossier</strong></td>
+                    <td><span class="btn-ui btn-primary"><i class="fa-solid fa-id-card"></i> Dossier</span></td>
+                    <td>Opens full profile: academic records, fee payment history, attendance percentages, and guardian information.</td>
+                </tr>
+                <tr>
+                    <td><strong>Upload PDF Salary Slip</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-file-arrow-up"></i> Upload Slip</span></td>
+                    <td>Attaches official PDF salary slip to teacher dossier. Teachers can securely view and download their slips anytime.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 10pt; color: var(--ink); margin-top: 10px; margin-bottom: 4px;">9.3 Security Desk & Password Reset Operations</h3>
+        <p style="font-size: 7.8pt; color: #475569; margin-bottom: 6px;">
+            <span class="path-box"><i class="fa-solid fa-folder"></i> /principal/password-resets</span> &nbsp;•&nbsp; 
+            <strong>Access:</strong> Principal & Staff with <code>security</code> permission.
+        </p>
+
+        <table class="manual-table">
+            <thead>
+                <tr>
+                    <th style="width: 24%;">Button / Action Control</th>
+                    <th style="width: 20%;">Visual Style</th>
+                    <th style="width: 56%;">System Behavior & Execution Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Approve & Execute Reset</strong></td>
+                    <td><span class="btn-ui btn-emerald"><i class="fa-solid fa-key"></i> Execute Reset</span></td>
+                    <td>Validates student/teacher password reset request, generates secure temporary password, and dispatches via SMS/Email.</td>
+                </tr>
+                <tr>
+                    <td><strong>Deny Reset Request</strong></td>
+                    <td><span class="btn-ui btn-rose"><i class="fa-solid fa-ban"></i> Deny</span></td>
+                    <td>Rejects unauthorized or suspicious password reset requests and logs the requester's IP address into the security audit log.</td>
+                </tr>
+                <tr>
+                    <td><strong>Direct Password Reset</strong></td>
+                    <td><span class="btn-ui btn-amber"><i class="fa-solid fa-shield-halved"></i> Direct Reset</span></td>
+                    <td>Allows the Principal or Security Admin to instantly change a compromised password on the spot without waiting for OTP queues.</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 </body>
