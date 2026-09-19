@@ -1,7 +1,7 @@
-<section>
+﻿<section>
     <header style="margin-bottom: 22px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px;">
         <div style="display:flex;align-items:center;gap:12px">
-            <div style="width:38px;height:38px;border-radius:10px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;display:flex;align-items:center;justify-content:center;font-size:18px">
+            <div style="width:38px;height:38px;border-radius:10px;background:#FBF3E8;color:#D48A2E;border:1px solid #E8CEAA;display:flex;align-items:center;justify-content:center;font-size:18px">
                 🛡️
             </div>
             <div>

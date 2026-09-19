@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Assign Subject & Teacher')
 @section('breadcrumb', 'Subject & Teacher Assignments')
 
@@ -327,7 +327,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <span style="color:#0284c7;font-weight:700">Section {{ $secName }}</span>
+                                                        <span style="color:#D48A2E;font-weight:700">Section {{ $secName }}</span>
                                                     </td>
                                                     <td>
                                                         <span class="badge badge-purple" style="font-weight:700">
@@ -345,7 +345,7 @@
                                                                 <button type="button" 
                                                                         class="btn btn-ghost btn-sm" 
                                                                         onclick="openReplaceModal({{ $off->section->id }}, '{{ addslashes($className) }} — Section {{ addslashes($secName) }}', {{ $off->subject->id }}, '{{ addslashes($subName) }}', {{ $off->teacher->id }}, '{{ addslashes($off->teacher->name) }}')"
-                                                                        style="font-size:11px;padding:4px 10px;color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                                                                        style="font-size:11px;padding:4px 10px;color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                                                                     ✏️ Replace Teacher
                                                                 </button>
                                                                 <form method="POST" action="{{ request()->routeIs('teacher.*') ? route('teacher.assignments.destroy', $off->assignment) : route('principal.assignments.destroy', $off->assignment) }}" onsubmit="return confirm('Remove teacher assignment for {{ addslashes($subName) }} in {{ addslashes($className) }}?')" style="margin:0;display:inline">
@@ -425,7 +425,7 @@
                                                     <tr class="offering-row" data-search-text="{{ $searchData }}">
                                                         <td>
                                                             <span style="font-weight:800;color:#0f172a">{{ $clsName }}</span> — 
-                                                            <span style="color:#0284c7;font-weight:700">Section {{ $secName }}</span>
+                                                            <span style="color:#D48A2E;font-weight:700">Section {{ $secName }}</span>
                                                         </td>
                                                         <td>
                                                             <span class="badge badge-purple" style="font-weight:700">
@@ -442,7 +442,7 @@
                                                                 <button type="button" 
                                                                         class="btn btn-ghost btn-sm" 
                                                                         onclick="openReplaceModal({{ $off->section->id }}, '{{ addslashes($clsName) }} — Section {{ addslashes($secName) }}', {{ $off->subject->id }}, '{{ addslashes($subName) }}', {{ $off->teacher->id }}, '{{ addslashes($off->teacher->name) }}')"
-                                                                        style="font-size:11px;padding:4px 10px;color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                                                                        style="font-size:11px;padding:4px 10px;color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                                                                     ✏️ Replace Teacher
                                                                 </button>
                                                                 <form method="POST" action="{{ request()->routeIs('teacher.*') ? route('teacher.assignments.destroy', $off->assignment) : route('principal.assignments.destroy', $off->assignment) }}" onsubmit="return confirm('Remove teacher assignment for {{ addslashes($subName) }} in {{ addslashes($clsName) }}?')" style="margin:0;display:inline">
@@ -519,7 +519,7 @@
                                                 @endphp
                                                 <tr class="offering-row" data-search-text="{{ $searchData }}">
                                                     <td>
-                                                        <span style="color:#0284c7;font-weight:700">Section {{ $secName }}</span>
+                                                        <span style="color:#D48A2E;font-weight:700">Section {{ $secName }}</span>
                                                     </td>
                                                     <td>
                                                         <span class="badge badge-purple" style="font-weight:700">
@@ -778,7 +778,7 @@
         const key = sectionId + '_' + subjectId;
         if (assignmentsMap[key]) {
             const teacherName = assignmentsMap[key].teacher_name;
-            noticeElem.innerHTML = '<div style="padding:8px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;color:#0284c7;font-size:12px;font-weight:700">ℹ️ Already assigned to: <strong>' + teacherName + '</strong></div>';
+            noticeElem.innerHTML = '<div style="padding:8px 12px;background:#FBF3E8;border:1px solid #E8CEAA;border-radius:8px;color:#D48A2E;font-size:12px;font-weight:700">ℹ️ Already assigned to: <strong>' + teacherName + '</strong></div>';
         } else {
             noticeElem.innerHTML = '<div style="padding:8px 12px;background:#fee2e2;border:1px solid #fecaca;border-radius:8px;color:#dc2626;font-size:12px;font-weight:700">🔴 Status: Unassigned (No teacher allocated yet)</div>';
         }
@@ -904,7 +904,7 @@
 
         if (currentTeacherId && currentTeacherName) {
             titleElem.innerText = '🔄 Replace Teacher for ' + subjectName;
-            teacherElem.innerHTML = 'Current Faculty: <strong style="color:#0284c7">' + currentTeacherName + '</strong>';
+            teacherElem.innerHTML = 'Current Faculty: <strong style="color:#D48A2E">' + currentTeacherName + '</strong>';
             teacherSelect.value = currentTeacherId;
         } else {
             titleElem.innerText = '➕ Assign Teacher for ' + subjectName;

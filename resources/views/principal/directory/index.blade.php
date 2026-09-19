@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.directory.';
@@ -202,9 +202,9 @@
     }
 
     .id-badge.faculty {
-        background: #EFF6FF;
+        background: #FBF3E8;
         color: #1D4ED8;
-        border-color: #DBEAFE;
+        border-color: #E8CEAA;
     }
 
     /* ── Compact Key-Value Details Rows ── */
@@ -259,22 +259,22 @@
     .view-profile-link {
         font-size: 11px;
         font-weight: 700;
-        color: #0284C7;
+        color: #D48A2E;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 4px;
         padding: 4px 8px;
         border-radius: 5px;
-        background: #F0F9FF;
-        border: 1px solid #BAE6FD;
+        background: #FBF3E8;
+        border: 1px solid #E8CEAA;
         transition: all 0.15s;
     }
 
     .view-profile-link:hover {
-        background: #0284C7;
+        background: #D48A2E;
         color: #ffffff;
-        border-color: #0284C7;
+        border-color: #D48A2E;
     }
 
     .view-profile-link.faculty {
@@ -435,7 +435,7 @@
         <div style="font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:#0F172A;margin-bottom:10px;display:flex;align-items:center;gap:8px">
             <x-icon name="chalkboard-user" class="w-4 h-4 text-blue-600" />
             <span>Faculty &amp; Staff Records</span>
-            <span style="font-size:11px;font-weight:700;color:#1D4ED8;background:#DBEAFE;border:1px solid #BFDBFE;padding:1px 7px;border-radius:12px">{{ $teachers->count() }} Found</span>
+            <span style="font-size:11px;font-weight:700;color:#1D4ED8;background:#E8CEAA;border:1px solid #BFDBFE;padding:1px 7px;border-radius:12px">{{ $teachers->count() }} Found</span>
         </div>
 
         @if($teachers->isEmpty())
@@ -448,7 +448,7 @@
                     <div class="profile-card">
                         <div>
                             <div class="card-top-row">
-                                <div class="avatar-box" style="background:#EFF6FF;border-color:#DBEAFE">
+                                <div class="avatar-box" style="background:#FBF3E8;border-color:#E8CEAA">
                                     <x-icon name="chalkboard-user" class="w-4 h-4 text-blue-600" />
                                 </div>
 

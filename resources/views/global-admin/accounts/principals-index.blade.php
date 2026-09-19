@@ -1,4 +1,4 @@
-@extends('global-admin.layouts.app')
+﻿@extends('global-admin.layouts.app')
 
 @section('title', 'Principal Accounts')
 @section('breadcrumb', 'Principal Accounts')
@@ -53,7 +53,7 @@
                                 <button type="button" 
                                         onclick="openRoleModal('{{ $principal->id }}', '{{ addslashes($principal->name) }}', '{{ addslashes($principal->email) }}', '{{ $principal->role }}')"
                                         class="btn btn-secondary btn-sm"
-                                        style="padding:5px 10px;border-radius:8px;font-size:11.5px;font-weight:700;color:#0284c7;border:1px solid #bae6fd;background:#f0f9ff;white-space:nowrap"
+                                        style="padding:5px 10px;border-radius:8px;font-size:11.5px;font-weight:700;color:#D48A2E;border:1px solid #E8CEAA;background:#FBF3E8;white-space:nowrap"
                                         title="Change User Role (Principal, Teacher, Student, Staff)">
                                     🔄 Role
                                 </button>
@@ -164,7 +164,7 @@
             </div>
             <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px">
                 <button type="button" onclick="closeRoleModal()" class="apple-liquid-btn-cancel" style="padding:9px 16px;border-radius:8px">Cancel</button>
-                <button type="submit" class="apple-liquid-btn-primary" style="padding:9px 20px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;font-weight:800;border-radius:8px">💾 Save New Role</button>
+                <button type="submit" class="apple-liquid-btn-primary" style="padding:9px 20px;background:linear-gradient(135deg,#D48A2E,#C07A22);color:#fff;border:none;font-weight:800;border-radius:8px">💾 Save New Role</button>
             </div>
         </form>
     </div>

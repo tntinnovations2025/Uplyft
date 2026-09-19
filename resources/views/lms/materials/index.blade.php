@@ -1,4 +1,4 @@
-@extends('lms.layouts.app')
+﻿@extends('lms.layouts.app')
 
 @section('title', 'Course Materials & Notes')
 @section('breadcrumb', 'Course Materials')
@@ -76,7 +76,7 @@
     @forelse($materials as $material)
         <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px;border-bottom:1px solid var(--border)">
             <div style="display:flex;align-items:center;gap:14px;min-width:0">
-                <div style="width:38px;height:38px;border-radius:8px;background:rgba(0,206,209,0.15);color:var(--accent2);display:flex;align-items:center;justify-content:center;flex-shrink:0">📕</div>
+                <div style="width:38px;height:38px;border-radius:8px;background:rgba(212,138,46,0.15);color:var(--accent2);display:flex;align-items:center;justify-content:center;flex-shrink:0">📕</div>
                 <div style="min-width:0">
                     <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $material->title }}</div>
                     <div class="muted" style="font-size:12px;margin-top:2px">

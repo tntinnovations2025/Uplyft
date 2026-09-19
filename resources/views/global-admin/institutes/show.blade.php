@@ -1,4 +1,4 @@
-@extends('global-admin.layouts.app')
+﻿@extends('global-admin.layouts.app')
 @section('breadcrumb', $institute->name)
 @section('title', $institute->name . ' — Profile')
 
@@ -47,7 +47,7 @@
             <tr><td style="color:#64748b;font-weight:700">Sub. Expires</td><td style="color:#0f172a;font-weight:600">{{ $institute->subscription_expires_at?->format('d M Y') ?? 'Perpetual' }}</td></tr>
             <tr>
                 <td style="color:#64748b;font-weight:700">Tenant DB</td>
-                <td><code style="font-size:12px;color:#0284c7;background:#f0f9ff;padding:2px 6px;border-radius:4px;border:1px solid #bae6fd">{{ $institute->tenant_db_name }}</code></td>
+                <td><code style="font-size:12px;color:#D48A2E;background:#FBF3E8;padding:2px 6px;border-radius:4px;border:1px solid #E8CEAA">{{ $institute->tenant_db_name }}</code></td>
             </tr>
             <tr><td style="color:#64748b;font-weight:700">Registered</td><td style="color:#0f172a;font-weight:600">{{ $institute->created_at->format('d M Y') }}</td></tr>
         </table>
@@ -122,7 +122,7 @@
     @if($principal)
         <table>
             <tr><td style="color:#64748b;font-weight:700;width:140px">Name</td><td style="color:#0f172a;font-weight:800">{{ $principal->name }}</td></tr>
-            <tr><td style="color:#64748b;font-weight:700">Email</td><td><code style="font-size:13px;color:#0284c7">{{ $principal->email }}</code></td></tr>
+            <tr><td style="color:#64748b;font-weight:700">Email</td><td><code style="font-size:13px;color:#D48A2E">{{ $principal->email }}</code></td></tr>
             @if($principal->identifier)
             <tr><td style="color:#64748b;font-weight:700">Employee ID</td><td><code style="font-size:13px;color:#9333ea">{{ $principal->identifier }}</code></td></tr>
             @endif

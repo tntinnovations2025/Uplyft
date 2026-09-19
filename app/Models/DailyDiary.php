@@ -24,16 +24,63 @@ class DailyDiary extends Model
         'entry_type',
         'title',
         'content',
+        'file_path',
+        'file_name',
+        'file_size',
+        'file_type',
         'assigned_date',
+        'due_date',
+        'reminder_morning',
+        'reminder_sent_at',
         'expires_at',
         'is_active',
     ];
 
     protected $casts = [
         'assigned_date' => 'date',
+        'due_date' => 'date',
+        'reminder_morning' => 'boolean',
+        'reminder_sent_at' => 'datetime',
         'expires_at' => 'datetime',
         'is_active' => 'boolean',
     ];
+
+    public function hasAttachment(): bool
+    {
+        return !empty($this->file_path);
+    }
+
+    public function getAttachmentUrlAttribute(): ?string
+    {
+        if (!$this->hasAttachment()) {
+            return null;
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->url($this->file_path);
+    }
+
+    public function getFormattedFileSizeAttribute(): string
+    {
+        if (!$this->file_size) {
+            return '';
+        }
+
+        if ($this->file_size >= 1048576) {
+            return round($this->file_size / 1048576, 1) . ' MB';
+        }
+
+        return round($this->file_size / 1024, 0) . ' KB';
+    }
+
+    public function isTest(): bool
+    {
+        return in_array(strtolower($this->entry_type), ['test', 'test_alert', 'quiz']);
+    }
+
+    public function isHomework(): bool
+    {
+        return in_array(strtolower($this->entry_type), ['homework', 'assignment']);
+    }
 
     protected static function applyTenantIsolation(Builder $builder, array $campusIds): void
     {

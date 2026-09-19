@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.';
@@ -30,7 +30,7 @@
     <div class="card" style="margin-bottom: 24px; padding: 24px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:12px">
             <h2 style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#fff;margin:0">👤 Reset Request Details</h2>
-            <span class="badge" style="background:{{ $notification->isPending() ? 'rgba(245,158,11,0.15)' : 'rgba(0,206,209,0.15)' }};border:1px solid {{ $notification->isPending() ? 'rgba(245,158,11,0.3)' : 'rgba(0,206,209,0.3)' }};color:{{ $notification->isPending() ? '#f59e0b' : '#00ced1' }};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700">
+            <span class="badge" style="background:{{ $notification->isPending() ? 'rgba(212,138,46,0.15)' : 'rgba(46,110,66,0.15)' }};border:1px solid {{ $notification->isPending() ? 'rgba(212,138,46,0.3)' : 'rgba(46,110,66,0.3)' }};color:{{ $notification->isPending() ? '#D48A2E' : '#2E6E42' }};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700">
                 {{ strtoupper($notification->status) }}
             </span>
         </div>
@@ -42,12 +42,12 @@
             </div>
             <div>
                 <div style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700;">Email / Account Identifier</div>
-                <div style="color: #38bdf8; font-weight: 700; font-size: 14px; margin-top: 4px;">{{ $notification->user->identifier ?? $notification->user->email }}</div>
+                <div style="color: #E8CEAA; font-weight: 700; font-size: 14px; margin-top: 4px;">{{ $notification->user->identifier ?? $notification->user->email }}</div>
             </div>
             <div>
                 <div style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700;">System Role</div>
                 <div style="margin-top: 4px;">
-                    <span class="badge" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700">
+                    <span class="badge" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#E8CEAA;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700">
                         {{ strtoupper($notification->user->role) }}
                     </span>
                 </div>

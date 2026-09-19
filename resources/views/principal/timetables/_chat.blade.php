@@ -1,5 +1,5 @@
-<!-- FLOATING SCHEDULE ASSISTANT BUTTON (BOTTOM RIGHT CORNER) -->
-<div id="schedule-assistant-wrapper" style="position:fixed;bottom:24px;right:24px;z-index:999999;font-family:'Outfit',sans-serif">
+﻿<!-- FLOATING SCHEDULE ASSISTANT BUTTON (BOTTOM RIGHT CORNER) -->
+<div id="schedule-assistant-wrapper" style="position:fixed;bottom:16px;right:16px;z-index:999999;font-family:'Outfit',sans-serif">
     <!-- FLOATING POPUP / CHAT DRAWER PANEL -->
     <div id="timetable-chat-panel" style="display:none;width:440px;max-width:calc(100vw - 32px);height:560px;max-height:calc(100vh - 110px);background:#ffffff;backdrop-filter:blur(20px);border:1px solid #e2e8f0;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,0.15);flex-direction:column;overflow:hidden;margin-bottom:12px;transition:all 0.3s ease">
         <!-- HEADER -->
@@ -45,7 +45,7 @@
                 };
             @endphp
             @foreach($chipSections as $chipSec)
-                <button type="button" onclick="ttChat.send('Optimize {{ $chipSec->instituteClass->custom_name }} {{ $sectionLetter($chipSec) }} timetable')" style="background:#f0f9ff;border:1px solid #bae6fd;color:#0284c7;border-radius:14px;padding:4px 10px;font-size:10.5px;font-weight:700;cursor:pointer" onmouseover="this.style.borderColor='#38bdf8'" onmouseout="this.style.borderColor='#bae6fd'">
+                <button type="button" onclick="ttChat.send('Optimize {{ $chipSec->instituteClass->custom_name }} {{ $sectionLetter($chipSec) }} timetable')" style="background:#FBF3E8;border:1px solid #E8CEAA;color:#D48A2E;border-radius:14px;padding:4px 10px;font-size:10.5px;font-weight:700;cursor:pointer" onmouseover="this.style.borderColor='#E8CEAA'" onmouseout="this.style.borderColor='#E8CEAA'">
                     📐 Optimize {{ $chipSec->instituteClass->custom_name }} {{ $sectionLetter($chipSec) }}
                 </button>
             @endforeach
@@ -69,12 +69,12 @@
 
     <!-- FLOATING BOTTOM RIGHT TRIGGER BUTTON -->
     <button type="button" id="schedule-assistant-toggle-btn" onclick="toggleScheduleAssistant()"
-            style="background:linear-gradient(135deg, #fd1d1d, #e1306c, #833ab4);color:#fff;border:none;border-radius:30px;padding:12px 22px;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(225,48,108,0.45);transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);user-select:none"
-            onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 12px 32px rgba(225,48,108,0.6)'"
-            onmouseout="this.style.transform='none';this.style.boxShadow='0 8px 24px rgba(225,48,108,0.45)'">
-        <span style="font-size:18px;line-height:1">🤖</span>
+            style="background:linear-gradient(135deg, #fd1d1d, #e1306c, #833ab4);color:#fff;border:none;border-radius:24px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(225,48,108,0.35);transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);user-select:none"
+            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(225,48,108,0.5)'"
+            onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 14px rgba(225,48,108,0.35)'">
+        <span style="font-size:14px;line-height:1">🤖</span>
         <span>Schedule Assistant</span>
-        <span id="sa-btn-badge" style="background:rgba(255,255,255,0.25);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:2px">AI</span>
+        <span id="sa-btn-badge" style="background:rgba(255,255,255,0.25);color:#fff;font-size:9.5px;padding:1px 5px;border-radius:8px;margin-left:2px;font-weight:800">AI</span>
     </button>
 </div>
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -79,7 +79,7 @@
             height: 32px;
             border-radius: 50%;
             background: #ffffff;
-            border: 1.5px solid #0284c7;
+            border: 1.5px solid #D48A2E;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -99,7 +99,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #D48A2E 0%, #D48A2E 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -152,7 +152,7 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 2.5px;
-            background: linear-gradient(90deg, #0284c7 0%, #38bdf8 50%, #6366f1 100%);
+            background: linear-gradient(90deg, #D48A2E 0%, #E8CEAA 50%, #6366f1 100%);
         }
 
         @keyframes cardFadeIn {

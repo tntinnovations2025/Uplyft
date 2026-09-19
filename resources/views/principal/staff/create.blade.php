@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Onboard Faculty & Staff')
 @section('breadcrumb', 'Onboard Faculty & Staff')
 
@@ -352,8 +352,8 @@
                 </div>
 
                 <!-- MANDATORY ACADEMIC RESULT CERTIFICATES -->
-                <div class="full-width section-box" style="background:#f0f9ff;border:1.5px solid #bae6fd">
-                    <h3 style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;color:#0369a1;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+                <div class="full-width section-box" style="background:#FBF3E8;border:1.5px solid #E8CEAA">
+                    <h3 style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;color:#C07A22;margin-bottom:14px;display:flex;align-items:center;gap:8px">
                         <span>📜</span> Mandatory Academic Result Certificates (Matric, Inter &amp; Bachelors)
                     </h3>
 

@@ -195,6 +195,16 @@ class StudentAdmissionController extends Controller
                 'pdf_path' => $storagePath,
             ]);
 
+            // Dispatch Real-Time Reverb Notification to Principal & Admins
+            \App\Services\PrincipalNotificationService::notifyStudentRegistered($student, auth()->user());
+
+            // Dispatch Student Portal Notification for Initial Fee Assignment
+            try {
+                \App\Services\PortalNotificationService::notifyStudentFeeAssigned($invoice);
+            } catch (\Throwable $e) {
+                Log::warning('Portal student fee notification: '.$e->getMessage());
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Student admission registered successfully.',

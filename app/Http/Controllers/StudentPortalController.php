@@ -45,15 +45,13 @@ class StudentPortalController extends Controller
         $absentDays = $attendances->filter(fn ($a) => in_array(strtolower($a->status), ['absent']))->count();
         $leaveDays = $attendances->filter(fn ($a) => in_array(strtolower($a->status), ['leave', 'excused']))->count();
 
-        // Baseline realistic attendance if newly onboarded
-        if ($totalDays === 0) {
-            $totalDays = 26;
-            $presentDays = 23;
-            $absentDays = 2;
-            $leaveDays = 1;
-        }
+        $overallAttendancePct = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 0.0;
 
-        $overallAttendancePct = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 100.0;
+        // Dynamic Subject Architecture: Scope to student's enrolled subjects
+        $enrolledSubjectIds = \App\Models\StudentSubjectEnrollment::where('student_id', $student->user_id ?? Auth::id())
+            ->where('enrollment_status', 'active')
+            ->pluck('subject_id')
+            ->all();
 
         // Subject-wise attendance calculation
         $subjectAttendance = collect();
@@ -67,32 +65,33 @@ class StudentPortalController extends Controller
                 $subjects = Subject::where('institute_class_id', $student->classSection->institute_class_id)->get();
             }
 
-            // Dynamic Subject Architecture: Scope to student's enrolled subjects
-            $enrolledSubjectIds = \App\Models\StudentSubjectEnrollment::where('student_id', $student->user_id ?? Auth::id())
-                ->where('enrollment_status', 'active')
-                ->pluck('subject_id')
-                ->all();
-
             if (! empty($enrolledSubjectIds)) {
                 $subjects = $subjects->whereIn('id', $enrolledSubjectIds)->values();
             }
 
-            // Benchmark distribution for visual variance
-            $sampleOffsets = [0, -3, 2, -6, 1, -9, 3];
             $idx = 0;
-
             foreach ($subjects as $subject) {
-                $offset = $sampleOffsets[$idx % count($sampleOffsets)];
-                $subTotal = max(18, $totalDays + ($offset > 0 ? 2 : -2));
-                $subPresents = min($subTotal, max(10, $presentDays + $offset));
-                $subPct = round(($subPresents / $subTotal) * 100, 1);
+                $subLogs = $attendances->where('subject_id', $subject->id);
+                if ($subLogs->isNotEmpty()) {
+                    $subTotal = $subLogs->count();
+                    $subPresents = $subLogs->filter(fn ($a) => in_array(strtolower($a->status), ['present', 'late']))->count();
+                    $subPct = $subTotal > 0 ? round(($subPresents / $subTotal) * 100, 1) : 0.0;
+                } elseif ($attendanceMode === 'daily' && $totalDays > 0) {
+                    $subTotal = $totalDays;
+                    $subPresents = $presentDays;
+                    $subPct = $overallAttendancePct;
+                } else {
+                    $subTotal = 0;
+                    $subPresents = 0;
+                    $subPct = 0.0;
+                }
 
-                // Color scale:
-                // >= 85%: Emerald Green (#10b981)
-                // 75-84%: Indigo (#6366f1)
-                // 60-74%: Amber (#f59e0b)
-                // < 60%: Rose (#f43f5e)
-                if ($subPct >= 85) {
+                if ($subTotal === 0) {
+                    $colorHex = '#68665D';
+                    $bgClass = 'bg-slate-400';
+                    $badgeClass = 'bg-slate-100 text-slate-700 border-slate-300';
+                    $statusLabel = 'No Logs';
+                } elseif ($subPct >= 85) {
                     $colorHex = '#10b981';
                     $bgClass = 'bg-emerald-500';
                     $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
@@ -131,45 +130,12 @@ class StudentPortalController extends Controller
             }
         }
 
-        // Fallback subject list if none configured yet
-        if ($subjectAttendance->isEmpty()) {
-            $defaultSubjects = [
-                ['name' => 'Mathematics & Calculus', 'code' => 'MTH-101', 'total' => 28, 'presents' => 26, 'pct' => 92.8],
-                ['name' => 'Physics & Quantum Mechanics', 'code' => 'PHY-201', 'total' => 28, 'presents' => 24, 'pct' => 85.7],
-                ['name' => 'Computer Science & AI', 'code' => 'CSC-301', 'total' => 26, 'presents' => 20, 'pct' => 76.9],
-                ['name' => 'English Communication', 'code' => 'ENG-102', 'total' => 24, 'presents' => 16, 'pct' => 66.7],
-                ['name' => 'Chemistry & Lab Work', 'code' => 'CHM-101', 'total' => 26, 'presents' => 14, 'pct' => 53.8],
-            ];
-
-            foreach ($defaultSubjects as $ds) {
-                $pct = $ds['pct'];
-                if ($pct >= 85) {
-                    $colorHex = '#10b981'; $bgClass = 'bg-emerald-500'; $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200'; $statusLabel = 'Excellent';
-                } elseif ($pct >= $minAttendancePct) {
-                    $colorHex = '#6366f1'; $bgClass = 'bg-indigo-500'; $badgeClass = 'bg-indigo-50 text-indigo-700 border-indigo-200'; $statusLabel = 'Good Standing';
-                } elseif ($pct >= 60) {
-                    $colorHex = '#f59e0b'; $bgClass = 'bg-amber-500'; $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200'; $statusLabel = 'Warning';
-                } else {
-                    $colorHex = '#f43f5e'; $bgClass = 'bg-rose-500'; $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200'; $statusLabel = 'Critical Risk';
-                }
-
-                $subjectAttendance->push([
-                    'id' => null,
-                    'name' => $ds['name'],
-                    'code' => $ds['code'],
-                    'total' => $ds['total'],
-                    'presents' => $ds['presents'],
-                    'percentage' => $pct,
-                    'color_hex' => $colorHex,
-                    'bg_class' => $bgClass,
-                    'badge_class' => $badgeClass,
-                    'status_label' => $statusLabel,
-                ]);
-            }
-        }
-
         // Daily Attendance Gauge Color
-        if ($overallAttendancePct >= 85) {
+        if ($totalDays === 0) {
+            $gaugeColor = '#68665D';
+            $gaugeBadge = 'bg-slate-100 text-slate-700 border-slate-300';
+            $gaugeStatus = 'No Records Yet';
+        } elseif ($overallAttendancePct >= 85) {
             $gaugeColor = '#10b981';
             $gaugeBadge = 'bg-emerald-50 text-emerald-700 border-emerald-200';
             $gaugeStatus = 'Excellent Standing';
@@ -387,7 +353,7 @@ class StudentPortalController extends Controller
 
         $totalDays = $attendances->count();
         $presentDays = $attendances->filter(fn ($a) => in_array(strtolower($a->status), ['present', 'late']))->count();
-        $percentage = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 100;
+        $percentage = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 1) : 0.0;
 
         // Subject-wise percentage breakdown
         $subjectWiseAttendance = collect();
@@ -402,9 +368,17 @@ class StudentPortalController extends Controller
             }
 
             foreach ($subjects as $subject) {
-                $subTotal = $totalDays;
-                $subPresents = $presentDays;
-                $subPct = $subTotal > 0 ? round(($subPresents / $subTotal) * 100, 1) : 100;
+                $subLogs = $attendances->where('subject_id', $subject->id);
+                if ($subLogs->isNotEmpty()) {
+                    $subTotal = $subLogs->count();
+                    $subPresents = $subLogs->filter(fn ($a) => in_array(strtolower($a->status), ['present', 'late']))->count();
+                    $subPct = $subTotal > 0 ? round(($subPresents / $subTotal) * 100, 1) : 0.0;
+                } else {
+                    $subTotal = $totalDays;
+                    $subPresents = $presentDays;
+                    $subPct = $subTotal > 0 ? round(($subPresents / $subTotal) * 100, 1) : 0.0;
+                }
+
                 $subjectWiseAttendance->push([
                     'subject_name' => $subject->subject_name,
                     'subject_code' => $subject->subject_code ?? 'SUB',

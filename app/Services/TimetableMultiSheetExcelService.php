@@ -182,8 +182,129 @@ class TimetableMultiSheetExcelService
     }
 
     /**
-     * Extract sorted dynamic time slots from allocations.
+     * Generate a Teacher-specific timetable workbook (.xlsx).
+     * One sheet: rows = Days, columns = Time slots, cells = Class/Section + Subject.
      */
+    public function generateTeacherTimetable(int $instituteId, int $academicTermId, $teacher, $allSlots): string
+    {
+        $institute = Institute::find($instituteId);
+        $term      = AcademicTerm::find($academicTermId);
+
+        $days      = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        $timeSlots = $this->extractTimeSlots($allSlots);
+
+        $teacherName = $teacher->name ?? 'Teacher';
+
+        // Build sheet XML
+        $sheetXml = $this->buildTeacherSheetXml(
+            $institute?->name ?? 'Institute',
+            $term?->name ?? 'Active Session',
+            $teacherName,
+            $days,
+            $timeSlots,
+            $allSlots
+        );
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'timetable_teacher_') . '.xlsx';
+        $zip = new ZipArchive();
+        if ($zip->open($tempFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new \RuntimeException('Cannot create temporary Excel archive.');
+        }
+
+        $safeSheetName = substr(preg_replace('/[^A-Za-z0-9 _]/', '', $teacherName), 0, 31);
+        $this->packageZipWorkbook($zip, [$safeSheetName], [$sheetXml]);
+        $zip->close();
+
+        return $tempFile;
+    }
+
+    /**
+     * Build sheet XML for teacher-specific timetable (Day rows × Time columns).
+     */
+    protected function buildTeacherSheetXml(
+        string $instituteName,
+        string $termName,
+        string $teacherName,
+        array $days,
+        $timeSlots,
+        $allSlots
+    ): string {
+        $timeOverlap = function (string $s1, string $e1, string $s2, string $e2): bool {
+            return $s1 < $e2 && $s2 < $e1;
+        };
+
+        $cols      = count($timeSlots) + 1; // +1 for Day label col
+        $colLetter = fn(int $n) => $this->getColumnLetter($n);
+
+        $xml  = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+        $xml .= '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">';
+        $xml .= '<sheetData>';
+
+        $rowIdx = 1;
+
+        // Title row
+        $xml .= "<row r=\"{$rowIdx}\">";
+        $xml .= "<c r=\"A{$rowIdx}\" s=\"1\" t=\"inlineStr\"><is><t>" . $this->escapeXml("{$instituteName} — {$teacherName} — {$termName}") . "</t></is></c>";
+        $xml .= "</row>";
+        $rowIdx++;
+
+        // Blank row
+        $xml .= "<row r=\"{$rowIdx}\"></row>";
+        $rowIdx++;
+
+        // Header row: Day | slot1 | slot2 | ...
+        $xml .= "<row r=\"{$rowIdx}\">";
+        $xml .= "<c r=\"A{$rowIdx}\" s=\"3\" t=\"inlineStr\"><is><t>Day</t></is></c>";
+        foreach ($timeSlots as $ci => $ts) {
+            $col = $colLetter($ci + 2);
+            $label = $this->escapeXml("{$ts['start']}–{$ts['end']}");
+            $xml .= "<c r=\"{$col}{$rowIdx}\" s=\"3\" t=\"inlineStr\"><is><t>{$label}</t></is></c>";
+        }
+        $xml .= "</row>";
+        $rowIdx++;
+
+        // Day rows
+        foreach ($days as $day) {
+            $daySlots = $allSlots->filter(fn($s) => strtolower($s->day_of_week) === $day);
+            $xml .= "<row r=\"{$rowIdx}\">";
+            $dayLabel = $this->escapeXml(ucfirst($day));
+            $xml .= "<c r=\"A{$rowIdx}\" s=\"5\" t=\"inlineStr\"><is><t>{$dayLabel}</t></is></c>";
+
+            foreach ($timeSlots as $ci => $ts) {
+                $col   = $colLetter($ci + 2);
+                $tsStart = $ts['start'];
+                $tsEnd   = $ts['end'];
+
+                $matched = $daySlots->first(function ($s) use ($tsStart, $tsEnd, $timeOverlap) {
+                    $sStart = substr($s->start_time, 0, 5);
+                    $sEnd   = substr($s->end_time, 0, 5);
+                    return $timeOverlap($sStart, $sEnd, $tsStart, $tsEnd);
+                });
+
+                if ($matched) {
+                    $subjectName = $matched->subject?->name ?? '—';
+                    $className   = $matched->section?->instituteClass?->custom_name ?? '';
+                    $secName     = $matched->section?->section_name ?? '';
+                    $room        = $matched->room?->room_number ?? '';
+                    $cell        = trim("{$subjectName}\n{$className} {$secName}" . ($room ? "\n📍 {$room}" : ''));
+                    $xml .= "<c r=\"{$col}{$rowIdx}\" s=\"6\" t=\"inlineStr\"><is><t>" . $this->escapeXml($cell) . "</t></is></c>";
+                } else {
+                    $xml .= "<c r=\"{$col}{$rowIdx}\" s=\"2\"><v></v></c>";
+                }
+            }
+            $xml .= "</row>";
+            $rowIdx++;
+        }
+
+        $xml .= '</sheetData>';
+        // Auto-fit columns
+        $xml .= '<cols><col min="1" max="1" width="12" customWidth="1"/><col min="2" max="' . $cols . '" width="22" customWidth="1"/></cols>';
+        $xml .= '</worksheet>';
+
+        return $xml;
+    }
+
+
     protected function extractTimeSlots($slots)
     {
         $timeSlots = $slots->map(fn ($s) => [

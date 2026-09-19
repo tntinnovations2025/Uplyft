@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.accounts.';
@@ -52,7 +52,7 @@
             </div>
 
             {{-- ⚡ AUTO SALARY DISBURSEMENT & INCOME DEDUCTION BANNER (COMPACT DESIGN) --}}
-            <div style="margin:12px 20px 0;background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 45%, #eff6ff 100%);border:1px solid #a7f3d0;border-radius:12px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 2px 10px -2px rgba(16,185,129,0.06)">
+            <div style="margin:12px 20px 0;background:linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 45%, #FBF3E8 100%);border:1px solid #a7f3d0;border-radius:12px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 2px 10px -2px rgba(16,185,129,0.06)">
                 <div style="display:flex;align-items:center;gap:12px">
                     <div style="width:36px;height:36px;border-radius:10px;background:#ffffff;border:1px solid #6ee7b7;color:#059669;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(16,185,129,0.1)">
                         ⚡
@@ -128,7 +128,7 @@
                                             </div>
                                         </div>
 
-                                        <span style="font-family:monospace;font-size:10px;font-weight:700;color:#0284c7;background:#eff6ff;padding:2px 6px;border-radius:6px;border:1px solid #bfdbfe;flex-shrink:0">
+                                        <span style="font-family:monospace;font-size:10px;font-weight:700;color:#D48A2E;background:#FBF3E8;padding:2px 6px;border-radius:6px;border:1px solid #E8CEAA;flex-shrink:0">
                                             {{ $t->employee_id ?: 'TCH-'.$t->id }}
                                         </span>
                                     </div>
@@ -157,7 +157,7 @@
                                                 Rs. {{ number_format($t->basic_salary_pkr ?: 0, 2) }}
                                             </div>
                                         </div>
-                                        <span style="font-size:10px;font-weight:700;color:#0284c7;background:#eff6ff;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe">
+                                        <span style="font-size:10px;font-weight:700;color:#D48A2E;background:#FBF3E8;padding:3px 8px;border-radius:6px;border:1px solid #E8CEAA">
                                             📄 {{ $t->salarySlips->count() }} Slip(s)
                                         </span>
                                     </div>
@@ -308,10 +308,10 @@
                 <!-- Net Cash Balance -->
                 <div style="background:#ffffff;border:1px solid rgba(226,232,240,0.85);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
                     <div style="display:flex;align-items:center;justify-content:space-between">
-                        <span style="font-size:11px;font-weight:800;text-transform:uppercase;color:{{ $netBalance >= 0 ? '#0284c7' : '#e11d48' }};letter-spacing:0.5px">Net Operating Balance</span>
+                        <span style="font-size:11px;font-weight:800;text-transform:uppercase;color:{{ $netBalance >= 0 ? '#D48A2E' : '#e11d48' }};letter-spacing:0.5px">Net Operating Balance</span>
                         <span style="font-size:16px">⚖️</span>
                     </div>
-                    <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:{{ $netBalance >= 0 ? '#0284c7' : '#e11d48' }};margin-top:6px">
+                    <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:{{ $netBalance >= 0 ? '#D48A2E' : '#e11d48' }};margin-top:6px">
                         {{ $currencySymbol }} {{ number_format($netBalance, 2) }}
                     </div>
                     <div style="font-size:11px;color:#64748b;margin-top:4px">{{ $netBalance >= 0 ? 'Surplus Operating Balance' : 'Operating Deficit' }}</div>
@@ -510,7 +510,7 @@
                 <div style="display:flex;align-items:center;gap:10px">
                     @if($canEditAccounts)
                         @if(auth()->user()->isPrincipal() || auth()->user()->isGlobalAdmin())
-                            <button type="button" class="btn btn-ghost btn-sm" onclick="openBulkFinanceImportModal()" style="border-color:#3b82f6;color:#2563eb;background:#eff6ff">
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="openBulkFinanceImportModal()" style="border-color:#D48A2E;color:#D48A2E;background:#FBF3E8">
                                 📥 Import Expenses
                             </button>
                         @endif
@@ -1209,9 +1209,9 @@
             fileLabel.innerHTML = 'Receipt / Bill Attachment (MANDATORY) *';
         } else if (req === 'optional') {
             warningBox.style.display = 'block';
-            warningBox.style.background = '#eff6ff';
-            warningBox.style.border = '1px solid #bfdbfe';
-            warningBox.style.color = '#0284c7';
+            warningBox.style.background = '#FBF3E8';
+            warningBox.style.border = '1px solid #E8CEAA';
+            warningBox.style.color = '#D48A2E';
             warningBox.innerHTML = '💡 OPTIONAL: You can attach a receipt / bill picture if available.';
             fileLabel.innerHTML = 'Receipt / Bill Attachment (Optional)';
         } else {
@@ -1278,7 +1278,7 @@
             </div>
             <div style="border-top:1px dashed #cbd5e1;padding-top:10px;display:flex;align-items:center;justify-content:space-between">
                 <span style="font-size:13px;color:#0f172a;font-weight:800">Estimated Net Income Remaining</span>
-                <span style="font-size:16px;font-weight:800;color:{{ ($totalIncome - $totalConfiguredPayroll) >= 0 ? '#0284c7' : '#e11d48' }}">
+                <span style="font-size:16px;font-weight:800;color:{{ ($totalIncome - $totalConfiguredPayroll) >= 0 ? '#D48A2E' : '#e11d48' }}">
                     {{ $currencySymbol }} {{ number_format($totalIncome - $totalConfiguredPayroll, 2) }}
                 </span>
             </div>
@@ -1286,7 +1286,7 @@
 
         <form method="POST" action="{{ route($routePrefix . 'salaries.auto-disburse') }}">
             @csrf
-            <div style="font-size:12.5px;color:#475569;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 16px;margin-bottom:20px;line-height:1.5;font-weight:600">
+            <div style="font-size:12.5px;color:#475569;background:#FBF3E8;border:1px solid #E8CEAA;border-radius:12px;padding:12px 16px;margin-bottom:20px;line-height:1.5;font-weight:600">
                 ℹ️ Executing this action will auto-generate expense ledger entries for all active faculty &amp; staff members, generate monthly salary slips for {{ now()->format('F Y') }}, and deduct the total payroll amount from total institute income reserves.
             </div>
 
@@ -1305,7 +1305,7 @@
     <div class="modal-box" style="max-width:520px;border-radius:18px;padding:24px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
             <div style="display:flex;align-items:center;gap:10px">
-                <div style="width:36px;height:36px;border-radius:10px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:18px">
+                <div style="width:36px;height:36px;border-radius:10px;background:#FBF3E8;color:#D48A2E;display:flex;align-items:center;justify-content:center;font-size:18px">
                     📥
                 </div>
                 <div>
@@ -1322,7 +1322,7 @@
             <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin-bottom:16px">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
                     <span style="font-size:12px;font-weight:700;color:#0f172a">📁 Sample CSV Template</span>
-                    <a href="{{ route('principal.bulk-import.sample', 'finance') }}" class="btn btn-ghost btn-sm" style="font-size:11px;color:#0284c7;padding:4px 10px">
+                    <a href="{{ route('principal.bulk-import.sample', 'finance') }}" class="btn btn-ghost btn-sm" style="font-size:11px;color:#D48A2E;padding:4px 10px">
                         ⬇️ Download Sample CSV
                     </a>
                 </div>
@@ -1333,7 +1333,7 @@
 
             <div style="margin-bottom:20px">
                 <label style="display:block;font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px">Select CSV / Excel File</label>
-                <input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required style="width:100%;padding:8px;border:1px dashed #3b82f6;background:#eff6ff;border-radius:10px;font-size:12px">
+                <input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required style="width:100%;padding:8px;border:1px dashed #D48A2E;background:#FBF3E8;border-radius:10px;font-size:12px">
             </div>
 
             <div style="display:flex;justify-content:flex-end;gap:10px">

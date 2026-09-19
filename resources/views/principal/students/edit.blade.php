@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.students.';
@@ -63,7 +63,7 @@
     .form-group select:focus,
     .form-group textarea:focus {
         outline: none;
-        border-color: #0284c7;
+        border-color: #D48A2E;
         background: #ffffff;
         box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
     }

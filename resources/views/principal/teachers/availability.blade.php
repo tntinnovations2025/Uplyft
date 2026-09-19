@@ -220,7 +220,7 @@
     </div>
 
     <a href="{{ route('principal.timetables.index') }}" class="btn btn-primary">
-        🗓️ Timetable &amp; Master Matrix &rarr;
+        🗓️ Timetable &rarr;
     </a>
 </div>
 
@@ -230,58 +230,72 @@
 </div>
 @endif
 
-<!-- Global Faculty Working Hours Setup Card -->
-<div class="card" style="margin-bottom:24px;border:1.5px solid #c7d2fe;background:linear-gradient(135deg,#f8fafc 0%,#eef2ff 100%)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+<!-- Global Faculty Working Hours Setup Card (Individual Day Timings) -->
+<div class="card" style="margin-bottom:20px;border:1.5px solid #c7d2fe;background:linear-gradient(135deg,#f8fafc 0%,#eef2ff 100%);padding:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
         <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:38px;height:38px;border-radius:10px;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(79,70,229,0.25)">
+            <div style="width:34px;height:34px;border-radius:9px;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 10px rgba(79,70,229,0.22)">
                 ⚡
             </div>
             <div>
-                <h3 style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;color:#0f172a;margin:0">
-                    Global Faculty Working Hours &amp; Weekday Schedule Setup
+                <h3 style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#0f172a;margin:0">
+                    Global Faculty Working Hours &amp; Individual Day Timings Setup
                 </h3>
-                <div style="font-size:12px;color:#4338ca;font-weight:600">
-                    Quickly configure standard working hours &amp; active weekdays for all faculty members at once.
+                <div style="font-size:11.5px;color:#4338ca;font-weight:600">
+                    Configure daily shift hours per weekday (e.g. Mon–Thu Full Day, Friday Half Day) and apply to all faculty.
                 </div>
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary" onclick="applyGlobalWorkHoursToAll()">
-            ⚡ Apply Schedule to All Faculty
-        </button>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;margin-bottom:18px;background:#ffffff;padding:16px;border-radius:12px;border:1px solid #cbd5e1">
-        <div>
-            <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Shift Start Time *</label>
-            <input type="time" id="global_start_time" value="08:00" class="time-picker-input">
-        </div>
-        <div>
-            <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Shift End Time *</label>
-            <input type="time" id="global_end_time" value="14:30" class="time-picker-input">
-        </div>
-        <div>
-            <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Break Start (Optional)</label>
-            <input type="time" id="global_break_start" value="13:00" class="time-picker-input">
-        </div>
-        <div>
-            <label class="form-label" style="color:#0f172a;font-size:11.5px">Standard Break End (Optional)</label>
-            <input type="time" id="global_break_end" value="13:30" class="time-picker-input">
+        <div style="display:flex;align-items:center;gap:8px">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="setPakistanGlobalPreset()" style="font-size:11.5px;border:1px solid #c7d2fe;background:#ffffff;color:#0f172a;padding:5px 12px">
+                🇵🇰 Pakistan Preset (Mon-Thu Full, Fri Half)
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="applyGlobalWorkHoursToAll()" style="font-size:11.5px;padding:6px 14px">
+                ⚡ Apply to All Faculty
+            </button>
         </div>
     </div>
 
-    <div>
-        <label class="form-label" style="color:#0f172a;font-size:11.5px;margin-bottom:8px">Working Weekdays (Uncheck to Disable Working Hours for that day):</label>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-            @php $allWeekdays = ['monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday', 'sunday' => 'Sunday']; @endphp
-            @foreach($allWeekdays as $wKey => $wLabel)
-                <label style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:#ffffff;border:1.5px solid #cbd5e1;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;color:#0f172a;user-select:none" id="global-weekday-lbl-{{ $wKey }}">
-                    <input type="checkbox" id="global_weekday_{{ $wKey }}" value="{{ $wKey }}" {{ in_array($wKey, ['monday','tuesday','wednesday','thursday','friday','saturday']) ? 'checked' : '' }} onchange="onGlobalWeekdayToggle('{{ $wKey }}')" style="width:16px!important;height:16px!important;accent-color:#4f46e5;margin:0!important">
-                    {{ $wLabel }}
+    <!-- Individual Day Shift Rows Grid in Global Setup -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:10px;margin-bottom:12px">
+        @php
+            $defaultDayConfigs = [
+                'monday'    => ['name' => 'Monday', 'tag' => 'Full Day', 'start' => '08:00', 'end' => '14:00', 'bStart' => '12:00', 'bEnd' => '12:30', 'checked' => true],
+                'tuesday'   => ['name' => 'Tuesday', 'tag' => 'Full Day', 'start' => '08:00', 'end' => '14:00', 'bStart' => '12:00', 'bEnd' => '12:30', 'checked' => true],
+                'wednesday' => ['name' => 'Wednesday', 'tag' => 'Full Day', 'start' => '08:00', 'end' => '14:00', 'bStart' => '12:00', 'bEnd' => '12:30', 'checked' => true],
+                'thursday'  => ['name' => 'Thursday', 'tag' => 'Full Day', 'start' => '08:00', 'end' => '14:00', 'bStart' => '12:00', 'bEnd' => '12:30', 'checked' => true],
+                'friday'    => ['name' => 'Friday', 'tag' => '🕌 Half Day', 'start' => '08:00', 'end' => '12:30', 'bStart' => '', 'bEnd' => '', 'checked' => true],
+                'saturday'  => ['name' => 'Saturday', 'tag' => 'Half/Off', 'start' => '08:00', 'end' => '13:00', 'bStart' => '', 'bEnd' => '', 'checked' => true],
+                'sunday'    => ['name' => 'Sunday', 'tag' => 'Weekend', 'start' => '08:00', 'end' => '14:00', 'bStart' => '', 'bEnd' => '', 'checked' => false],
+            ];
+        @endphp
+
+        @foreach($defaultDayConfigs as $dKey => $dConf)
+        <div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px" id="global-day-box-{{ $dKey }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:800;color:#0f172a;user-select:none">
+                    <input type="checkbox" id="global_weekday_{{ $dKey }}" value="{{ $dKey }}" {{ $dConf['checked'] ? 'checked' : '' }} onchange="onGlobalWeekdayToggle('{{ $dKey }}')" style="accent-color:#4f46e5;width:14px;height:14px;margin:0">
+                    <span>{{ $dConf['name'] }}</span>
                 </label>
-            @endforeach
+                <span style="font-size:10px;font-weight:700;color:{{ $dKey === 'friday' ? '#d97706' : '#059669' }};background:{{ $dKey === 'friday' ? '#fffbeb' : '#ecfdf5' }};padding:1px 6px;border-radius:5px" id="global-day-tag-{{ $dKey }}">
+                    {{ $dConf['tag'] }}
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <div>
+                    <label style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px">Start</label>
+                    <input type="time" id="global_start_{{ $dKey }}" value="{{ $dConf['start'] }}" class="time-picker-input" style="padding:4px 6px;font-size:11.5px">
+                </div>
+                <div>
+                    <label style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px">End</label>
+                    <input type="time" id="global_end_{{ $dKey }}" value="{{ $dConf['end'] }}" class="time-picker-input" style="padding:4px 6px;font-size:11.5px">
+                </div>
+            </div>
+            <input type="hidden" id="global_bstart_{{ $dKey }}" value="{{ $dConf['bStart'] }}">
+            <input type="hidden" id="global_bend_{{ $dKey }}" value="{{ $dConf['bEnd'] }}">
         </div>
+        @endforeach
     </div>
 </div>
 
@@ -485,15 +499,46 @@
         }
     }
 
+    function setPakistanGlobalPreset() {
+        const pkConfig = {
+            'monday':    { start: '08:00', end: '14:00', bStart: '12:00', bEnd: '12:30', active: true },
+            'tuesday':   { start: '08:00', end: '14:00', bStart: '12:00', bEnd: '12:30', active: true },
+            'wednesday': { start: '08:00', end: '14:00', bStart: '12:00', bEnd: '12:30', active: true },
+            'thursday':  { start: '08:00', end: '14:00', bStart: '12:00', bEnd: '12:30', active: true },
+            'friday':    { start: '08:00', end: '12:30', bStart: '',      bEnd: '',      active: true },
+            'saturday':  { start: '08:00', end: '13:00', bStart: '',      bEnd: '',      active: true },
+            'sunday':    { start: '08:00', end: '14:00', bStart: '',      bEnd: '',      active: false }
+        };
+
+        Object.keys(pkConfig).forEach(day => {
+            const conf = pkConfig[day];
+            const chk = document.getElementById(`global_weekday_${day}`);
+            const sIn = document.getElementById(`global_start_${day}`);
+            const eIn = document.getElementById(`global_end_${day}`);
+            const bsIn = document.getElementById(`global_bstart_${day}`);
+            const beIn = document.getElementById(`global_bend_${day}`);
+
+            if (chk) chk.checked = conf.active;
+            if (sIn) sIn.value = conf.start;
+            if (eIn) eIn.value = conf.end;
+            if (bsIn) bsIn.value = conf.bStart;
+            if (beIn) beIn.value = conf.bEnd;
+            onGlobalWeekdayToggle(day);
+        });
+
+        alert('🇵🇰 Pakistan Standard Schedule Preset loaded (Mon–Thu: 08:00-14:00, Fri: 08:00-12:30). Click "Apply to All Faculty" to update faculty shifts.');
+    }
+
     function applyGlobalWorkHoursToAll() {
-        const startTime = document.getElementById('global_start_time').value;
-        const endTime = document.getElementById('global_end_time').value;
-        const breakStart = document.getElementById('global_break_start') ? document.getElementById('global_break_start').value : '';
-        const breakEnd = document.getElementById('global_break_end') ? document.getElementById('global_break_end').value : '';
         const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
         weekdays.forEach(day => {
-            const isDayChecked = document.getElementById(`global_weekday_${day}`).checked;
+            const chkElem = document.getElementById(`global_weekday_${day}`);
+            const isDayChecked = chkElem ? chkElem.checked : true;
+            const startTime = document.getElementById(`global_start_${day}`) ? document.getElementById(`global_start_${day}`).value : '08:00';
+            const endTime = document.getElementById(`global_end_${day}`) ? document.getElementById(`global_end_${day}`).value : '14:00';
+            const breakStart = document.getElementById(`global_bstart_${day}`) ? document.getElementById(`global_bstart_${day}`).value : '';
+            const breakEnd = document.getElementById(`global_bend_${day}`) ? document.getElementById(`global_bend_${day}`).value : '';
             
             document.querySelectorAll(`.day-box[id$="-${day}"]`).forEach(box => {
                 const checkbox = box.querySelector('input[type="checkbox"][name*="[is_available]"]');
@@ -516,15 +561,16 @@
             });
         });
 
-        alert('✅ Global Faculty Work Hours applied! Click "Save Hours" on the teacher card to persist changes to the database.');
+        alert('✅ Individual Day Timings applied across all faculty members! Click "Save Hours" on the teacher cards to persist.');
     }
 
     function onGlobalWeekdayToggle(day) {
         const chk = document.getElementById(`global_weekday_${day}`);
-        const lbl = document.getElementById(`global-weekday-lbl-${day}`);
-        if (chk && lbl) {
-            lbl.style.borderColor = chk.checked ? '#4f46e5' : '#cbd5e1';
-            lbl.style.background = chk.checked ? '#eef2ff' : '#ffffff';
+        const box = document.getElementById(`global-day-box-${day}`);
+        if (chk && box) {
+            box.style.borderColor = chk.checked ? '#c7d2fe' : '#e2e8f0';
+            box.style.background = chk.checked ? '#ffffff' : '#f8fafc';
+            box.style.opacity = chk.checked ? '1' : '0.6';
         }
     }
 </script>

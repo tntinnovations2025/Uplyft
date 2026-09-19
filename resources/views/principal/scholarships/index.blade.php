@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.scholarships.';
@@ -25,7 +25,7 @@
             <span>➕ Add Scholarship Policy</span>
         </button>
     @else
-        <div style="font-size:12px;color:#0284c7;font-weight:700;padding:8px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;display:flex;align-items:center;gap:6px">
+        <div style="font-size:12px;color:#D48A2E;font-weight:700;padding:8px 14px;background:#FBF3E8;border:1px solid #E8CEAA;border-radius:8px;display:flex;align-items:center;gap:6px">
             <span>👁️</span> <span>View Only Access (Read-Only)</span>
         </div>
     @endif
@@ -81,7 +81,7 @@
                 </div>
                 @if(auth()->user()->hasPermission('scholarships', 'edit'))
                     <div style="display:flex;gap:6px">
-                        <button onclick='openEditModal(@json($scholarship))' class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                        <button onclick='openEditModal(@json($scholarship))' class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                             ✏️ Edit Rules
                         </button>
                         <form method="POST" action="{{ route($routePrefix . 'destroy', $scholarship) }}" onsubmit="return confirm('Are you sure you want to delete this scholarship policy?')" style="display:inline">
@@ -93,7 +93,7 @@
                         </form>
                     </div>
                 @else
-                    <span style="font-size:11px;color:#0284c7;font-weight:700">👁️ Read-Only</span>
+                    <span style="font-size:11px;color:#D48A2E;font-weight:700">👁️ Read-Only</span>
                 @endif
             </div>
         </div>

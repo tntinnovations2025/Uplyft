@@ -9,6 +9,7 @@
         "php": "^8.3",
         "barryvdh/laravel-dompdf": "*",
         "laravel/framework": "^13.8",
+        "laravel/reverb": "^1.11",
         "laravel/tinker": "^3.0",
         "phpoffice/phpspreadsheet": "*",
         "smalot/pdfparser": "^2.12"

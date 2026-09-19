@@ -434,7 +434,7 @@
                                         </td>
                                         <td style="padding:14px 16px">
                                             @if($dtype === 'pro_rata')
-                                                <span style="font-size:12px;font-weight:700;color:#0284c7">Pro-Rata Daily Rate</span>
+                                                <span style="font-size:12px;font-weight:700;color:#D48A2E">Pro-Rata Daily Rate</span>
                                             @elseif($dtype === 'fixed')
                                                 <span style="font-size:12px;font-weight:700;color:#d97706">Fixed Fine ({{ $currencySymbol }} {{ number_format($ffine, 0) }})</span>
                                             @else
@@ -474,7 +474,7 @@
             @if($activeTab === 'financial' || $activeTab === 'bank' || $activeTab === 'all')
                 <div class="settings-card" id="card-bank">
                     <div class="settings-card-header">
-                        <div class="settings-card-icon" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe">
+                        <div class="settings-card-icon" style="background:#FBF3E8;color:#D48A2E;border:1px solid #E8CEAA">
                             🏦
                         </div>
                         <div>
@@ -784,7 +784,7 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i>
                         </div>
                         <div style="font-size:14px;font-weight:800;color:#1e1b4b">{{ ($institute && $institute->logo_path) ? 'Click or Drop Image to Replace Institute Logo' : 'Click or Drop Image to Upload Institute Logo' }}</div>
-                        <div style="font-size:12px;color:#6b7280;margin-top:3px">Supports SVG, PNG, JPG, WEBP &bull; Full original image saved as-is without forced cropping</div>
+                        <div style="font-size:12px;color:#6b7280;margin-top:3px">Supports SVG, PNG, JPG, WEBP &bull; Or select one of the 10 catchy preset emblems below</div>
                     </div>
 
                     {{-- Applied Image Preview --}}
@@ -794,7 +794,7 @@
                         </div>
                         <div style="text-align:left">
                             <div style="display:flex;align-items:center;gap:6px">
-                                <span id="principal-applied-status-title" style="font-size:13.5px;font-weight:800;color:#059669">✓ Full Original Image Selected</span>
+                                <span id="principal-applied-status-title" style="font-size:13.5px;font-weight:800;color:#059669">✓ Selected Preset Logo</span>
                                 <span style="font-size:11px;background:#d1fae5;color:#059669;padding:1px 6px;border-radius:4px;font-weight:700">Ready to Save</span>
                             </div>
                             <div id="principal-applied-crop-filename" style="font-size:11.5px;color:#64748b;margin-top:2px"></div>
@@ -810,10 +810,195 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- 10 PRESET CATCHY & PROFESSIONAL LOGOS GRID --}}
+                <div style="margin-top:20px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                        <div>
+                            <h4 style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;color:#0f172a;margin:0;display:flex;align-items:center;gap:8px">
+                                🎨 10 Preset Catchy &amp; Professional Logos
+                            </h4>
+                            <p style="font-size:12px;color:#64748b;margin-top:2px">Click any high-resolution vector emblem below to apply it instantly to your campus profile &amp; switcher.</p>
+                        </div>
+                        <span style="font-size:11.5px;font-weight:700;color:#4f46e5;background:#eef2ff;padding:4px 10px;border-radius:999px;border:1px solid #c7d2fe">Instant Pick</span>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:14px">
+                        @php
+                            $presetLogos = [
+                                [
+                                    'id' => 'velocity_car',
+                                    'title' => 'Velocity Car',
+                                    'desc' => 'Automotive & Speed',
+                                    'bg' => 'linear-gradient(135deg, #ef4444 0%, #991b1b 100%)',
+                                    'path' => '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3C13 6.9 11.8 6 10 6H4c-1.1 0-2 .9-2 2v7c0 .6.4 1 1 1h2m0 0a2.5 2.5 0 105 0m7 0a2.5 2.5 0 105 0" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M7 10h5l2.5 3H7v-3z" fill="white" opacity="0.4"/>'
+                                ],
+                                [
+                                    'id' => 'apex_bike',
+                                    'title' => 'Apex Superbike',
+                                    'desc' => 'Agility & Power',
+                                    'bg' => 'linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)',
+                                    'path' => '<circle cx="6" cy="15" r="3.5" stroke="white" stroke-width="2.2" fill="none"/><circle cx="18" cy="15" r="3.5" stroke="white" stroke-width="2.2" fill="none"/><path d="M6 15l4-6h5l3 6M10 9l3-4h3" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M13 5l2 4" stroke="white" stroke-width="2.5" stroke-linecap="round"/>'
+                                ],
+                                [
+                                    'id' => 'grizzly_bear',
+                                    'title' => 'Grizzly Bear',
+                                    'desc' => 'Strength & Courage',
+                                    'bg' => 'linear-gradient(135deg, #f59e0b 0%, #78350f 100%)',
+                                    'path' => '<path d="M12 2a4 4 0 00-4 4c0 1.8.8 3.5 2 4.6V13a3 3 0 00-3 3v2a1 1 0 001 1h8a1 1 0 001-1v-2a3 3 0 00-3-3v-2.4c1.2-1.1 2-2.8 2-4.6a4 4 0 00-4-4z" fill="white"/><circle cx="9.5" cy="5.5" r="1" fill="#78350f"/><circle cx="14.5" cy="5.5" r="1" fill="#78350f"/><ellipse cx="12" cy="7.5" rx="1.5" ry="1" fill="#78350f"/><path d="M5 4a2 2 0 100 4M19 4a2 2 0 110 4" stroke="white" stroke-width="2" fill="none"/>'
+                                ],
+                                [
+                                    'id' => 'royal_eagle',
+                                    'title' => 'Royal Eagle',
+                                    'desc' => 'Vision & Excellence',
+                                    'bg' => 'linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%)',
+                                    'path' => '<path d="M12 3L4 9l3 12 5-4 5 4 3-12-8-6z" fill="none" stroke="white" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 3v14M7 10l5 3 5-3" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'
+                                ],
+                                [
+                                    'id' => 'golden_lion',
+                                    'title' => 'Golden Lion',
+                                    'desc' => 'Leadership & Crest',
+                                    'bg' => 'linear-gradient(135deg, #eab308 0%, #854d0e 100%)',
+                                    'path' => '<path d="M12 2l7 4v6c0 5.5-3.8 10.7-7 12-3.2-1.3-7-6.5-7-12V6l7-4z" fill="white" opacity="0.2" stroke="white" stroke-width="2"/><path d="M12 6a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM12 13v6M9 16h6" stroke="white" stroke-width="2.2" stroke-linecap="round"/>'
+                                ],
+                                [
+                                    'id' => 'stellar_rocket',
+                                    'title' => 'Stellar Rocket',
+                                    'desc' => 'Innovation & Growth',
+                                    'bg' => 'linear-gradient(135deg, #8b5cf6 0%, #4c1d95 100%)',
+                                    'path' => '<path d="M12 2.5s4.5 3 4.5 9.5L12 16 7.5 12c0-6.5 4.5-9.5 4.5-9.5z" fill="none" stroke="white" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="8.5" r="1.8" fill="white"/><path d="M7.5 12L4 15.5v3.5h3.5L11 15.5M16.5 12l3.5 3.5v3.5h-3.5L13 15.5M12 16v5.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+                                ],
+                                [
+                                    'id' => 'imperial_shield',
+                                    'title' => 'Imperial Shield',
+                                    'desc' => 'Security & Trust',
+                                    'bg' => 'linear-gradient(135deg, #10b981 0%, #064e3b 100%)',
+                                    'path' => '<path d="M12 3a9 9 0 00-7 3.5V12c0 5.5 3.8 10 7 11 3.2-1 7-5.5 7-11V6.5A9 9 0 0012 3z" fill="none" stroke="white" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 7v10M8 11h8" stroke="white" stroke-width="2.2" stroke-linecap="round"/>'
+                                ],
+                                [
+                                    'id' => 'monarch_crown',
+                                    'title' => 'Monarch Crown',
+                                    'desc' => 'Royalty & Prestige',
+                                    'bg' => 'linear-gradient(135deg, #d97706 0%, #451a03 100%)',
+                                    'path' => '<path d="M3 18h18v2H3v-2zm1-2l2.5-9L12 12l5.5-5L20 16H4z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><circle cx="4" cy="6" r="1.5" fill="white"/><circle cx="12" cy="5" r="1.5" fill="white"/><circle cx="20" cy="6" r="1.5" fill="white"/>'
+                                ],
+                                [
+                                    'id' => 'explorer_compass',
+                                    'title' => 'Explorer Compass',
+                                    'desc' => 'Navigation & Knowledge',
+                                    'bg' => 'linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%)',
+                                    'path' => '<circle cx="12" cy="12" r="9" stroke="white" stroke-width="2.2" fill="none"/><path d="M16.2 7.8l-2.8 5.6-5.6 2.8 2.8-5.6 5.6-2.8z" fill="white" stroke="white" stroke-width="1" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.5" fill="#0284c7"/>'
+                                ],
+                                [
+                                    'id' => 'apex_lightning',
+                                    'title' => 'Apex Lightning',
+                                    'desc' => 'Energy & High Impact',
+                                    'bg' => 'linear-gradient(135deg, #ec4899 0%, #831843 100%)',
+                                    'path' => '<path d="M13 2L4.5 13.5H12L11 22L19.5 10.5H12L13 2z" fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>'
+                                ],
+                            ];
+                        @endphp
+
+                        @foreach($presetLogos as $preset)
+                            <div class="preset-logo-card" 
+                                 onclick="applyPresetLogo('{{ $preset['id'] }}', '{{ e($preset['title']) }}')"
+                                 style="background:#ffffff;border:2px solid #e2e8f0;border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s ease;display:flex;flex-direction:column;align-items:center;gap:8px"
+                                 onmouseover="this.style.borderColor='#6366f1';this.style.transform='translateY(-2px)'"
+                                 onmouseout="this.style.borderColor='#e2e8f0';this.style.transform='translateY(0)'">
+                                <div id="preset-badge-{{ $preset['id'] }}" style="width:52px;height:52px;border-radius:50%;background:{{ $preset['bg'] }};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.12);transition:transform 0.2s ease">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        {!! $preset['path'] !!}
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font-size:12.5px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $preset['title'] }}</div>
+                                    <div style="font-size:10.5px;color:#64748b;margin-top:1px">{{ $preset['desc'] }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <script>
+                    function applyPresetLogo(presetId, title) {
+                        const svgElem = document.querySelector('#preset-badge-' + presetId + ' svg');
+                        if (!svgElem) return;
+
+                        const startColor = getGradientStart(presetId);
+                        const endColor = getGradientEnd(presetId);
+
+                        const svgContent = svgElem.innerHTML;
+                        const fullSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200">
+                            <defs>
+                                <linearGradient id="presetBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="${startColor}" />
+                                    <stop offset="100%" stop-color="${endColor}" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="url(#presetBg)" />
+                            <g transform="translate(20, 20) scale(2.5)">
+                                ${svgContent}
+                            </g>
+                        </svg>`;
+
+                        const svgDataUrl = 'data:image/svg+xml;base64,' + btoa(fullSvg);
+                        
+                        prOriginalFilename = presetId + '_logo.svg';
+                        prRawDataUrl = svgDataUrl;
+
+                        document.getElementById('principal_cropped_logo_input').value = svgDataUrl;
+                        document.getElementById('principal-applied-crop-preview').src = svgDataUrl;
+                        document.getElementById('principal-applied-crop-filename').textContent = title + ' Emblem (SVG)';
+                        document.getElementById('principal-applied-status-title').textContent = '✓ Preset Logo (' + title + ') Selected';
+
+                        document.getElementById('principal-dropzone-idle').style.display = 'none';
+                        document.getElementById('principal-dropzone-applied').style.display = 'flex';
+
+                        document.querySelectorAll('.preset-logo-card').forEach(card => {
+                            card.style.borderColor = '#e2e8f0';
+                            card.style.background = '#ffffff';
+                        });
+                        const selectedCard = document.querySelector('#preset-badge-' + presetId).closest('.preset-logo-card');
+                        if (selectedCard) {
+                            selectedCard.style.borderColor = '#4f46e5';
+                            selectedCard.style.background = '#eef2ff';
+                        }
+                    }
+
+                    function getGradientStart(id) {
+                        const map = {
+                            velocity_car: '#ef4444',
+                            apex_bike: '#06b6d4',
+                            grizzly_bear: '#f59e0b',
+                            royal_eagle: '#3b82f6',
+                            golden_lion: '#eab308',
+                            stellar_rocket: '#8b5cf6',
+                            imperial_shield: '#10b981',
+                            monarch_crown: '#d97706',
+                            explorer_compass: '#0284c7',
+                            apex_lightning: '#ec4899'
+                        };
+                        return map[id] || '#4f46e5';
+                    }
+
+                    function getGradientEnd(id) {
+                        const map = {
+                            velocity_car: '#991b1b',
+                            apex_bike: '#0e7490',
+                            grizzly_bear: '#78350f',
+                            royal_eagle: '#1e3a8a',
+                            golden_lion: '#854d0e',
+                            stellar_rocket: '#4c1d95',
+                            imperial_shield: '#064e3b',
+                            monarch_crown: '#451a03',
+                            explorer_compass: '#0c4a6e',
+                            apex_lightning: '#831843'
+                        };
+                        return map[id] || '#312e81';
+                    }
+                </script>
             </div>
             @endif
-
-        </div>
 
         <!-- Sticky Save Floating Bar at bottom -->
         <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:12px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:18px 24px;box-shadow:0 4px 20px rgba(15,23,42,0.04)">

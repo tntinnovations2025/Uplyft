@@ -367,6 +367,9 @@
                             </div>
                             @endif
 
+                            {{-- Portal Real-Time Notification Bell --}}
+                            @include('partials.portal-notification-bell')
+
                             {{-- User Profile Pill --}}
                             @auth
                                 <div class="flex items-center gap-2.5 pl-3 border-l border-[#E1DFD7]">

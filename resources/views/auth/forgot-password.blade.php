@@ -1,4 +1,4 @@
-<x-guest-layout>
+﻿<x-guest-layout>
     <style>
         .portal-header-group {
             display: flex;
@@ -101,7 +101,7 @@
         }
 
         .portal-link {
-            color: #0284c7;
+            color: #D48A2E;
             text-decoration: none;
             font-weight: 700;
         }

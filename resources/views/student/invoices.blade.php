@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Fee Invoices & Billing Statement')
 @section('page-header', 'Fee Invoices & Billing')
@@ -456,7 +456,7 @@
                         <div class="workspace-panel-title">
                             <span>🏦 Payment Channels &amp; Deposit Details</span>
                         </div>
-                        <span style="font-size:11px;font-weight:700;color:#2563eb;background:#eff6ff;padding:3px 10px;border-radius:8px;border:1px solid #bfdbfe">
+                        <span style="font-size:11px;font-weight:700;color:#D48A2E;background:#FBF3E8;padding:3px 10px;border-radius:8px;border:1px solid #E8CEAA">
                             1Link / 1Bill Enabled
                         </span>
                     </div>

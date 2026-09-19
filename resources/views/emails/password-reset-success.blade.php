@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -46,7 +46,7 @@
                     @if($user->identifier)
                     <tr><td>Account Identifier</td><td>{{ $user->identifier }}</td></tr>
                     @endif
-                    <tr><td>New Password</td><td style="font-family:monospace;font-size:16px;color:#38bdf8">{{ $newPassword }}</td></tr>
+                    <tr><td>New Password</td><td style="font-family:monospace;font-size:16px;color:#E8CEAA">{{ $newPassword }}</td></tr>
                 </table>
             </div>
 

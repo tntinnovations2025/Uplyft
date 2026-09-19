@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Subject Catalog & Curriculum')
 @section('breadcrumb', 'Subject Catalog')
 
@@ -202,7 +202,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="font-weight:800;color:#0284c7;font-size:13px">
+                                        <div style="font-weight:800;color:#D48A2E;font-size:13px">
                                             🎯 {{ $sub->total_marks ?? 100 }} Total Marks
                                         </div>
                                         <div style="font-size:11px;color:#64748b;margin-top:2px;font-weight:500">
@@ -237,7 +237,7 @@
                                                 ? route('teacher.subjects.destroy', $sub) 
                                                 : route('principal.subjects.destroy', $sub);
                                         @endphp
-                                        <button type="button" class="btn btn-ghost btn-sm" style="padding:6px 12px;font-size:12px;margin-right:4px;color:#0284c7;border-color:#bae6fd;background:#f0f9ff" onclick='openEditSubjectModal(@json($sub), "{{ $updateRoute }}")'>
+                                        <button type="button" class="btn btn-ghost btn-sm" style="padding:6px 12px;font-size:12px;margin-right:4px;color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8" onclick='openEditSubjectModal(@json($sub), "{{ $updateRoute }}")'>
                                             ✏️ Edit
                                         </button>
                                         <form action="{{ $destroyRoute }}" method="POST" onsubmit="return confirm('Delete subject {{ addslashes($sub->subject_name) }} from {{ addslashes($cls->custom_name) }}?')" style="display:inline-block">
@@ -330,8 +330,8 @@
                     <input type="number" name="lecture_duration_minutes" value="60" min="15" max="480" step="15" required style="width:100%;padding:10px;background:#ffffff;border:1px solid #fde68a;border-radius:10px;color:#d97706;font-weight:800;outline:none" placeholder="60">
                 </div>
                 <div>
-                    <label style="font-size:11px;font-weight:700;color:#0284c7;text-transform:uppercase">Total Marks *</label>
-                    <input type="number" name="total_marks" value="100" min="1" max="1000" required style="width:100%;padding:10px;background:#ffffff;border:1px solid #bae6fd;border-radius:10px;color:#0284c7;font-weight:800;outline:none">
+                    <label style="font-size:11px;font-weight:700;color:#D48A2E;text-transform:uppercase">Total Marks *</label>
+                    <input type="number" name="total_marks" value="100" min="1" max="1000" required style="width:100%;padding:10px;background:#ffffff;border:1px solid #E8CEAA;border-radius:10px;color:#D48A2E;font-weight:800;outline:none">
                 </div>
                 <div>
                     <label style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase">Passing Marks *</label>
@@ -419,8 +419,8 @@
                     <input type="number" id="edit_lecture_duration_minutes" name="lecture_duration_minutes" value="60" min="15" max="480" step="15" required style="width:100%;padding:10px;background:#ffffff;border:1px solid #fde68a;border-radius:10px;color:#d97706;font-weight:800;outline:none">
                 </div>
                 <div>
-                    <label style="font-size:11px;font-weight:700;color:#0284c7;text-transform:uppercase">Total Marks *</label>
-                    <input type="number" id="edit_total_marks" name="total_marks" value="100" min="1" max="1000" required style="width:100%;padding:10px;background:#ffffff;border:1px solid #bae6fd;border-radius:10px;color:#0284c7;font-weight:800;outline:none">
+                    <label style="font-size:11px;font-weight:700;color:#D48A2E;text-transform:uppercase">Total Marks *</label>
+                    <input type="number" id="edit_total_marks" name="total_marks" value="100" min="1" max="1000" required style="width:100%;padding:10px;background:#ffffff;border:1px solid #E8CEAA;border-radius:10px;color:#D48A2E;font-weight:800;outline:none">
                 </div>
                 <div>
                     <label style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase">Passing Marks *</label>

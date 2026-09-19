@@ -1515,7 +1515,7 @@
                 </a>
                 <a href="{{ route('principal.timetables.index') }}" class="glossy-nav-item {{ (request()->routeIs('principal.timetables.*') || request()->is('principal/timetables*')) ? 'active' : '' }}">
                     <span class="icon"><x-icon name="calendar-days" /></span>
-                    <span>Timetable Matrix</span>
+                    <span>Timetable</span>
                 </a>
             </div>
 
@@ -1639,7 +1639,10 @@
             <div class="breadcrumb">
                 <span>@yield('breadcrumb', 'Overview')</span>
             </div>
-            <div style="display:flex;align-items:center;gap:14px">
+            <div style="display:flex;align-items:center;gap:12px">
+                {{-- Real-Time Operations Notification Bell --}}
+                @include('principal.partials.notification-bell')
+
                 @if(isset($topOrg) && $topOrg)
                     @php
                         $usedCount = $topCampuses->count();
@@ -1648,32 +1651,32 @@
                         $activeCampusModel = $topCampuses->firstWhere('id', $topActiveCampusId) ?? $topUser->institute;
                     @endphp
 
-                    {{-- ── Top-Right Instagram / Facebook Style Organization & Campus Profile Switcher ── --}}
+                    {{-- ── Rightmost Circular Icon to switch campus/organization profile ── --}}
                     <div style="position:relative;display:inline-block">
-                        <button type="button" onclick="event.stopPropagation(); toggleTopNavProfileSwitcher()" style="display:flex;align-items:center;gap:10px;padding:6px 14px;background:linear-gradient(135deg,#ecfdf5 0%,#eef2ff 100%);border:1.5px solid #a7f3d0;border-radius:20px;cursor:pointer;box-shadow:0 2px 8px rgba(16,185,129,0.12);transition:all 0.2s;user-select:none" title="Switch Campus & Organization Profiles">
-                            <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;box-shadow:0 2px 6px rgba(5,150,105,0.3);flex-shrink:0">
+                        <button type="button" 
+                                onclick="event.stopPropagation(); toggleTopNavProfileSwitcher()" 
+                                style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border:2px solid #a7f3d0;box-shadow:0 2px 8px rgba(16,185,129,0.25);cursor:pointer;transition:all 0.2s;user-select:none;position:relative;overflow:hidden" 
+                                title="Switch Campus & Organization Profile ({{ $activeCampusModel?->name ?? $topOrg->name }})">
+                            @if($activeCampusModel?->logo_url)
+                                <img src="{{ $activeCampusModel->logo_url }}" alt="{{ $activeCampusModel->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />
+                            @else
                                 <i class="fa-solid fa-building"></i>
-                            </div>
-                            <div style="text-align:left">
-                                <div style="font-size:10px;font-weight:800;color:#047857;text-transform:uppercase;letter-spacing:0.4px;line-height:1">
-                                    {{ $topOrg->name }}
-                                </div>
-                                <div style="font-size:12px;font-weight:800;color:#0f172a;margin-top:2px;line-height:1;display:flex;align-items:center;gap:6px">
-                                    <span style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $activeCampusModel?->name ?? 'Active Campus' }}</span>
-                                    <span style="font-size:9.5px;background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:10px;font-weight:800;border:1px solid #bbf7d0">{{ $usedCount }}/{{ $maxQuota }}</span>
-                                </div>
-                            </div>
-                            <span style="font-size:11px;color:#047857;font-weight:800;margin-left:2px">▾</span>
+                            @endif
+                            <span style="position:absolute;bottom:0;right:0;width:10px;height:10px;border-radius:50%;background:#10b981;border:2px solid #ffffff;z-index:2"></span>
                         </button>
 
-                        {{-- Instagram / Facebook Floating Profile Switcher Popover --}}
+                        {{-- Floating Profile Switcher Popover --}}
                         <div id="top-nav-profile-switcher-pop" style="display:none;position:absolute;top:calc(100% + 8px);right:0;width:340px;z-index:999999;background:#ffffff;border:1.5px solid #cbd5e1;border-radius:20px;box-shadow:0 20px 50px -10px rgba(15,23,42,0.25);padding:14px;animation:appleLiquidSpringPop 0.25s ease forwards">
                             
                             {{-- Header --}}
                             <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid #f1f5f9;margin-bottom:10px">
                                 <div style="display:flex;align-items:center;gap:10px">
-                                    <div style="width:34px;height:34px;border-radius:10px;background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;display:flex;align-items:center;justify-content:center;font-size:14px">
-                                        <i class="fa-solid fa-building"></i>
+                                    <div style="width:34px;height:34px;border-radius:10px;background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;flex-shrink:0">
+                                        @if($activeCampusModel?->logo_url)
+                                            <img src="{{ $activeCampusModel->logo_url }}" alt="{{ $activeCampusModel->name }}" style="width:100%;height:100%;object-fit:cover" />
+                                        @else
+                                            <i class="fa-solid fa-building"></i>
+                                        @endif
                                     </div>
                                     <div>
                                         <div style="font-size:13px;font-weight:800;color:#0f172a">{{ $topOrg->name }}</div>
@@ -1689,7 +1692,7 @@
                                 Switch Active Campus Profile
                             </div>
 
-                            {{-- Campus List (Top Right Strictly Profile Switcher) --}}
+                            {{-- Campus List --}}
                             <div style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-right:2px">
                                 @foreach($topCampuses as $tcamp)
                                     @php $isTopCurr = (int)$tcamp->id === (int)$topActiveCampusId; @endphp
@@ -1698,8 +1701,12 @@
                                         <input type="hidden" name="institute_id" value="{{ $tcamp->id }}">
                                         <button type="submit" style="width:100%;text-align:left;padding:10px 12px;border-radius:14px;border:1.5px solid {{ $isTopCurr ? '#818cf8' : '#e2e8f0' }};background:{{ $isTopCurr ? '#eef2ff' : '#ffffff' }};cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all 0.18s;box-shadow:{{ $isTopCurr ? '0 2px 8px rgba(79,70,229,0.12)' : 'none' }}">
                                             <div style="display:flex;align-items:center;gap:10px;min-width:0">
-                                                <div style="width:32px;height:32px;border-radius:10px;background:{{ $isTopCurr ? 'linear-gradient(135deg,#4f46e5,#6366f1)' : '#cbd5e1' }};color:#ffffff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:{{ $isTopCurr ? '0 2px 6px rgba(79,70,229,0.3)' : 'none' }}">
-                                                    {{ $tcamp->display_initial }}
+                                                <div style="width:32px;height:32px;border-radius:10px;background:{{ $isTopCurr ? 'linear-gradient(135deg,#4f46e5,#6366f1)' : '#cbd5e1' }};color:#ffffff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:{{ $isTopCurr ? '0 2px 6px rgba(79,70,229,0.3)' : 'none' }};overflow:hidden">
+                                                    @if($tcamp->logo_url)
+                                                        <img src="{{ $tcamp->logo_url }}" alt="{{ $tcamp->name }}" style="width:100%;height:100%;object-fit:cover" />
+                                                    @else
+                                                        {{ $tcamp->display_initial }}
+                                                    @endif
                                                 </div>
                                                 <div style="min-width:0">
                                                     <div style="font-size:12.5px;font-weight:{{ $isTopCurr ? '800' : '700' }};color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
@@ -1741,29 +1748,6 @@
                             }
                         });
                     </script>
-                @endif
-
-                {{-- Active Academic Session / Term Pill --}}
-                @php
-                    $headerActiveTerm = null;
-                    if (auth()->check() && auth()->user()->institute_id) {
-                        $headerActiveTerm = \App\Models\AcademicTerm::getActiveTerm(auth()->user()->institute_id);
-                    }
-                @endphp
-                @if(auth()->check() && auth()->user()->institute_id)
-                <div style="display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg,#ecfdf5 0%,#eef2ff 100%);border:1.5px solid #a7f3d0;border-radius:20px;box-shadow:0 2px 8px rgba(16,185,129,0.12);user-select:none">
-                    <span style="position:relative;display:inline-flex;width:7px;height:7px;flex-shrink:0">
-                        @if($headerActiveTerm)
-                            <span style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;background:#10b981;opacity:0.6"></span>
-                            <span style="position:relative;width:7px;height:7px;border-radius:50%;background:#10b981"></span>
-                        @else
-                            <span style="position:relative;width:7px;height:7px;border-radius:50%;background:#d97706"></span>
-                        @endif
-                    </span>
-                    <span style="font-size:11px;font-weight:800;color:#047857;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px" title="{{ $headerActiveTerm?->name ?? 'No Active Term' }}">
-                        {{ $headerActiveTerm?->name ?? 'Activate Term' }}
-                    </span>
-                </div>
                 @endif
             </div>
         </header>

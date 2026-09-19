@@ -334,7 +334,7 @@
                     <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/70 flex items-center justify-center text-lg font-bold shadow-2xs">
                         <i class="fa-solid fa-file-pen"></i>
                     </div>
-                    <span class="badge badge-amber text-xs font-bold">12 Pending</span>
+                    <span class="badge badge-amber text-xs font-bold">{{ $pendingSubmissionsCount ?? 0 }} Pending</span>
                 </div>
                 <div>
                     <h3 class="font-extrabold text-slate-900 text-base mb-1 font-display">Assignments to Grade</h3>
@@ -387,7 +387,7 @@
                 <div class="mt-auto pt-4 border-t border-slate-200/80">
                     <a href="{{ auth()->user()->staffUrl('attendance') }}" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl btn-primary text-xs font-bold">
                         <i class="fa-solid fa-play text-[11px]"></i>
-                        <span>Start Roster for {{ $todaySlots->first()['subject_code'] ?? 'CS-101' }}</span>
+                        <span>Start Class Roster{{ $todaySlots->isNotEmpty() ? ' for ' . $todaySlots->first()['subject_code'] : '' }}</span>
                     </a>
                 </div>
             </div>
@@ -469,7 +469,7 @@
                         <i class="fa-solid fa-calendar-week"></i>
                     </div>
                     <div>
-                        <div class="text-xs font-extrabold text-slate-900 group-hover:text-indigo-700 transition">Timetable Engine</div>
+                        <div class="text-xs font-extrabold text-slate-900 group-hover:text-indigo-700 transition">Timetable</div>
                         <div class="text-[10.5px] text-slate-500 font-medium">Matrix Scheduling</div>
                     </div>
                     @if(!auth()->user()->hasPermission('timetables', 'edit'))
@@ -622,7 +622,7 @@
                     <i class="fa-solid fa-calendar-week"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight font-display">Complete Weekly Teaching Schedule</h2>
+                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight font-display">Timetable</h2>
                     <p class="text-xs text-slate-500 font-medium mt-0.5">All assigned classes, sections, and laboratories for the active session.</p>
                 </div>
             </div>

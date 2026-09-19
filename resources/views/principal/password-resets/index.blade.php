@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.';
@@ -35,7 +35,7 @@
                 Review, approve, or reject account reset requests submitted by students and faculty.
             </span>
         </div>
-        <span class="badge" style="background:rgba(0,206,209,0.15);border:1px solid rgba(0,206,209,0.3);color:#00ced1;padding:6px 12px;border-radius:20px;font-weight:700;font-size:11px">
+        <span class="badge" style="background:rgba(212,138,46,0.15);border:1px solid rgba(212,138,46,0.3);color:#D48A2E;padding:6px 12px;border-radius:20px;font-weight:700;font-size:11px">
             {{ $resetRequests->total() }} TOTAL REQUESTS
         </span>
     </div>
@@ -56,10 +56,10 @@
                     <tr style="{{ $request->isPending() ? 'background: rgba(245, 158, 11, 0.08);' : '' }}">
                         <td style="padding:14px">
                             <div style="font-weight: 700; color: #fff;">{{ $request->user->name }}</div>
-                            <div style="font-size: 11px; color: #38bdf8;">{{ $request->user->identifier ?? $request->user->email }}</div>
+                            <div style="font-size: 11px; color: #E8CEAA;">{{ $request->user->identifier ?? $request->user->email }}</div>
                         </td>
                         <td style="padding:14px">
-                            <span class="badge" style="background:{{ $request->user->role === 'teacher' ? 'rgba(56,189,248,0.15)' : 'rgba(16,185,129,0.15)' }};border:1px solid {{ $request->user->role === 'teacher' ? 'rgba(56,189,248,0.3)' : 'rgba(16,185,129,0.3)' }};color:{{ $request->user->role === 'teacher' ? '#38bdf8' : '#10b981' }};padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700">
+                            <span class="badge" style="background:{{ $request->user->role === 'teacher' ? 'rgba(56,189,248,0.15)' : 'rgba(16,185,129,0.15)' }};border:1px solid {{ $request->user->role === 'teacher' ? 'rgba(56,189,248,0.3)' : 'rgba(16,185,129,0.3)' }};color:{{ $request->user->role === 'teacher' ? '#E8CEAA' : '#10b981' }};padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700">
                                 {{ strtoupper($request->user->role) }}
                             </span>
                         </td>

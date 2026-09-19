@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
         .body { padding: 32px 28px; color: #cbd5e1; }
         .body p { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
         .otp-box { background: rgba(99,102,241,0.1); border: 2px dashed #6366f1; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0; }
-        .otp-code { font-family: monospace, monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #38bdf8; }
+        .otp-code { font-family: monospace, monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #E8CEAA; }
         .otp-expiry { font-size: 12px; color: #94a3b8; margin-top: 8px; }
         .footer { text-align: center; padding: 20px; font-size: 12px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); }
     </style>

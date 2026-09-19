@@ -1,4 +1,4 @@
-{{-- Universal Multi-Tenant Branded 3D Spinning Logo Splash Loader (UI/UX Pro Max Plain White & Glossy Blue) --}}
+﻿{{-- Universal Multi-Tenant Branded 3D Spinning Logo Splash Loader (UI/UX Pro Max Plain White & Glossy Blue) --}}
 @php
     $platformLogoPath = \App\Models\PlatformSetting::get('platform_logo_path');
     $uplyftMasterLogoUrl = null;
@@ -448,7 +448,7 @@
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%);
+        background: linear-gradient(135deg, #D48A2E 0%, #D48A2E 50%, #4f46e5 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -539,7 +539,7 @@
         letter-spacing: 1.6px;
         text-transform: uppercase;
         color: #0f172a;
-        background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #D48A2E 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -566,7 +566,7 @@
     .uplyft-loader-bar-progress {
         width: 0%;
         height: 100%;
-        background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 50%), linear-gradient(90deg, #0284c7 0%, #38bdf8 50%, #2563eb 100%);
+        background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 50%), linear-gradient(90deg, #D48A2E 0%, #E8CEAA 50%, #D48A2E 100%);
         border-radius: 9999px;
         position: absolute;
         top: 0;
@@ -583,7 +583,7 @@
         height: 10px;
         border-radius: 50%;
         background: #ffffff;
-        box-shadow: 0 0 10px #ffffff, 0 0 18px #38bdf8, 0 0 25px #0284c7;
+        box-shadow: 0 0 10px #ffffff, 0 0 18px #E8CEAA, 0 0 25px #D48A2E;
     }
 
     @keyframes barFillExact {

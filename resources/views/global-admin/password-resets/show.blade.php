@@ -1,4 +1,4 @@
-@extends('global-admin.layouts.app')
+﻿@extends('global-admin.layouts.app')
 
 @section('title', 'Process Password Reset')
 @section('page-title', 'Authorize & Reset Principal Password')
@@ -35,7 +35,7 @@
             </div>
             <div>
                 <div style="color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700;">Email / Account Identifier</div>
-                <div style="color: #0284c7; font-weight: 700; font-size: 14px; margin-top: 4px;">{{ $notification->user->identifier ?? $notification->user->email }}</div>
+                <div style="color: #D48A2E; font-weight: 700; font-size: 14px; margin-top: 4px;">{{ $notification->user->identifier ?? $notification->user->email }}</div>
             </div>
             <div>
                 <div style="color: #64748b; font-size: 11px; text-transform: uppercase; font-weight: 700;">System Role</div>

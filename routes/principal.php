@@ -10,6 +10,7 @@ use App\Http\Controllers\Principal\ClassSubjectController;
 use App\Http\Controllers\Principal\FeeInvoiceController;
 use App\Http\Controllers\Principal\InstituteSettingController;
 use App\Http\Controllers\Principal\MasterDirectoryController;
+use App\Http\Controllers\Principal\NotificationController;
 use App\Http\Controllers\Principal\PrincipalDashboardController;
 use App\Http\Controllers\Principal\RoomController;
 use App\Http\Controllers\Principal\ScholarshipPolicyController;
@@ -47,6 +48,15 @@ Route::middleware(['auth', 'role:principal,teacher', 'institute.member'])->group
 
     // Principal Dashboard
     Route::get('/dashboard', [PrincipalDashboardController::class, 'index'])->name('dashboard');
+
+    // Real-Time Operation Notifications Engine (Laravel Reverb)
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/feed', [NotificationController::class, 'feed'])->name('feed');
+        Route::post('/{id}/mark-read', [NotificationController::class, 'markRead'])->name('mark-read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
+        Route::post('/test-broadcast', [NotificationController::class, 'testBroadcast'])->name('test-broadcast');
+    });
 
     // Academic Terms Lifecycle & Security Settings (Exempt from active.term prerequisite)
     Route::get('/security', function () {

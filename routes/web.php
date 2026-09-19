@@ -80,6 +80,11 @@ $staffPortalGroup = function () {
     Route::post('/attendance', [TeacherPortalController::class, 'storeAttendance'])->name('attendance.store');
     Route::get('/lms', [TeacherPortalController::class, 'lms'])->name('lms');
 
+    // Teacher Daily Diary
+    Route::get('/diary', [\App\Http\Controllers\Teacher\DailyDiaryController::class, 'index'])->name('diary.index');
+    Route::post('/diary', [\App\Http\Controllers\Teacher\DailyDiaryController::class, 'store'])->name('diary.store');
+    Route::delete('/diary/{diary}', [\App\Http\Controllers\Teacher\DailyDiaryController::class, 'destroy'])->name('diary.destroy');
+
     // Delegated Administrative Rights Routes (Staying 100% on Employee Portal Workspace)
     Route::middleware(['active.term'])->group(function () {
         // Scholarship Policy & Discounts
@@ -207,6 +212,15 @@ Route::middleware(['auth'])->prefix('principal')->name('principal.')->group(func
 });
 
 Route::middleware('auth')->group(function () {
+    // ── Universal Portal Notifications (Students & Teachers) ──
+    Route::prefix('portal-notifications')->name('portal.notifications.')->group(function () {
+        Route::get('/feed', [\App\Http\Controllers\PortalNotificationController::class, 'feed'])->name('feed');
+        Route::post('/{id}/mark-read', [\App\Http\Controllers\PortalNotificationController::class, 'markRead'])->name('mark-read');
+        Route::post('/mark-all-read', [\App\Http\Controllers\PortalNotificationController::class, 'markAllRead'])->name('mark-all-read');
+        Route::delete('/{id}', [\App\Http\Controllers\PortalNotificationController::class, 'destroy'])->name('destroy');
+        Route::post('/test-broadcast', [\App\Http\Controllers\PortalNotificationController::class, 'testBroadcast'])->name('test-broadcast');
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/platform-logo', [ProfileController::class, 'updatePlatformLogo'])->name('profile.platform-logo.update');

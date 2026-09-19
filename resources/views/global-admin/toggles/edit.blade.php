@@ -1,4 +1,4 @@
-@extends('global-admin.layouts.app')
+﻿@extends('global-admin.layouts.app')
 @section('breadcrumb', 'Modular Feature Switchboard — ' . $institute->name)
 @section('title', 'SaaS Feature Switchboard — ' . $institute->name)
 
@@ -568,7 +568,7 @@
                 </h1>
                 <div style="color:var(--text-muted);font-size:13px;margin-top:4px;display:flex;align-items:center;gap:12px">
                     <span>
-                        <i class="fa-solid fa-layer-group mr-1" style="color:#0284c7"></i>
+                        <i class="fa-solid fa-layer-group mr-1" style="color:#D48A2E"></i>
                         <strong style="color:#0f172a">{{ ucfirst($institute->subscription_tier) }} Tier</strong>
                     </span>
                     <span>•</span>
@@ -577,7 +577,7 @@
                         {{ $institute->city ?? 'Main Campus' }}
                     </span>
                     <span>•</span>
-                    <a href="{{ route('global-admin.institutes.show', $institute) }}" style="color:#0284c7;text-decoration:none;font-weight:700">
+                    <a href="{{ route('global-admin.institutes.show', $institute) }}" style="color:#D48A2E;text-decoration:none;font-weight:700">
                         View Institute Dossier →
                     </a>
                 </div>

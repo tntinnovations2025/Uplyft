@@ -69,6 +69,9 @@ class TeacherOnboardingService
                 'basic_salary_pkr' => $data['basic_salary_pkr'] ?? null,
             ]);
 
+            // Dispatch Real-Time Reverb Notification to Principal & Admins
+            \App\Services\PrincipalNotificationService::notifyStaffOnboarded($user, auth()->user());
+
             return [
                 'teacher' => $teacher,
                 'credentials' => [

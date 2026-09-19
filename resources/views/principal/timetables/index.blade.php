@@ -1,6 +1,6 @@
 @extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
-@section('title', 'Timetable & Master Matrix')
-@section('breadcrumb', 'Timetable Matrix')
+@section('title', 'Timetable')
+@section('breadcrumb', 'Timetable')
 
 @section('content')
 @php
@@ -14,7 +14,7 @@
         display: none;
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(15, 23, 42, 0.5);
+        background: rgba(27, 26, 23, 0.45);
         backdrop-filter: blur(8px);
         z-index: 99999;
         align-items: center;
@@ -22,16 +22,16 @@
         padding: 20px;
     }
     .modal-box {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: #F9F8F5;
+        border: 1px solid #E1DFD7;
         border-radius: 18px;
         width: 100%;
         max-width: 540px;
         padding: 28px;
-        box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.12);
         max-height: 90vh;
         overflow-y: auto;
-        color: #0f172a;
+        color: #1B1A17;
     }
 
     /* Per-Section Day Selector Pills */
@@ -40,9 +40,9 @@
         border-radius: 8px;
         font-size: 11.5px;
         font-weight: 700;
-        color: #475569;
-        background: #f8fafc;
-        border: 1px solid #cbd5e1;
+        color: #68665D;
+        background: #F9F8F5;
+        border: 1px solid #E1DFD7;
         text-decoration: none;
         transition: all 0.2s ease;
         display: inline-flex;
@@ -50,14 +50,14 @@
         gap: 6px;
     }
     .sec-day-pill:hover {
-        background: #f1f5f9;
-        color: #0f172a;
+        background: #F2EFEB;
+        color: #1B1A17;
     }
     .sec-day-pill.active {
-        background: linear-gradient(135deg, #4f46e5, #4338ca);
+        background: linear-gradient(135deg, #D48A2E, #C07A22);
         color: #ffffff;
-        border-color: #4f46e5;
-        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        border-color: #D48A2E;
+        box-shadow: 0 2px 8px rgba(212, 138, 46, 0.3);
     }
 
     /* Table Grid Styling */
@@ -67,27 +67,27 @@
         border-spacing: 0;
         border-radius: 14px;
         overflow: hidden;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
+        border: 1px solid #E1DFD7;
+        background: #F9F8F5;
     }
     .timetable-grid th {
-        background: #f8fafc;
-        color: #475569;
+        background: #F2EFEB;
+        color: #68665D;
         font-size: 12px;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding: 14px 12px;
-        border-bottom: 2px solid #e2e8f0;
-        border-right: 1px solid #f1f5f9;
+        border-bottom: 2px solid #E1DFD7;
+        border-right: 1px solid #E8E5DC;
         text-align: center;
     }
     .timetable-grid td {
         padding: 10px;
-        border-bottom: 1px solid #f1f5f9;
-        border-right: 1px solid #f1f5f9;
+        border-bottom: 1px solid #E8E5DC;
+        border-right: 1px solid #E8E5DC;
         vertical-align: top;
-        background: #ffffff;
+        background: #F9F8F5;
         min-height: 80px;
     }
     .timetable-grid td:last-child, .timetable-grid th:last-child {
@@ -99,9 +99,9 @@
 
     /* Slot Card Styling */
     .slot-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-left: 4px solid #4f46e5;
+        background: #F9F8F5;
+        border: 1px solid #E1DFD7;
+        border-left: 4px solid #D48A2E;
         border-radius: 8px;
         padding: 8px 10px;
         margin-bottom: 6px;
@@ -110,32 +110,32 @@
     }
     .slot-card:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(212,138,46,0.08);
+        border-color: #E8CEAA;
     }
     .slot-card .subject {
         font-weight: 800;
         font-size: 12px;
-        color: #0f172a;
+        color: #1B1A17;
     }
     .slot-card .teacher {
         font-size: 11px;
-        color: #64748b;
+        color: #68665D;
         margin-top: 2px;
     }
     .slot-card .room {
         font-size: 10px;
         font-weight: 700;
-        color: #059669;
+        color: #2E6E42;
         margin-top: 2px;
     }
     .slot-card .delete-btn {
         position: absolute;
         top: 4px;
         right: 4px;
-        background: #fee2e2;
-        color: #dc2626;
-        border: 1px solid #fca5a5;
+        background: #F6E4E1;
+        color: #A2412C;
+        border: 1px solid #E8CEAA;
         border-radius: 4px;
         width: 18px;
         height: 18px;
@@ -145,12 +145,12 @@
         align-items: center;
         justify-content: center;
     }
-    .slot-card .delete-btn:hover { background: #dc2626; color: #fff; }
+    .slot-card .delete-btn:hover { background: #A2412C; color: #fff; }
 
     /* Accordion Header */
     .grade-accordion-header {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: #F9F8F5;
+        border: 1px solid #E1DFD7;
         border-radius: 12px;
         padding: 14px 20px;
         margin-top: 20px;
@@ -163,14 +163,14 @@
         transition: all 0.2s ease;
     }
     .grade-accordion-header:hover {
-        background: #fdf2f8;
-        border-color: #fbcfe8;
+        background: #F8E9D3;
+        border-color: #E8CEAA;
     }
     .grade-accordion-title {
         font-family: 'Outfit', sans-serif;
         font-size: 17px;
         font-weight: 800;
-        color: #0f172a;
+        color: #1B1A17;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -185,49 +185,60 @@
 <div style="margin-bottom:24px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:16px">
         <div>
-            <h1 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;letter-spacing:-0.5px">🗓️ Timetable &amp; Master Matrix</h1>
-            <p style="color:#64748b;font-size:13.5px;margin-top:2px;font-weight:500">
-                Conflict-free master schedule adhering to teacher availability, room capacity, and active academic term rules in <strong>{{ $activeTerm?->name }}</strong>.
-            </p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#1B1A17;letter-spacing:-0.5px">Timetable</h1>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:12.5px;color:#64748b;font-weight:700">
-                Active View: <strong style="color:#4f46e5">{{ $viewType === 'teacher' ? 'Teacher Schedules' : 'Class Schedules' }}</strong>
+            <span style="font-size:12.5px;color:#68665D;font-weight:700">
+                Active View: <strong style="color:#D48A2E">{{ $viewType === 'teacher' ? 'Teacher Schedules' : 'Class Schedules' }}</strong>
             </span>
         </div>
     </div>
 
 <!-- SINGLE UNIFIED TOP NAVIGATION & ACTION MENU -->
-    <div style="background:#ffffff;border:1px solid rgba(226,232,240,0.85);border-radius:14px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 4px 20px -2px rgba(0,0,0,0.04)">
+    <div style="background:#F9F8F5;border:1px solid #E1DFD7;border-radius:14px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 4px 20px -2px rgba(0,0,0,0.04)">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            {{-- My Assigned Lectures: only show if the current user actually has timetable slots assigned to them --}}
+            @if($mySlots->isNotEmpty())
+            <a href="{{ route($routePrefix . 'timetables.index', ['view_type' => 'my']) }}" 
+               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;background:#F2EFEB;color:#68665D;border:1px solid #E1DFD7">
+                👨‍🏫 My Assigned Lectures
+            </a>
+            @endif
             <a href="{{ route($routePrefix . 'timetables.index', ['view_type' => 'class']) }}" 
-               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;{{ $viewType === 'class' ? 'background:linear-gradient(135deg, #4f46e5, #4338ca);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,0.35)' : 'background:#f8fafc;color:#475569;border:1px solid #cbd5e1' }}">
+               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;{{ $viewType === 'class' ? 'background:linear-gradient(135deg, #D48A2E, #C07A22);color:#fff;box-shadow:0 4px 14px rgba(212,138,46,0.35)' : 'background:#F2EFEB;color:#68665D;border:1px solid #E1DFD7' }}">
                 🏫 Class Schedules
             </a>
             <a href="{{ route($routePrefix . 'timetables.index', ['view_type' => 'teacher']) }}" 
-               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;{{ $viewType === 'teacher' ? 'background:linear-gradient(135deg, #4f46e5, #4338ca);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,0.35)' : 'background:#f8fafc;color:#475569;border:1px solid #cbd5e1' }}">
-                👨‍🏫 Teacher Schedules
+               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;{{ $viewType === 'teacher' ? 'background:linear-gradient(135deg, #D48A2E, #C07A22);color:#fff;box-shadow:0 4px 14px rgba(212,138,46,0.35)' : 'background:#F2EFEB;color:#68665D;border:1px solid #E1DFD7' }}">
+                📋 Teacher Schedules
             </a>
             <a href="{{ route($routePrefix . 'timetables.grid') }}" 
-               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;background:#f8fafc;color:#475569;border:1px solid #cbd5e1">
+               class="btn" style="border-radius:10px;padding:9px 16px;font-size:12.5px;font-weight:700;background:#F2EFEB;color:#68665D;border:1px solid #E1DFD7">
                 🏢 Campus Master Grid
             </a>
             <a href="{{ route($routePrefix . 'timetables.days-and-hours') }}" 
-               class="btn" style="border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;background:#f8fafc;color:#475569;border:1px solid #cbd5e1">
+               class="btn" style="border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;background:#F2EFEB;color:#68665D;border:1px solid #E1DFD7">
                 ⚙️ Bell Timings &amp; Days
             </a>
         </div>
 
-            <a href="{{ route($routePrefix . 'timetables.export') }}" class="btn btn-ghost" style="border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd5e1;background:#ffffff">
-                📗 Download Excel (.xlsx)
-            </a>
+        <div style="display:flex;align-items:center;gap:8px">
+            @if($viewType === 'class')
+                {{-- Full institute download in class view --}}
+                <a href="{{ route($routePrefix . 'timetables.export') }}" 
+                   class="btn btn-ghost" 
+                   style="border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;border:1px solid #E1DFD7;background:#F9F8F5"
+                   title="Download complete institute timetable as Excel">
+                    📗 Download All (.xlsx)
+                </a>
+            @endif
             @if(auth()->user()->hasPermission('timetables', 'edit'))
                 <button type="button" onclick="openAddSlotModal()" class="btn btn-primary" style="border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700">
                     ➕ Add Class Slot
                 </button>
                 <form id="generateTimetableForm" method="POST" action="{{ route($routePrefix . 'timetables.generate') }}" style="display:inline">
                     @csrf
-                    <button type="button" onclick="openClassyConfirmModal()" class="btn btn-primary" style="border-radius:10px;padding:9px 16px;font-size:12px;font-weight:700;background:linear-gradient(135deg, #10b981, #059669);border:none">
+                    <button type="button" onclick="openClassyConfirmModal()" class="btn btn-primary" style="border-radius:10px;padding:9px 16px;font-size:12px;font-weight:700;background:linear-gradient(135deg, #2E6E42, #1E5230);border:none">
                         ⚡ Auto-Generate Timetable
                     </button>
                 </form>
@@ -240,13 +251,13 @@
 
 @if($viewType === 'teacher')
     <!-- TEACHER SELECTOR & TEACHER-WISE SCHEDULE VIEW -->
-    <div class="card" style="margin-bottom:24px;padding:20px;background:#ffffff;border:1px solid rgba(226,232,240,0.85);border-radius:16px;box-shadow:0 4px 20px -2px rgba(0,0,0,0.04)">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:14px">
+    <div class="card" style="margin-bottom:24px;padding:20px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:16px;box-shadow:0 4px 20px -2px rgba(0,0,0,0.04)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;border-bottom:1px solid #E1DFD7;padding-bottom:14px">
             <div>
-                <h2 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#0f172a;display:flex;align-items:center;gap:8px">
+                <h2 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#1B1A17;display:flex;align-items:center;gap:8px">
                     👨‍🏫 Timetable Teacher-Wise
                 </h2>
-                <p style="color:#64748b;font-size:12.5px;margin-top:2px;font-weight:500">
+                <p style="color:#68665D;font-size:12.5px;margin-top:2px;font-weight:500">
                     Click on any teacher's name card to display their weekly timetable matrix schedule.
                 </p>
             </div>
@@ -257,13 +268,13 @@
                            id="teacherSearchInput" 
                            onkeyup="filterTeacherCards()" 
                            placeholder="🔍 Search teacher name..." 
-                           style="width:100%;padding:8px 12px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;color:#0f172a;font-size:12.5px;outline:none">
+                           style="width:100%;padding:8px 12px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:10px;color:#1B1A17;font-size:12.5px;outline:none">
                 </div>
 
                 <!-- Teacher Select Dropdown -->
                 <div style="min-width:220px">
                     <select onchange="window.location.href='{{ route($routePrefix . 'timetables.index') }}?view_type=teacher&teacher_id=' + this.value" 
-                            style="width:100%;padding:8px 12px;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;color:#0f172a;font-size:12.5px;font-weight:600;outline:none">
+                            style="width:100%;padding:8px 12px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:10px;color:#1B1A17;font-size:12.5px;font-weight:600;outline:none">
                         <option value="">-- All Teachers ({{ $teachers->count() }}) --</option>
                         @foreach($teachers as $t)
                             <option value="{{ $t->id }}" {{ (string)$selectedTeacherId === (string)$t->id ? 'selected' : '' }}>
@@ -296,80 +307,90 @@
                 $mergedTSlots = \App\Models\Timetable::mergeContiguousSlots($rawTSlots);
                 $isInitiallyExpanded = $selectedTeacherId == $t->id;
             @endphp
-            <div class="teacher-schedule-card" data-teacher-name="{{ strtolower($t->name) }}" style="margin-bottom:16px;background:rgba(30,41,59,0.7);border:1px solid rgba(0,206,209,0.25);border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.25);transition:all 0.2s">
+            <div class="teacher-schedule-card" data-teacher-name="{{ strtolower($t->name) }}" style="margin-bottom:16px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:all 0.2s">
                 <!-- Teacher Name Clickable Header Bar -->
                 <div onclick="toggleTeacherTimetable('{{ $t->id }}')" 
-                     style="background:linear-gradient(135deg, rgba(30,41,59,0.95), rgba(15,23,42,0.95));padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;cursor:pointer;user-select:none;border-bottom:{{ $isInitiallyExpanded ? '1px solid rgba(255,255,255,0.08)' : 'none' }}"
-                     onmouseover="this.style.background='linear-gradient(135deg, rgba(30,41,59,1), rgba(15,23,42,1))'"
-                     onmouseout="this.style.background='linear-gradient(135deg, rgba(30,41,59,0.95), rgba(15,23,42,0.95))'">
+                     style="background:linear-gradient(135deg, #F2EFEB, #EAE7E0);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;cursor:pointer;user-select:none;border-bottom:{{ $isInitiallyExpanded ? '1px solid #E1DFD7' : 'none' }}"
+                     onmouseover="this.style.background='linear-gradient(135deg, #EAE7E0, #E1DFD7)'"
+                     onmouseout="this.style.background='linear-gradient(135deg, #F2EFEB, #EAE7E0)'">
                     <div style="display:flex;align-items:center;gap:14px">
-                        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg, #00ced1, #3b82f6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;box-shadow:0 4px 12px rgba(0,206,209,0.3)">
+                        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg, #D48A2E, #C07A22);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;box-shadow:0 4px 12px rgba(212,138,46,0.3)">
                             {{ strtoupper(substr($t->name, 0, 1)) }}
                         </div>
                         <div>
-                            <div style="font-weight:800;color:#fff;font-size:16px;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px">
+                            <div style="font-weight:800;color:#1B1A17;font-size:16px;font-family:'Manrope',sans-serif;display:inline-flex;align-items:center;gap:8px">
                                 <span>👨‍🏫 {{ $t->name }}</span>
                                 <button type="button" 
                                         onclick="event.stopPropagation(); openTeacherModalFromId({{ $t->id }})" 
-                                        style="font-size:10px;background:rgba(0,206,209,0.15);color:#00ced1;padding:2px 7px;border-radius:12px;border:1px solid rgba(0,206,209,0.3);font-weight:700;cursor:pointer"
+                                        style="font-size:10px;background:#F8E9D3;color:#D48A2E;padding:2px 7px;border-radius:12px;border:1px solid #E8CEAA;font-weight:700;cursor:pointer"
                                         title="Click to view full profile details">
                                     🔍 Details
                                 </button>
                             </div>
-                            <div style="font-size:12px;color:#94a3b8;margin-top:2px">{{ $t->email }} &bull; {{ $mergedTSlots->count() }} Total Weekly Lecture(s)</div>
+                            <div style="font-size:12px;color:#68665D;margin-top:2px">{{ $t->email }} &bull; {{ $mergedTSlots->count() }} Total Weekly Lecture(s)</div>
                         </div>
                     </div>
 
-                    <div style="display:flex;align-items:center;gap:10px">
-                        <span class="badge" style="background:rgba(0,206,209,0.15);color:#00ced1;border:1px solid rgba(0,206,209,0.3);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700">
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <span class="badge" style="background:#F8E9D3;color:#D48A2E;border:1px solid #E8CEAA;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700">
                             📚 {{ $mergedTSlots->count() }} Weekly Block(s)
                         </span>
 
-                        <span id="teacher-acc-icon-{{ $t->id }}" style="font-size:12px;font-weight:800;color:{{ $isInitiallyExpanded ? '#fff' : '#00ced1' }};background:{{ $isInitiallyExpanded ? 'rgba(0,206,209,0.25)' : 'rgba(0,206,209,0.1)' }};padding:6px 14px;border-radius:8px;border:1px solid rgba(0,206,209,0.3);transition:all 0.2s">
+                        {{-- Teacher-wise download button --}}
+                        @if($mergedTSlots->isNotEmpty())
+                        <a href="{{ route($routePrefix . 'timetables.export', ['teacher_id' => $t->id]) }}"
+                           onclick="event.stopPropagation()"
+                           style="font-size:11px;font-weight:700;color:#2E6E42;background:#E3EFE2;border:1px solid #b5d6b5;padding:5px 12px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:4px"
+                           title="Download {{ $t->name }}'s timetable as Excel">
+                            📥 Excel
+                        </a>
+                        @endif
+
+                        <span id="teacher-acc-icon-{{ $t->id }}" style="font-size:12px;font-weight:800;color:{{ $isInitiallyExpanded ? '#1B1A17' : '#D48A2E' }};background:{{ $isInitiallyExpanded ? '#F8E9D3' : '#F2EFEB' }};padding:6px 14px;border-radius:8px;border:1px solid #E8CEAA;transition:all 0.2s">
                             {{ $isInitiallyExpanded ? '▲ Collapse Schedule' : '▼ Click to View Schedule' }}
                         </span>
                     </div>
                 </div>
 
                 <!-- Teacher Timetable Table Container (Expanded on Click) -->
-                <div id="teacher-timetable-body-{{ $t->id }}" style="padding:18px;display:{{ $isInitiallyExpanded ? 'block' : 'none' }}">
+                <div id="teacher-timetable-body-{{ $t->id }}" style="padding:18px;background:#F9F8F5;display:{{ $isInitiallyExpanded ? 'block' : 'none' }}">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-                        <div style="font-size:13px;font-weight:700;color:#00ced1">
+                        <div style="font-size:13px;font-weight:700;color:#D48A2E">
                             📅 Weekly Schedule Table for {{ $t->name }}
                         </div>
                         <!-- View Toggle Buttons (Grid vs List) -->
-                        <div style="display:inline-flex;background:rgba(15,23,42,0.8);padding:3px;border-radius:8px;border:1px solid rgba(255,255,255,0.08)">
+                        <div style="display:inline-flex;background:#F2EFEB;padding:3px;border-radius:8px;border:1px solid #E1DFD7">
                             <button type="button" 
                                     id="view-toggle-grid-{{ $t->id }}" 
                                     onclick="switchTeacherViewMode('{{ $t->id }}', 'grid')" 
-                                    style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:#00ced1;color:#0f172a;border:none">
+                                    style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:#D48A2E;color:#fff;border:none">
                                 🗓️ Weekly Matrix Grid
                             </button>
                             <button type="button" 
                                     id="view-toggle-list-{{ $t->id }}" 
                                     onclick="switchTeacherViewMode('{{ $t->id }}', 'list')" 
-                                    style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:#94a3b8;border:none">
+                                    style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:#68665D;border:none">
                                 📋 List View
                             </button>
                         </div>
                     </div>
 
                     @if($mergedTSlots->isEmpty())
-                        <div style="text-align:center;padding:24px;color:#94a3b8;font-size:13px">
+                        <div style="text-align:center;padding:24px;color:#68665D;font-size:13px">
                             No scheduled lectures for {{ $t->name }} in active term {{ $activeTerm?->name }}.
                         </div>
                     @else
                         <!-- MODE 1: WEEKLY MATRIX GRID (DEFAULT - COMPACT 6 COLUMN LAYOUT) -->
                         <div id="teacher-view-grid-{{ $t->id }}" style="overflow-x:auto">
-                            <table class="horiz-matrix-table" style="width:100%;min-width:720px;border-collapse:collapse;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden">
+                            <table class="horiz-matrix-table" style="width:100%;min-width:720px;border-collapse:collapse;border:1px solid #E1DFD7;border-radius:12px;overflow:hidden">
                                 <thead>
-                                    <tr style="background:rgba(15,23,42,0.9)">
+                                    <tr style="background:#F2EFEB">
                                         @foreach($allDaysList as $dKey => $dName)
                                             @php $daySlotsCount = $mergedTSlots->filter(fn($s) => strtolower($s->day_of_week) === $dKey)->count(); @endphp
-                                            <th style="width:16.66%;padding:10px 8px;font-size:12px;font-weight:700;color:#fff;border-bottom:1px solid rgba(255,255,255,0.1);border-right:1px solid rgba(255,255,255,0.06);text-align:center">
+                                            <th style="width:16.66%;padding:10px 8px;font-size:12px;font-weight:700;color:#1B1A17;border-bottom:1px solid #E1DFD7;border-right:1px solid #E8E5DC;text-align:center">
                                                 {{ $dName }}
                                                 @if($daySlotsCount > 0)
-                                                    <span style="font-size:10px;background:rgba(0,206,209,0.2);color:#00ced1;padding:1px 6px;border-radius:4px;margin-left:4px">{{ $daySlotsCount }}</span>
+                                                    <span style="font-size:10px;background:#F8E9D3;color:#D48A2E;padding:1px 6px;border-radius:4px;margin-left:4px">{{ $daySlotsCount }}</span>
                                                 @endif
                                             </th>
                                         @endforeach
@@ -381,37 +402,37 @@
                                             @php 
                                                 $daySlots = $mergedTSlots->filter(fn($s) => strtolower($s->day_of_week) === $dKey)->sortBy('start_time');
                                             @endphp
-                                            <td style="vertical-align:top;padding:8px;background:rgba(15,23,42,0.4);border-right:1px solid rgba(255,255,255,0.06);border-bottom:none">
+                                            <td style="vertical-align:top;padding:8px;background:#F9F8F5;border-right:1px solid #E8E5DC;border-bottom:none">
                                                 @forelse($daySlots as $slot)
                                                     @php
                                                         $rNum = $slot->room?->room_number ?? '';
                                                         $cleanRoom = Str::startsWith(strtolower($rNum), 'room') ? $rNum : ($rNum ? 'Room ' . $rNum : 'Hall');
                                                     @endphp
-                                                    <div style="margin-bottom:8px;background:linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));border:1px solid rgba(0,206,209,0.3);border-radius:10px;padding:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2)">
-                                                        <div style="font-size:11px;font-weight:800;color:#38bdf8;margin-bottom:4px">
+                                                    <div style="margin-bottom:8px;background:#F2EFEB;border:1px solid #E8CEAA;border-left:3px solid #D48A2E;border-radius:10px;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
+                                                        <div style="font-size:11px;font-weight:800;color:#D48A2E;margin-bottom:4px">
                                                             ⏰ {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} – {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                                         </div>
-                                                        <div style="font-size:12.5px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1.3;cursor:pointer"
-                                                             onmouseover="this.style.color='#00ced1'"
-                                                             onmouseout="this.style.color='#fff'"
+                                                        <div style="font-size:12.5px;font-weight:800;color:#1B1A17;margin-bottom:4px;line-height:1.3;cursor:pointer"
+                                                             onmouseover="this.style.color='#D48A2E'"
+                                                             onmouseout="this.style.color='#1B1A17'"
                                                              onclick="showSubjectDetailsModal('{{ addslashes($slot->subject?->subject_name ?: 'Subject') }}', '{{ addslashes($slot->subject?->subject_code ?: '') }}', '{{ addslashes($slot->section?->instituteClass?->custom_name ?: '') }}', '{{ addslashes($t->name) }}', '{{ addslashes($cleanRoom) }}')">
                                                             📘 {{ $slot->subject?->subject_name ?: 'Subject' }}
                                                             @if($slot->subject?->subject_code)
-                                                                <span style="font-size:9.5px;color:#00ced1;background:rgba(0,206,209,0.15);padding:1px 5px;border-radius:4px;margin-left:2px">{{ $slot->subject->subject_code }}</span>
+                                                                <span style="font-size:9.5px;color:#D48A2E;background:#F8E9D3;padding:1px 5px;border-radius:4px;margin-left:2px">{{ $slot->subject->subject_code }}</span>
                                                             @endif
                                                         </div>
-                                                        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#cbd5e1;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06)">
-                                                            <span style="font-weight:700;cursor:pointer;color:#38bdf8"
+                                                        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#68665D;margin-top:6px;padding-top:6px;border-top:1px solid #E1DFD7">
+                                                            <span style="font-weight:700;cursor:pointer;color:#3A529C"
                                                                   onmouseover="this.style.textDecoration='underline'"
                                                                   onmouseout="this.style.textDecoration='none'"
                                                                   onclick="showSectionDetailsModal('{{ addslashes($slot->section?->instituteClass?->custom_name ?: 'Class') }}', '{{ addslashes($slot->section?->section_name ?: 'A') }}', '{{ $mergedTSlots->count() }}')">
                                                                 🏫 {{ $slot->section?->instituteClass?->custom_name ?: 'Class' }}–{{ $slot->section?->section_name ?: 'A' }}
                                                             </span>
-                                                            <span style="color:#2ed573;font-weight:700">🚪 {{ $cleanRoom }}</span>
+                                                            <span style="color:#2E6E42;font-weight:700">🚪 {{ $cleanRoom }}</span>
                                                         </div>
                                                     </div>
                                                 @empty
-                                                    <div style="font-size:11px;color:#64748b;text-align:center;padding:16px 0;font-style:italic">— Off —</div>
+                                                    <div style="font-size:11px;color:#A19E92;text-align:center;padding:16px 0;font-style:italic">— Off —</div>
                                                 @endforelse
                                             </td>
                                         @endforeach
@@ -423,13 +444,13 @@
                         <!-- MODE 2: STREAMLINED LIST VIEW (COMPACT SLOTS ALWAYS SORTED CHRONOLOGICALLY) -->
                         <div id="teacher-view-list-{{ $t->id }}" style="display:none">
                             <!-- CLICKABLE DAY SELECTOR TABS -->
-                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;background:rgba(15,23,42,0.6);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.05)">
-                                <span style="font-size:12px;font-weight:700;color:#cbd5e1;margin-right:4px">🗓️ Filter Day:</span>
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;background:#F2EFEB;padding:8px 12px;border-radius:10px;border:1px solid #E1DFD7">
+                                <span style="font-size:12px;font-weight:700;color:#68665D;margin-right:4px">🗓️ Filter Day:</span>
                                 <button type="button" 
                                         id="day-filter-btn-{{ $t->id }}-all" 
                                         class="day-filter-btn-{{ $t->id }}"
                                         onclick="filterDayLectures('all', '{{ $t->id }}')" 
-                                        style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:linear-gradient(135deg, #00ced1, #3b82f6);color:#fff;box-shadow:0 4px 12px rgba(0,206,209,0.3);border:none">
+                                        style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:linear-gradient(135deg, #D48A2E, #C07A22);color:#fff;box-shadow:0 4px 12px rgba(212,138,46,0.3);border:none">
                                     🗓️ All Days
                                 </button>
                                 @foreach($allDaysList as $dKey => $dName)
@@ -438,8 +459,8 @@
                                             id="day-filter-btn-{{ $t->id }}-{{ $dKey }}" 
                                             class="day-filter-btn-{{ $t->id }}"
                                             onclick="filterDayLectures('{{ $dKey }}', '{{ $t->id }}')" 
-                                            style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:rgba(30,41,59,0.8);color:#94a3b8;border:1px solid rgba(255,255,255,0.08)">
-                                        {{ $dName }} @if($dayCount > 0) <span style="font-size:10px;background:rgba(0,206,209,0.2);color:#00ced1;padding:1px 5px;border-radius:4px;margin-left:2px">{{ $dayCount }}</span> @endif
+                                            style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:#F9F8F5;color:#68665D;border:1px solid #E1DFD7">
+                                        {{ $dName }} @if($dayCount > 0) <span style="font-size:10px;background:#F8E9D3;color:#D48A2E;padding:1px 5px;border-radius:4px;margin-left:2px">{{ $dayCount }}</span> @endif
                                     </button>
                                 @endforeach
                             </div>
@@ -451,29 +472,29 @@
                                         $rNum = $slot->room?->room_number ?? '';
                                         $cleanRoom = Str::startsWith(strtolower($rNum), 'room') ? $rNum : ($rNum ? 'Room ' . $rNum : 'Hall');
                                     @endphp
-                                    <div class="lecture-card-{{ $t->id }}" data-day="{{ $dKey }}" style="background:rgba(15,23,42,0.9);border:1px solid rgba(0,206,209,0.25);border-radius:10px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+                                    <div class="lecture-card-{{ $t->id }}" data-day="{{ $dKey }}" style="background:#F9F8F5;border:1px solid #E1DFD7;border-radius:10px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
                                         <div style="display:flex;align-items:center;gap:12px">
-                                            <span style="font-size:11px;font-weight:800;color:#00ced1;background:rgba(0,206,209,0.15);padding:3px 8px;border-radius:6px">
+                                            <span style="font-size:11px;font-weight:800;color:#D48A2E;background:#F8E9D3;padding:3px 8px;border-radius:6px">
                                                 🗓️ {{ ucfirst($slot->day_of_week) }}
                                             </span>
-                                            <span style="font-size:13px;font-weight:800;color:#38bdf8">
+                                            <span style="font-size:13px;font-weight:800;color:#1B1A17">
                                                 ⏰ {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} – {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                             </span>
-                                            <span style="font-size:13px;font-weight:800;color:#fff;cursor:pointer"
-                                                  onmouseover="this.style.color='#00ced1'"
-                                                  onmouseout="this.style.color='#fff'"
+                                            <span style="font-size:13px;font-weight:800;color:#1B1A17;cursor:pointer"
+                                                  onmouseover="this.style.color='#D48A2E'"
+                                                  onmouseout="this.style.color='#1B1A17'"
                                                   onclick="showSubjectDetailsModal('{{ addslashes($slot->subject?->subject_name ?: 'Subject') }}', '{{ addslashes($slot->subject?->subject_code ?: '') }}', '{{ addslashes($slot->section?->instituteClass?->custom_name ?: '') }}', '{{ addslashes($t->name) }}', '{{ addslashes($cleanRoom) }}')">
-                                                📘 {{ $slot->subject?->subject_name }} @if($slot->subject?->subject_code)<span style="font-size:10px;color:#00ced1">({{ $slot->subject->subject_code }})</span>@endif
+                                                📘 {{ $slot->subject?->subject_name }} @if($slot->subject?->subject_code)<span style="font-size:10px;color:#D48A2E">({{ $slot->subject->subject_code }})</span>@endif
                                             </span>
                                         </div>
-                                        <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:#cbd5e1">
-                                            <span style="font-weight:700;cursor:pointer;color:#38bdf8"
+                                        <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:#68665D">
+                                            <span style="font-weight:700;cursor:pointer;color:#3A529C"
                                                   onmouseover="this.style.textDecoration='underline'"
                                                   onmouseout="this.style.textDecoration='none'"
                                                   onclick="showSectionDetailsModal('{{ addslashes($slot->section?->instituteClass?->custom_name ?: 'Class') }}', '{{ addslashes($slot->section?->section_name ?: 'A') }}', '{{ $mergedTSlots->count() }}')">
                                                 🏫 Class {{ $slot->section?->instituteClass?->custom_name }} — Section {{ $slot->section?->section_name }}
                                             </span>
-                                            <span style="color:#2ed573;font-weight:700">🚪 {{ $cleanRoom }}</span>
+                                            <span style="color:#2E6E42;font-weight:700">🚪 {{ $cleanRoom }}</span>
                                         </div>
                                     </div>
                                 @endforeach
@@ -483,7 +504,7 @@
                 </div>
             </div>
         @empty
-            <div style="text-align:center;padding:32px;color:#94a3b8;font-size:13px">
+            <div style="text-align:center;padding:32px;color:#68665D;font-size:13px">
                 No teachers found.
             </div>
         @endforelse
@@ -492,20 +513,20 @@
 
 @if($viewType === 'time')
     <!-- TIME SLOT SELECTOR & TIME-WISE SCHEDULE VIEW WITH CLICKABLE DAYS & HORIZONTAL BARS -->
-    <div class="card" style="margin-bottom:24px;padding:20px;background:rgba(15,23,42,0.85);border:1px solid rgba(0,206,209,0.25);border-radius:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:14px">
+    <div class="card" style="margin-bottom:24px;padding:20px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px;border-bottom:1px solid #E1DFD7;padding-bottom:14px">
             <div>
-                <h2 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px">
+                <h2 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:#1B1A17;display:flex;align-items:center;gap:8px">
                     ⏰ View Timetable Time-Slot-Wise
                 </h2>
-                <p style="color:#94a3b8;font-size:12.5px;margin-top:2px">
+                <p style="color:#68665D;font-size:12.5px;margin-top:2px">
                     Inspect scheduled lectures by specific time slots across all weekdays and classrooms.
                 </p>
             </div>
             <div style="display:flex;align-items:center;gap:12px;min-width:280px">
-                <label style="font-size:12px;color:#94a3b8;font-weight:700;white-space:nowrap">Select Time Slot:</label>
+                <label style="font-size:12px;color:#68665D;font-weight:700;white-space:nowrap">Select Time Slot:</label>
                 <select onchange="window.location.href='{{ route($routePrefix . 'timetables.index') }}?view_type=time&time_slot=' + this.value" 
-                        style="width:100%;padding:9px 14px;background:#0f172a;border:1px solid rgba(0,206,209,0.4);border-radius:10px;color:#fff;font-size:13px;font-weight:600;outline:none">
+                        style="width:100%;padding:9px 14px;background:#F2EFEB;border:1px solid #E1DFD7;border-radius:10px;color:#1B1A17;font-size:13px;font-weight:600;outline:none">
                     <option value="">-- All Time Slots --</option>
                     @foreach($timeSlots as $ts)
                         <option value="{{ $ts['key'] }}" {{ (string)$selectedTimeSlot === (string)$ts['key'] ? 'selected' : '' }}>
@@ -522,18 +543,18 @@
         @endphp
 
         @if($mergedTimeSlots->isEmpty())
-            <div style="text-align:center;padding:32px;color:#94a3b8;font-size:13px">
+            <div style="text-align:center;padding:32px;color:#68665D;font-size:13px">
                 No scheduled lectures match the selected time slot.
             </div>
         @else
             <!-- CLICKABLE DAY SELECTOR TABS -->
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;background:rgba(15,23,42,0.6);padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)">
-                <span style="font-size:12px;font-weight:700;color:#cbd5e1;margin-right:4px">🗓️ Filter Day:</span>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;background:#F2EFEB;padding:10px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:12px;font-weight:700;color:#68665D;margin-right:4px">🗓️ Filter Day:</span>
                 <button type="button" 
                         id="day-filter-btn-timeslot-all" 
                         class="day-filter-btn-timeslot"
                         onclick="filterDayLectures('all', 'timeslot')" 
-                        style="padding:6px 14px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg, #00ced1, #3b82f6);color:#fff;box-shadow:0 4px 12px rgba(0,206,209,0.3);border:none;transition:all 0.2s">
+                        style="padding:6px 14px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;background:linear-gradient(135deg, #D48A2E, #C07A22);color:#fff;box-shadow:0 4px 12px rgba(212,138,46,0.3);border:none;transition:all 0.2s">
                     🗓️ All Days
                 </button>
                 @foreach($allDaysList as $dKey => $dName)
@@ -542,8 +563,8 @@
                             id="day-filter-btn-timeslot-{{ $dKey }}" 
                             class="day-filter-btn-timeslot"
                             onclick="filterDayLectures('{{ $dKey }}', 'timeslot')" 
-                            style="padding:6px 14px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;background:rgba(30,41,59,0.8);color:#94a3b8;border:1px solid rgba(255,255,255,0.08);transition:all 0.2s">
-                        {{ $dName }} @if($dayCount > 0) <span style="font-size:10px;background:rgba(0,206,209,0.2);color:#00ced1;padding:1px 6px;border-radius:4px;margin-left:2px">{{ $dayCount }}</span> @endif
+                            style="padding:6px 14px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;background:#F9F8F5;color:#68665D;border:1px solid #E1DFD7;transition:all 0.2s">
+                        {{ $dName }} @if($dayCount > 0) <span style="font-size:10px;background:#F8E9D3;color:#D48A2E;padding:1px 6px;border-radius:4px;margin-left:2px">{{ $dayCount }}</span> @endif
                     </button>
                 @endforeach
             </div>
@@ -559,53 +580,53 @@
                         $hoursDecimal = round($diffMins / 60, 2);
                         $barWidthPercent = min(100, max(15, round(($diffMins / 180) * 100)));
                     @endphp
-                    <div class="lecture-card-timeslot" data-day="{{ $dKey }}" style="background:rgba(15,23,42,0.9);border:1px solid rgba(0,206,209,0.3);border-radius:12px;padding:14px 18px;box-shadow:0 6px 18px rgba(0,0,0,0.3)">
+                    <div class="lecture-card-timeslot" data-day="{{ $dKey }}" style="background:#F9F8F5;border:1px solid #E1DFD7;border-radius:12px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">
                         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px">
                             <div style="display:flex;align-items:center;gap:10px">
-                                <span style="font-size:11.5px;font-weight:800;color:#00ced1;background:rgba(0,206,209,0.15);padding:4px 10px;border-radius:6px">
+                                <span style="font-size:11.5px;font-weight:800;color:#D48A2E;background:#F8E9D3;padding:4px 10px;border-radius:6px">
                                     🗓️ {{ ucfirst($slot->day_of_week) }}
                                 </span>
-                                <span style="font-size:13.5px;font-weight:800;color:#38bdf8">
+                                <span style="font-size:13.5px;font-weight:800;color:#1B1A17">
                                     ⏰ {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} – {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                 </span>
                             </div>
                             <div style="display:flex;align-items:center;gap:8px">
-                                <span style="font-size:12px;font-weight:800;color:#2ed573;background:rgba(46,213,115,0.15);border:1px solid rgba(46,213,115,0.3);padding:4px 12px;border-radius:8px">
+                                <span style="font-size:12px;font-weight:800;color:#2E6E42;background:#E3EFE2;border:1px solid #b5d6b5;padding:4px 12px;border-radius:8px">
                                     ⏱️ Duration: {{ $hoursDecimal }} {{ Str::plural('Hour', $hoursDecimal) }} ({{ $diffMins }} mins)
                                 </span>
                             </div>
                         </div>
 
                         <!-- Horizontal Duration Progress Bar -->
-                        <div style="background:rgba(255,255,255,0.06);height:8px;border-radius:4px;overflow:hidden;margin-bottom:12px">
-                            <div style="width:{{ $barWidthPercent }}%;height:100%;background:linear-gradient(90deg, #00ced1, #6c63ff);border-radius:4px"></div>
+                        <div style="background:#E1DFD7;height:8px;border-radius:4px;overflow:hidden;margin-bottom:12px">
+                            <div style="width:{{ $barWidthPercent }}%;height:100%;background:linear-gradient(90deg, #D48A2E, #C07A22);border-radius:4px"></div>
                         </div>
 
                         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;align-items:center">
                             <div>
-                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Subject</span>
-                                <span style="font-size:13.5px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;margin-top:2px;cursor:pointer"
-                                      onmouseover="this.style.color='#00ced1'"
-                                      onmouseout="this.style.color='#fff'"
+                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Subject</span>
+                                <span style="font-size:13.5px;font-weight:800;color:#1B1A17;display:flex;align-items:center;gap:6px;margin-top:2px;cursor:pointer"
+                                      onmouseover="this.style.color='#D48A2E'"
+                                      onmouseout="this.style.color='#1B1A17'"
                                       onclick="showSubjectDetailsModal('{{ addslashes($slot->subject?->subject_name ?: 'Subject') }}', '{{ addslashes($slot->subject?->subject_code ?: '') }}', '{{ addslashes($slot->section?->instituteClass?->custom_name ?: '') }}', '{{ addslashes($slot->teacher?->name ?: 'Unassigned') }}', '{{ addslashes($slot->room?->room_number ? 'Room ' . $slot->room->room_number : 'Assigned Hall') }}')">
                                     📘 {{ $slot->subject?->subject_name ?: 'Subject' }}
                                     @if($slot->subject?->subject_code)
-                                        <code style="font-size:10px;color:#38bdf8;background:rgba(56,189,248,0.12);padding:2px 6px;border-radius:4px">{{ $slot->subject->subject_code }}</code>
+                                        <code style="font-size:10px;color:#D48A2E;background:#F8E9D3;padding:2px 6px;border-radius:4px">{{ $slot->subject->subject_code }}</code>
                                     @endif
                                 </span>
                             </div>
                             <div>
-                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Class &amp; Section</span>
-                                <span style="font-size:13px;font-weight:700;color:#cbd5e1;margin-top:2px;display:block;cursor:pointer"
-                                      onmouseover="this.style.color='#38bdf8'"
-                                      onmouseout="this.style.color='#cbd5e1'"
+                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Class &amp; Section</span>
+                                <span style="font-size:13px;font-weight:700;color:#1B1A17;margin-top:2px;display:block;cursor:pointer"
+                                      onmouseover="this.style.color='#D48A2E'"
+                                      onmouseout="this.style.color='#1B1A17'"
                                       onclick="showSectionDetailsModal('{{ addslashes($slot->section?->instituteClass?->custom_name ?: 'Class') }}', '{{ addslashes($slot->section?->section_name ?: 'A') }}', 1)">
                                     🏫 {{ $slot->section?->instituteClass?->custom_name ?: 'Class' }} — Section {{ $slot->section?->section_name ?: 'A' }}
                                 </span>
                             </div>
                             <div>
-                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Faculty Teacher</span>
-                                <span style="font-size:13px;font-weight:700;color:#38bdf8;margin-top:2px;display:block;cursor:pointer"
+                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Faculty Teacher</span>
+                                <span style="font-size:13px;font-weight:700;color:#3A529C;margin-top:2px;display:block;cursor:pointer"
                                       onmouseover="this.style.textDecoration='underline'"
                                       onmouseout="this.style.textDecoration='none'"
                                       onclick="openTeacherModalFromId({{ $slot->teacher_id ?: 0 }})">
@@ -613,8 +634,8 @@
                                 </span>
                             </div>
                             <div>
-                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Room / Facility</span>
-                                <span style="font-size:13px;font-weight:700;color:#2ed573;margin-top:2px;display:block">
+                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Room / Facility</span>
+                                <span style="font-size:13px;font-weight:700;color:#2E6E42;margin-top:2px;display:block">
                                     🚪 {{ $slot->room?->room_number ? 'Room ' . $slot->room->room_number : 'Assigned Hall' }}
                                 </span>
                             </div>
@@ -628,35 +649,23 @@
 
 @if($viewType === 'class')
 <!-- CONTROL BAR: SEARCH SECTION & EXPAND/COLLAPSE BUTTONS -->
-<div class="card" style="margin-bottom:24px;padding:16px 20px">
+<div class="card" style="margin-bottom:24px;padding:16px 20px;border:1px solid #E1DFD7;background:#F9F8F5">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-        <div style="display:flex;align-items:center;gap:12px;flex:1;max-width:400px">
-            <span style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap">🔍 Search Section:</span>
-            <input type="text" id="sectionSearchInput" onkeyup="filterSections()" placeholder="Type section e.g. 9A, 9-A, Grade 10..." style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;width:100%;outline:none">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;max-width:420px">
+            <span style="font-size:13px;font-weight:800;color:#1B1A17;white-space:nowrap">🔍 Search Section:</span>
+            <input type="text" id="sectionSearchInput" onkeyup="filterSections()" placeholder="Type section e.g. 9A, 9-A, Grade 10..." style="padding:9px 14px;background:#F2EFEB;border:1px solid #E1DFD7;border-radius:10px;color:#1B1A17;font-size:13px;font-weight:500;width:100%;outline:none;box-shadow:0 1px 2px rgba(0,0,0,0.03)">
         </div>
 
-        <div style="display:flex;align-items:center;gap:12px;flex:1;max-width:320px">
-            <span style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap">Filter Section:</span>
+        <div style="display:flex;align-items:center;gap:12px;flex:1;max-width:380px">
+            <span style="font-size:13px;font-weight:800;color:#1B1A17;white-space:nowrap">Filter Section:</span>
             <select onchange="window.location.href='{{ route($routePrefix . 'timetables.index') }}?view_type=class&section_id=' + this.value" 
-                    style="width:100%;padding:9px 14px;background:#0f172a;border:1px solid rgba(0,206,209,0.4);border-radius:10px;color:#fff;font-size:13px;font-weight:600;outline:none">
+                    style="width:100%;padding:9px 14px;background:#F2EFEB;border:1px solid #E1DFD7;border-radius:10px;color:#1B1A17;font-size:13px;font-weight:600;outline:none;box-shadow:0 1px 2px rgba(0,0,0,0.03)">
                 <option value="">-- All Sections --</option>
                 @foreach($sections as $sec)
                     @php
-                        $cName = $sec->instituteClass?->custom_name ?: 'Grade 10';
+                        $cName = $sec->instituteClass?->custom_name ?: 'Class';
                         $sName = $sec->section_name ?: 'A';
-                        $sClean = trim(str_replace(['Sec', 'Section', 'sec', 'section'], '', $sName));
-                        if (str_contains($sClean, '-')) {
-                            $parts = explode('-', $sClean);
-                            $sClean = trim(end($parts));
-                        }
-                        preg_match_all('/\d+/', $cName, $cMatches);
-                        foreach ($cMatches[0] ?? [] as $num) {
-                            if (str_starts_with($sClean, $num)) {
-                                $sClean = trim(substr($sClean, strlen($num)));
-                            }
-                        }
-                        $sClean = trim($sClean, ' -_');
-                        $classSecLabel = !empty($sClean) ? ($cName . ' - ' . strtoupper($sClean)) : $cName;
+                        $classSecLabel = $cName . ' — Section ' . $sName;
                     @endphp
                     <option value="{{ $sec->id }}" {{ (string)$selectedSectionId === (string)$sec->id ? 'selected' : '' }}>
                         🏫 {{ $classSecLabel }}
@@ -666,10 +675,10 @@
         </div>
 
         <div style="display:flex;align-items:center;gap:10px">
-            <button type="button" onclick="expandAllGrades()" class="btn btn-ghost btn-sm" style="font-size:12px">
+            <button type="button" onclick="expandAllGrades()" class="btn btn-ghost btn-sm" style="font-size:12px;border:1px solid #E1DFD7;background:#F2EFEB;color:#1B1A17;font-weight:700">
                 📂 Expand All Grades
             </button>
-            <button type="button" onclick="collapseAllGrades()" class="btn btn-ghost btn-sm" style="font-size:12px">
+            <button type="button" onclick="collapseAllGrades()" class="btn btn-ghost btn-sm" style="font-size:12px;border:1px solid #E1DFD7;background:#F2EFEB;color:#1B1A17;font-weight:700">
                 📁 Collapse All Grades
             </button>
         </div>
@@ -695,55 +704,54 @@
             <div class="grade-accordion-title">
                 🎓 {{ $className }}
                 <span class="badge badge-purple" style="font-size:11px;padding:3px 10px">{{ $displaySections->count() }} Section(s)</span>
+                <span style="font-size:11px;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;padding:2px 8px;border-radius:12px;font-weight:700">🗓️ Timetable Active</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px">
                 <button type="button" onclick="event.stopPropagation(); openAddSlotModal()" class="btn btn-ghost btn-sm" style="font-size:11px">
                     ➕ Add Slot
                 </button>
-                <span class="grade-accordion-icon grade-icon-{{ $classSlug }}" style="font-size:14px;color:var(--text-muted)">▼</span>
+                <span class="grade-accordion-icon grade-icon-{{ $classSlug }}" style="font-size:14px;color:var(--text-muted)">▲</span>
             </div>
         </div>
 
-        <div id="grade-body-{{ $classSlug }}" class="grade-body-container" style="display:none">
-            <div class="card" style="padding:18px;background:rgba(15,23,42,0.85);border:1px solid rgba(0,206,209,0.25);border-radius:14px">
+        <div id="grade-body-{{ $classSlug }}" class="grade-body-container" style="display:block">
+            <div class="card" style="padding:18px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:14px">
                 @foreach($displaySections as $sec)
                     @php
                         $secSlots = $allSlots->filter(fn($s) => $s->class_section_id == $sec->id);
                         $mergedSecSlots = \App\Models\Timetable::mergeContiguousSlots($secSlots);
-
-                        $sClean = trim(str_replace(['Sec', 'Section', 'sec', 'section'], '', $sec->section_name));
-                        if (str_contains($sClean, '-')) {
-                            $parts = explode('-', $sClean);
-                            $sClean = trim(end($parts));
-                        }
-                        preg_match_all('/\d+/', $className, $cMatches);
-                        foreach ($cMatches[0] ?? [] as $num) {
-                            if (str_starts_with($sClean, $num)) {
-                                $sClean = trim(substr($sClean, strlen($num)));
-                            }
-                        }
-                        $sClean = trim($sClean, ' -_');
-                        $classSecTitle = !empty($sClean) ? ($className . ' - ' . strtoupper($sClean)) : $className;
+                        $sRaw = $sec->section_name ?: 'A';
+                        $classSecTitle = $className . ' — ' . $sRaw;
                     @endphp
-                    <div style="margin-bottom:20px;background:rgba(30,41,59,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;gap:10px">
-                            <div style="font-weight:800;color:#fff;font-size:15px;display:flex;align-items:center;gap:8px;cursor:pointer"
-                                 onclick="showSectionDetailsModal('{{ addslashes($className) }}', '{{ addslashes($sec->section_name) }}', '{{ $mergedSecSlots->count() }}')">
-                                🏫 {{ $classSecTitle }} <span style="font-size:11px;color:#00ced1;font-weight:600">(Click for details 🔍)</span>
+                    <div style="margin-bottom:20px;background:#F2EFEB;border:1px solid #E1DFD7;border-radius:12px;padding:16px">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #E1DFD7;flex-wrap:wrap;gap:10px">
+                            <div style="font-weight:800;color:#1B1A17;font-size:15px;display:flex;align-items:center;gap:8px;cursor:pointer"
+                                  onclick="showSectionDetailsModal('{{ addslashes($className) }}', '{{ addslashes($sec->section_name) }}', '{{ $mergedSecSlots->count() }}')">
+                                🏫 {{ $classSecTitle }} <span style="font-size:11px;color:#D48A2E;font-weight:600">(Click for details 🔍)</span>
                             </div>
-                            <span style="font-size:12px;color:#00ced1;font-weight:700;background:rgba(0,206,209,0.12);border:1px solid rgba(0,206,209,0.25);padding:4px 10px;border-radius:6px">
-                                📚 {{ $mergedSecSlots->count() }} Weekly Lecture Block(s)
-                            </span>
+                            <div style="display:flex;align-items:center;gap:8px">
+                                <span style="font-size:12px;color:#D48A2E;font-weight:700;background:#F8E9D3;border:1px solid #E8CEAA;padding:4px 10px;border-radius:6px">
+                                    📚 {{ $mergedSecSlots->count() }} Weekly Lecture Block(s)
+                                </span>
+                                {{-- Section-wise download button --}}
+                                @if($mergedSecSlots->isNotEmpty())
+                                <a href="{{ route($routePrefix . 'timetables.export', ['class_section_id' => $sec->id]) }}"
+                                   style="font-size:11px;font-weight:700;color:#2E6E42;background:#E3EFE2;border:1px solid #b5d6b5;padding:4px 11px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:4px"
+                                   title="Download {{ $classSecTitle }} timetable as Excel">
+                                    📥 Excel
+                                </a>
+                                @endif
+                            </div>
                         </div>
 
                         <!-- CLICKABLE DAY FILTER TABS FOR THIS SECTION -->
-                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;background:rgba(15,23,42,0.6);padding:8px 12px;border-radius:10px">
-                            <span style="font-size:11.5px;font-weight:700;color:#cbd5e1;margin-right:4px">🗓️ Filter Day:</span>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;background:#F9F8F5;padding:8px 12px;border-radius:10px;border:1px solid #E1DFD7">
+                            <span style="font-size:11.5px;font-weight:700;color:#68665D;margin-right:4px">🗓️ Filter Day:</span>
                             <button type="button" 
                                     id="day-filter-btn-sec-{{ $sec->id }}-all" 
                                     class="day-filter-btn-sec-{{ $sec->id }}"
                                     onclick="filterDayLectures('all', 'sec-{{ $sec->id }}')" 
-                                    style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:linear-gradient(135deg, #00ced1, #3b82f6);color:#fff;box-shadow:0 4px 12px rgba(0,206,209,0.3);border:none;transition:all 0.2s">
+                                    style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:linear-gradient(135deg, #D48A2E, #C07A22);color:#fff;box-shadow:0 4px 12px rgba(212,138,46,0.3);border:none;transition:all 0.2s">
                                 🗓️ All Days
                             </button>
                             @foreach(['monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday'] as $dKey => $dName)
@@ -752,14 +760,14 @@
                                         id="day-filter-btn-sec-{{ $sec->id }}-{{ $dKey }}" 
                                         class="day-filter-btn-sec-{{ $sec->id }}"
                                         onclick="filterDayLectures('{{ $dKey }}', 'sec-{{ $sec->id }}')" 
-                                        style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:rgba(30,41,59,0.8);color:#94a3b8;border:1px solid rgba(255,255,255,0.08);transition:all 0.2s">
-                                    {{ $dName }} @if($dayCount > 0) <span style="font-size:10px;background:rgba(0,206,209,0.2);color:#00ced1;padding:1px 5px;border-radius:4px;margin-left:2px">{{ $dayCount }}</span> @endif
+                                        style="padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;background:#F9F8F5;color:#68665D;border:1px solid #E1DFD7;transition:all 0.2s">
+                                    {{ $dName }} @if($dayCount > 0) <span style="font-size:10px;background:#F8E9D3;color:#D48A2E;padding:1px 5px;border-radius:4px;margin-left:2px">{{ $dayCount }}</span> @endif
                                 </button>
                             @endforeach
                         </div>
 
                         @if($mergedSecSlots->isEmpty())
-                            <div style="text-align:center;padding:20px;color:#94a3b8;font-size:12.5px">
+                            <div style="text-align:center;padding:20px;color:#68665D;font-size:12.5px">
                                 No scheduled lectures for Section {{ $sec->section_name }}.
                             </div>
                         @else
@@ -774,48 +782,48 @@
                                         $hoursDecimal = round($diffMins / 60, 2);
                                         $barWidthPercent = min(100, max(15, round(($diffMins / 180) * 100)));
                                     @endphp
-                                    <div class="lecture-card-sec-{{ $sec->id }}" data-day="{{ $dKey }}" style="background:rgba(15,23,42,0.9);border:1px solid rgba(0,206,209,0.3);border-radius:10px;padding:12px 16px;box-shadow:0 4px 14px rgba(0,0,0,0.25)">
+                                    <div class="lecture-card-sec-{{ $sec->id }}" data-day="{{ $dKey }}" style="background:#F9F8F5;border:1px solid #E1DFD7;border-radius:10px;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
                                         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px">
                                             <div style="display:flex;align-items:center;gap:10px">
-                                                <span style="font-size:11px;font-weight:800;color:#00ced1;background:rgba(0,206,209,0.15);padding:3px 8px;border-radius:6px">
+                                                <span style="font-size:11px;font-weight:800;color:#D48A2E;background:#F8E9D3;padding:3px 8px;border-radius:6px">
                                                     🗓️ {{ ucfirst($slot->day_of_week) }}
                                                 </span>
-                                                <span style="font-size:13px;font-weight:800;color:#38bdf8">
+                                                <span style="font-size:13px;font-weight:800;color:#1B1A17">
                                                     ⏰ {{ \Carbon\Carbon::parse($slot->start_time)->format('g:i A') }} – {{ \Carbon\Carbon::parse($slot->end_time)->format('g:i A') }}
                                                 </span>
                                             </div>
                                             <div style="display:flex;align-items:center;gap:8px">
-                                                <span style="font-size:11.5px;font-weight:800;color:#2ed573;background:rgba(46,213,115,0.15);border:1px solid rgba(46,213,115,0.3);padding:3px 10px;border-radius:6px">
+                                                <span style="font-size:11.5px;font-weight:800;color:#2E6E42;background:#E3EFE2;border:1px solid #b5d6b5;padding:3px 10px;border-radius:6px">
                                                     ⏱️ Duration: {{ $hoursDecimal }} {{ Str::plural('Hour', $hoursDecimal) }} ({{ $diffMins }} mins)
                                                 </span>
                                                 <form method="POST" action="{{ route('principal.timetables.destroy', $slot) }}" onsubmit="return classyConfirmForm(this, 'Remove Slot?', 'Are you sure you want to remove this timetable slot?', {danger: true, icon: '🗑️', confirmText: 'Yes, Remove'})" style="margin:0">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="delete-btn" style="background:rgba(239,68,68,0.2);color:#ef4444;border:none;border-radius:6px;width:24px;height:24px;font-size:14px;cursor:pointer" title="Delete Slot">&times;</button>
+                                                    <button type="submit" class="delete-btn" style="background:#F6E4E1;color:#A2412C;border:none;border-radius:6px;width:24px;height:24px;font-size:14px;cursor:pointer" title="Delete Slot">&times;</button>
                                                 </form>
                                             </div>
                                         </div>
 
                                         <!-- Horizontal Duration Progress Bar -->
-                                        <div style="background:rgba(255,255,255,0.06);height:6px;border-radius:3px;overflow:hidden;margin-bottom:10px">
-                                            <div style="width:{{ $barWidthPercent }}%;height:100%;background:linear-gradient(90deg, #00ced1, #6c63ff);border-radius:3px"></div>
+                                        <div style="background:#E1DFD7;height:6px;border-radius:3px;overflow:hidden;margin-bottom:10px">
+                                            <div style="width:{{ $barWidthPercent }}%;height:100%;background:linear-gradient(90deg, #D48A2E, #C07A22);border-radius:3px"></div>
                                         </div>
 
                                         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:10px;align-items:center">
                                             <div>
-                                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Subject</span>
-                                                <span style="font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;margin-top:2px;cursor:pointer"
-                                                      onmouseover="this.style.color='#00ced1'"
-                                                      onmouseout="this.style.color='#fff'"
+                                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Subject</span>
+                                                <span style="font-size:13px;font-weight:800;color:#1B1A17;display:flex;align-items:center;gap:6px;margin-top:2px;cursor:pointer"
+                                                      onmouseover="this.style.color='#D48A2E'"
+                                                      onmouseout="this.style.color='#1B1A17'"
                                                       onclick="showSubjectDetailsModal('{{ addslashes($slot->subject?->subject_name ?: 'Subject') }}', '{{ addslashes($slot->subject?->subject_code ?: '') }}', '{{ addslashes($className) }}', '{{ addslashes($slot->teacher?->name ?: 'Unassigned') }}', '{{ addslashes($slot->room?->room_number ? 'Room ' . $slot->room->room_number : 'Assigned Hall') }}')">
                                                     📘 {{ $slot->subject?->subject_name ?: 'Subject' }}
                                                     @if($slot->subject?->subject_code)
-                                                        <code style="font-size:10px;color:#38bdf8;background:rgba(56,189,248,0.12);padding:2px 5px;border-radius:4px">{{ $slot->subject->subject_code }}</code>
+                                                        <code style="font-size:10px;color:#D48A2E;background:#F8E9D3;padding:2px 5px;border-radius:4px">{{ $slot->subject->subject_code }}</code>
                                                     @endif
                                                 </span>
                                             </div>
                                             <div>
-                                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Faculty Teacher</span>
-                                                <span style="font-size:12.5px;font-weight:700;color:#38bdf8;margin-top:2px;display:block;cursor:pointer"
+                                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Faculty Teacher</span>
+                                                <span style="font-size:12.5px;font-weight:700;color:#3A529C;margin-top:2px;display:block;cursor:pointer"
                                                       onmouseover="this.style.textDecoration='underline'"
                                                       onmouseout="this.style.textDecoration='none'"
                                                       onclick="openTeacherModalFromId({{ $slot->teacher_id ?: 0 }})">
@@ -823,8 +831,8 @@
                                                 </span>
                                             </div>
                                             <div>
-                                                <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;display:block">Room / Facility</span>
-                                                <span style="font-size:12.5px;font-weight:700;color:#2ed573;margin-top:2px;display:block">
+                                                <span style="font-size:10px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Room / Facility</span>
+                                                <span style="font-size:12.5px;font-weight:700;color:#2E6E42;margin-top:2px;display:block">
                                                     🚪 {{ $slot->room?->room_number ? 'Room ' . $slot->room->room_number : 'Assigned Hall' }}
                                                 </span>
                                             </div>
@@ -849,6 +857,12 @@
 <script>
 let globalDay = '{{ $defaultDay }}';
 const expandedGrades = new Set();
+document.querySelectorAll('.grade-wrapper-block').forEach(wrapper => {
+    const classSlug = Array.from(wrapper.classList)
+        .find(c => c.startsWith('grade-group-'))
+        ?.replace('grade-group-', '');
+    if (classSlug) expandedGrades.add(classSlug);
+});
 const sectionDays = {};
 
 function filterTeacherCards() {
@@ -876,23 +890,23 @@ function switchTeacherViewMode(teacherId, mode) {
         if (gridDiv) gridDiv.style.display = 'block';
         if (listDiv) listDiv.style.display = 'none';
         if (gridBtn) {
-            gridBtn.style.background = '#00ced1';
-            gridBtn.style.color = '#0f172a';
+            gridBtn.style.background = '#D48A2E';
+            gridBtn.style.color = '#fff';
         }
         if (listBtn) {
             listBtn.style.background = 'transparent';
-            listBtn.style.color = '#94a3b8';
+            listBtn.style.color = '#68665D';
         }
     } else {
         if (gridDiv) gridDiv.style.display = 'none';
         if (listDiv) listDiv.style.display = 'block';
         if (listBtn) {
-            listBtn.style.background = '#00ced1';
-            listBtn.style.color = '#0f172a';
+            listBtn.style.background = '#D48A2E';
+            listBtn.style.color = '#fff';
         }
         if (gridBtn) {
             gridBtn.style.background = 'transparent';
-            gridBtn.style.color = '#94a3b8';
+            gridBtn.style.color = '#68665D';
         }
     }
 }
@@ -914,16 +928,16 @@ document.addEventListener('click', function(e) {
 
 function filterDayLectures(day, scopeId = 'all') {
     document.querySelectorAll('.day-filter-btn-' + scopeId).forEach(btn => {
-        btn.style.background = 'rgba(30,41,59,0.8)';
-        btn.style.color = '#94a3b8';
-        btn.style.border = '1px solid rgba(255,255,255,0.08)';
+        btn.style.background = '#F9F8F5';
+        btn.style.color = '#68665D';
+        btn.style.border = '1px solid #E1DFD7';
         btn.style.boxShadow = 'none';
     });
     const activeBtn = document.getElementById('day-filter-btn-' + scopeId + '-' + day);
     if (activeBtn) {
-        activeBtn.style.background = 'linear-gradient(135deg, #00ced1, #3b82f6)';
+        activeBtn.style.background = 'linear-gradient(135deg, #D48A2E, #C07A22)';
         activeBtn.style.color = '#fff';
-        activeBtn.style.boxShadow = '0 4px 12px rgba(0,206,209,0.3)';
+        activeBtn.style.boxShadow = '0 4px 12px rgba(212,138,46,0.3)';
         activeBtn.style.border = 'none';
     }
 
@@ -1077,7 +1091,7 @@ function filterSections() {
 <div id="addSlotModal" class="modal-backdrop" onclick="if(event.target===this) closeAddSlotModal()">
     <div class="modal-box">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px">
-            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;margin:0">➕ Add Timetable Slot Manually</h3>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:700;color:#1B1A17;margin:0">➕ Add Timetable Slot Manually</h3>
             <button type="button" onclick="closeAddSlotModal()" style="background:none;border:none;color:var(--text-muted);font-size:24px;cursor:pointer">&times;</button>
         </div>
 
@@ -1279,53 +1293,53 @@ function filterSections() {
 </div>
 
 <!-- TEACHER / FACULTY DETAILS POPUP MODAL -->
-<div id="teacherDetailsModal" class="modal-backdrop" onclick="if(event.target===this) closeTeacherDetailsModal()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:999999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
-    <div class="modal-box" style="width:90%;max-width:540px;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;box-shadow:0 25px 60px rgba(0,0,0,0.15)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid #e2e8f0;padding-bottom:14px">
+<div id="teacherDetailsModal" class="modal-backdrop" onclick="if(event.target===this) closeTeacherDetailsModal()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(27,26,23,0.45);z-index:999999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+    <div class="modal-box" style="width:90%;max-width:540px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:20px;padding:28px;box-shadow:0 25px 60px rgba(0,0,0,0.12)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;border-bottom:1px solid #E1DFD7;padding-bottom:14px">
             <div style="display:flex;align-items:center;gap:14px">
-                <div id="tdm_avatar" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg, #fd1d1d, #e1306c, #833ab4);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:22px;box-shadow:0 4px 16px rgba(225,48,108,0.35)">
+                <div id="tdm_avatar" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg, #D48A2E, #C07A22);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:22px;box-shadow:0 4px 16px rgba(212,138,46,0.3)">
                     T
                 </div>
                 <div>
-                    <h3 id="tdm_name" style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;color:#0f172a;margin:0">
+                    <h3 id="tdm_name" style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;color:#1B1A17;margin:0">
                         Teacher Name
                     </h3>
-                    <div id="tdm_empid" style="font-size:12px;color:#e1306c;font-weight:700;margin-top:2px">
+                    <div id="tdm_empid" style="font-size:12px;color:#D48A2E;font-weight:700;margin-top:2px">
                         Employee ID: EMP-00
                     </div>
                 </div>
             </div>
-            <button type="button" onclick="closeTeacherDetailsModal()" style="background:none;border:none;color:#64748b;font-size:28px;cursor:pointer;line-height:1">&times;</button>
+            <button type="button" onclick="closeTeacherDetailsModal()" style="background:none;border:none;color:#68665D;font-size:28px;cursor:pointer;line-height:1">&times;</button>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
-            <div style="background:#f8fafc;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0">
-                <span style="font-size:10.5px;color:#64748b;font-weight:800;text-transform:uppercase;display:block">Email Address</span>
-                <span id="tdm_email" style="font-size:13px;font-weight:700;color:#0f172a;margin-top:2px;display:block;word-break:break-all">email@domain.com</span>
+            <div style="background:#F2EFEB;padding:12px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:10.5px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Email Address</span>
+                <span id="tdm_email" style="font-size:13px;font-weight:700;color:#1B1A17;margin-top:2px;display:block;word-break:break-all">email@domain.com</span>
             </div>
-            <div style="background:#f8fafc;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0">
-                <span style="font-size:10.5px;color:#64748b;font-weight:800;text-transform:uppercase;display:block">Phone Number</span>
-                <span id="tdm_phone" style="font-size:13px;font-weight:700;color:#0284c7;margin-top:2px;display:block">N/A</span>
+            <div style="background:#F2EFEB;padding:12px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:10.5px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Phone Number</span>
+                <span id="tdm_phone" style="font-size:13px;font-weight:700;color:#3A529C;margin-top:2px;display:block">N/A</span>
             </div>
-            <div style="background:#f8fafc;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0">
-                <span style="font-size:10.5px;color:#64748b;font-weight:800;text-transform:uppercase;display:block">Highest Qualification</span>
-                <span id="tdm_qual" style="font-size:13px;font-weight:700;color:#0f172a;margin-top:2px;display:block">Faculty Member</span>
+            <div style="background:#F2EFEB;padding:12px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:10.5px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Highest Qualification</span>
+                <span id="tdm_qual" style="font-size:13px;font-weight:700;color:#1B1A17;margin-top:2px;display:block">Faculty Member</span>
             </div>
-            <div style="background:#f8fafc;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0">
-                <span style="font-size:10.5px;color:#64748b;font-weight:800;text-transform:uppercase;display:block">Teaching Experience</span>
-                <span id="tdm_exp" style="font-size:13px;font-weight:700;color:#059669;margin-top:2px;display:block">N/A</span>
+            <div style="background:#F2EFEB;padding:12px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:10.5px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Teaching Experience</span>
+                <span id="tdm_exp" style="font-size:13px;font-weight:700;color:#2E6E42;margin-top:2px;display:block">N/A</span>
             </div>
-            <div style="background:#f8fafc;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0">
-                <span style="font-size:10.5px;color:#64748b;font-weight:800;text-transform:uppercase;display:block">Monthly Basic Salary</span>
-                <span id="tdm_salary" style="font-size:13px;font-weight:700;color:#059669;margin-top:2px;display:block">PKR 0</span>
+            <div style="background:#F2EFEB;padding:12px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:10.5px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Monthly Basic Salary</span>
+                <span id="tdm_salary" style="font-size:13px;font-weight:700;color:#2E6E42;margin-top:2px;display:block">PKR 0</span>
             </div>
-            <div style="background:#f8fafc;padding:12px 14px;border-radius:12px;border:1px solid #e2e8f0">
-                <span style="font-size:10.5px;color:#64748b;font-weight:800;text-transform:uppercase;display:block">Emergency Contact</span>
-                <span id="tdm_emergency" style="font-size:13px;font-weight:700;color:#d97706;margin-top:2px;display:block">N/A</span>
+            <div style="background:#F2EFEB;padding:12px 14px;border-radius:12px;border:1px solid #E1DFD7">
+                <span style="font-size:10.5px;color:#68665D;font-weight:800;text-transform:uppercase;display:block">Emergency Contact</span>
+                <span id="tdm_emergency" style="font-size:13px;font-weight:700;color:#D48A2E;margin-top:2px;display:block">N/A</span>
             </div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;border-top:1px solid #e2e8f0;padding-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;border-top:1px solid #E1DFD7;padding-top:16px">
             <a id="tdm_profile_link" href="#" class="btn btn-primary" style="padding:9px 16px;font-size:12.5px;font-weight:700;text-decoration:none">
                 👁️ Open Full Profile &amp; Directory Ledger &rarr;
             </a>
@@ -1337,30 +1351,30 @@ function filterSections() {
 </div>
 
 <!-- SUBJECT DETAILS POPUP MODAL -->
-<div id="subjectDetailsModal" class="modal-backdrop" onclick="if(event.target===this) closeSubjectDetailsModal()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:999999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
-    <div class="modal-box" style="width:90%;max-width:480px;background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.15)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:10px">
-            <h3 id="sdm_title" style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#0f172a;margin:0">
+<div id="subjectDetailsModal" class="modal-backdrop" onclick="if(event.target===this) closeSubjectDetailsModal()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(27,26,23,0.45);z-index:999999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+    <div class="modal-box" style="width:90%;max-width:480px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:18px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.12)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid #E1DFD7;padding-bottom:10px">
+            <h3 id="sdm_title" style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#1B1A17;margin:0">
                 Subject Details
             </h3>
-            <button type="button" onclick="closeSubjectDetailsModal()" style="background:none;border:none;color:#64748b;font-size:24px;cursor:pointer;line-height:1">&times;</button>
+            <button type="button" onclick="closeSubjectDetailsModal()" style="background:none;border:none;color:#68665D;font-size:24px;cursor:pointer;line-height:1">&times;</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Subject Name &amp; Code</span>
-                <span id="sdm_name_code" style="font-size:14px;font-weight:800;color:#0284c7;margin-top:2px;display:block">Subject</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Subject Name &amp; Code</span>
+                <span id="sdm_name_code" style="font-size:14px;font-weight:800;color:#D48A2E;margin-top:2px;display:block">Subject</span>
             </div>
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Class Grade</span>
-                <span id="sdm_class" style="font-size:13px;font-weight:800;color:#0f172a;margin-top:2px;display:block">Class</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Class Grade</span>
+                <span id="sdm_class" style="font-size:13px;font-weight:800;color:#1B1A17;margin-top:2px;display:block">Class</span>
             </div>
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Faculty Teacher In-Charge</span>
-                <span id="sdm_teacher" style="font-size:13px;font-weight:800;color:#059669;margin-top:2px;display:block">Teacher</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Faculty Teacher In-Charge</span>
+                <span id="sdm_teacher" style="font-size:13px;font-weight:800;color:#2E6E42;margin-top:2px;display:block">Teacher</span>
             </div>
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Room / Facility Location</span>
-                <span id="sdm_room" style="font-size:13px;font-weight:800;color:#d97706;margin-top:2px;display:block">Room</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Room / Facility Location</span>
+                <span id="sdm_room" style="font-size:13px;font-weight:800;color:#D48A2E;margin-top:2px;display:block">Room</span>
             </div>
         </div>
         <div style="display:flex;justify-content:flex-end;margin-top:20px">
@@ -1370,26 +1384,26 @@ function filterSections() {
 </div>
 
 <!-- SECTION DETAILS POPUP MODAL -->
-<div id="sectionDetailsModal" class="modal-backdrop" onclick="if(event.target===this) closeSectionDetailsModal()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:999999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
-    <div class="modal-box" style="width:90%;max-width:460px;background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.15)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:10px">
-            <h3 id="sec_dm_title" style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#0f172a;margin:0">
+<div id="sectionDetailsModal" class="modal-backdrop" onclick="if(event.target===this) closeSectionDetailsModal()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(27,26,23,0.45);z-index:999999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+    <div class="modal-box" style="width:90%;max-width:460px;background:#F9F8F5;border:1px solid #E1DFD7;border-radius:18px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.12)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid #E1DFD7;padding-bottom:10px">
+            <h3 id="sec_dm_title" style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:#1B1A17;margin:0">
                 Class Section Details
             </h3>
-            <button type="button" onclick="closeSectionDetailsModal()" style="background:none;border:none;color:#64748b;font-size:24px;cursor:pointer;line-height:1">&times;</button>
+            <button type="button" onclick="closeSectionDetailsModal()" style="background:none;border:none;color:#68665D;font-size:24px;cursor:pointer;line-height:1">&times;</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Class Name</span>
-                <span id="sec_dm_class" style="font-size:14px;font-weight:800;color:#0284c7;margin-top:2px;display:block">Class</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Class Name</span>
+                <span id="sec_dm_class" style="font-size:14px;font-weight:800;color:#D48A2E;margin-top:2px;display:block">Class</span>
             </div>
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Section</span>
-                <span id="sec_dm_sec" style="font-size:13px;font-weight:800;color:#0f172a;margin-top:2px;display:block">Section</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Section</span>
+                <span id="sec_dm_sec" style="font-size:13px;font-weight:800;color:#1B1A17;margin-top:2px;display:block">Section</span>
             </div>
-            <div style="background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0">
-                <span style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;display:block">Weekly Lecture Workload</span>
-                <span id="sec_dm_count" style="font-size:13px;font-weight:800;color:#059669;margin-top:2px;display:block">0 Lecture Blocks</span>
+            <div style="background:#F2EFEB;padding:12px;border-radius:10px;border:1px solid #E1DFD7">
+                <span style="font-size:11px;color:#68665D;font-weight:700;text-transform:uppercase;display:block">Weekly Lecture Workload</span>
+                <span id="sec_dm_count" style="font-size:13px;font-weight:800;color:#2E6E42;margin-top:2px;display:block">0 Lecture Blocks</span>
             </div>
         </div>
         <div style="display:flex;justify-content:flex-end;margin-top:20px">
@@ -1565,15 +1579,15 @@ function toggleTeacherTimetable(teacherId) {
         body.style.display = 'block';
         if (icon) {
             icon.innerHTML = '▲ Collapse Schedule';
-            icon.style.background = 'rgba(0,206,209,0.25)';
-            icon.style.color = '#fff';
+            icon.style.background = '#F8E9D3';
+            icon.style.color = '#1B1A17';
         }
     } else {
         body.style.display = 'none';
         if (icon) {
             icon.innerHTML = '▼ Click to View Schedule';
-            icon.style.background = 'rgba(0,206,209,0.1)';
-            icon.style.color = '#00ced1';
+            icon.style.background = '#F2EFEB';
+            icon.style.color = '#D48A2E';
         }
     }
 }
@@ -1584,8 +1598,8 @@ function expandAllTeachers() {
     });
     document.querySelectorAll('[id^="teacher-acc-icon-"]').forEach(icon => {
         icon.innerHTML = '▲ Collapse Schedule';
-        icon.style.background = 'rgba(0,206,209,0.25)';
-        icon.style.color = '#fff';
+        icon.style.background = '#F8E9D3';
+        icon.style.color = '#1B1A17';
     });
 }
 
@@ -1595,17 +1609,15 @@ function collapseAllTeachers() {
     });
     document.querySelectorAll('[id^="teacher-acc-icon-"]').forEach(icon => {
         icon.innerHTML = '▼ Click to View Schedule';
-        icon.style.background = 'rgba(0,206,209,0.1)';
-        icon.style.color = '#00ced1';
+        icon.style.background = '#F2EFEB';
+        icon.style.color = '#D48A2E';
     });
 }
 
-@if($viewType === 'section')
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof expandAllGrades === 'function') {
         expandAllGrades();
     }
 });
-@endif
 </script>
 @endsection

@@ -226,7 +226,7 @@ class FeeInvoiceController extends Controller
                     ->first();
 
                 // Persist invoice record (no admission/security fee on recurring invoices)
-                Invoice::create([
+                $newInvoice = Invoice::create([
                     'institute_id' => $institute->id,
                     'academic_term_id' => $activeTerm?->id,
                     'student_id' => $student->id,
@@ -240,6 +240,12 @@ class FeeInvoiceController extends Controller
                     'status' => 'unpaid',
                     'pdf_path' => $storagePath,
                 ]);
+
+                try {
+                    \App\Services\PortalNotificationService::notifyStudentFeeAssigned($newInvoice);
+                } catch (\Throwable $e) {
+                    \Log::warning("Failed to dispatch student fee notification: " . $e->getMessage());
+                }
 
                 $createdCount++;
             }
@@ -318,6 +324,9 @@ class FeeInvoiceController extends Controller
             'notes' => "Auto-logged from Student Fee Voucher #INV-{$invoice->id} ({$invoice->fee_month})",
             'created_by' => $user->id,
         ]);
+
+        // Dispatch Real-Time Reverb Notification to Principal & Admins
+        \App\Services\PrincipalNotificationService::notifyFeePaid($invoice, $user);
 
         return redirect()
             ->back()

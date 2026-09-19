@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Academic Class & Student Promotion Studio')
 @section('breadcrumb', 'Class Promotion')
 
@@ -82,15 +82,15 @@
             <!-- STEP 2: DESTINATION SESSION & TARGET CLASS -->
             <div class="card" style="background:#121827;border:1px solid rgba(56,189,248,0.3);border-radius:16px;padding:24px">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(56,189,248,0.2);color:#38bdf8;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">2</div>
+                    <div style="width:32px;height:32px;border-radius:50%;background:rgba(56,189,248,0.2);color:#E8CEAA;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">2</div>
                     <div>
-                        <h2 style="font-size:16px;font-weight:700;color:#38bdf8;margin:0">Destination Academic Session &amp; Class</h2>
+                        <h2 style="font-size:16px;font-weight:700;color:#E8CEAA;margin:0">Destination Academic Session &amp; Class</h2>
                         <div style="font-size:12px;color:var(--text-muted)">Select target session and existing or new custom class name.</div>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-bottom:16px">
-                    <label for="promote_target_session_id" style="color:#38bdf8;font-weight:700">3. Target Destination Session *</label>
+                    <label for="promote_target_session_id" style="color:#E8CEAA;font-weight:700">3. Target Destination Session *</label>
                     <select id="promote_target_session_id" name="target_session_id" onchange="filterPromoteTargetClasses(this.value)" required style="border-color:rgba(56,189,248,0.4);background:#0b0f19">
                         <option value="">-- Select Target Session --</option>
                         @foreach($allTerms as $t)
@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom:16px">
-                    <label for="promote_target_class_id" style="color:#38bdf8;font-weight:700">4. Select Existing Target Class</label>
+                    <label for="promote_target_class_id" style="color:#E8CEAA;font-weight:700">4. Select Existing Target Class</label>
                     <select id="promote_target_class_id" name="target_class_id" style="border-color:rgba(56,189,248,0.4);background:#0b0f19">
                         <option value="">-- Select Target Class OR Type Custom Name Below --</option>
                         @foreach($allClasses as $ac)
@@ -145,7 +145,7 @@
                 </label>
 
                 <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px">
-                    <input type="checkbox" name="copy_faculty_allocations" value="1" checked style="width:18px;height:18px;accent-color:#38bdf8;margin-top:2px">
+                    <input type="checkbox" name="copy_faculty_allocations" value="1" checked style="width:18px;height:18px;accent-color:#E8CEAA;margin-top:2px">
                     <div>
                         <span style="font-size:13px;color:#fff;font-weight:700">Preserve Faculty Allocations</span>
                         <div style="font-size:11.5px;color:#94a3b8;margin-top:2px">Retain teacher subject section authorities and class incharge roles.</div>
@@ -332,7 +332,7 @@
                         <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);font-weight:700">
                             ⚠️ ${data.failed_count} Failed
                         </span>
-                        <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-weight:700">
+                        <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:rgba(56,189,248,0.15);color:#E8CEAA;border:1px solid rgba(56,189,248,0.3);font-weight:700">
                             👥 ${data.total_students} Total
                         </span>
                     </div>

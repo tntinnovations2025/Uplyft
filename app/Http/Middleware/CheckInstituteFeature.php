@@ -82,7 +82,7 @@ class CheckInstituteFeature
         if (auth()->check() && auth()->user()->institute_id) {
             $inst = auth()->user()->institute;
             if ($inst) {
-                $inst->loadMissing('featureToggles');
+                $inst->load('featureToggles');
                 return $inst;
             }
         }

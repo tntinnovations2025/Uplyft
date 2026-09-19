@@ -187,14 +187,14 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-end gap-1.5">
+                    <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
                         @if($invoice->status === 'paid')
-                            <span class="badge badge-emerald text-xs font-extrabold px-3 py-1 flex items-center gap-1.5 shadow-2xs">
-                                <i class="fa-solid fa-check"></i> Paid
+                            <span class="badge badge-emerald text-xs font-extrabold px-3 py-1 inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap flex-shrink-0">
+                                <i class="fa-solid fa-check"></i> <span>Paid</span>
                             </span>
                         @else
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black text-rose-700 bg-rose-50 border border-rose-200 shadow-2xs">
-                                <i class="fa-solid fa-triangle-exclamation text-rose-600 text-[11px]"></i> Unpaid
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black text-rose-700 bg-rose-50 border border-rose-200 shadow-2xs whitespace-nowrap flex-shrink-0">
+                                <i class="fa-solid fa-triangle-exclamation text-rose-600 text-[11px]"></i> <span>Unpaid</span>
                             </span>
                         @endif
                     </div>

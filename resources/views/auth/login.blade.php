@@ -1,4 +1,4 @@
-<x-guest-layout>
+﻿<x-guest-layout>
     @php
         $initialRole = old('role') ?? $selectedRole ?? request()->query('role');
         if (!in_array($initialRole, ['principal', 'faculty', 'student'], true)) {
@@ -56,7 +56,7 @@
 
         .portal-badge-default {
             background: rgba(2, 132, 199, 0.08);
-            color: #0284c7;
+            color: #D48A2E;
             border: 1px solid rgba(2, 132, 199, 0.18);
         }
 
@@ -129,7 +129,7 @@
 
         .role-card:hover {
             transform: translateY(-1px);
-            border-color: var(--role-color, #0284c7);
+            border-color: var(--role-color, #D48A2E);
             box-shadow: 0 4px 12px -2px var(--role-glow, rgba(2, 132, 199, 0.18));
         }
 
@@ -152,9 +152,9 @@
         }
 
         .role-card.role-student {
-            --role-color: #0284c7;
+            --role-color: #D48A2E;
             --role-glow: rgba(2, 132, 199, 0.22);
-            --role-bg-light: #f0f9ff;
+            --role-bg-light: #FBF3E8;
             --role-text: #075985;
         }
 
@@ -163,7 +163,7 @@
             height: 30px;
             border-radius: 7px;
             background: var(--role-bg-light, #f1f5f9);
-            color: var(--role-color, #0284c7);
+            color: var(--role-color, #D48A2E);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -327,12 +327,12 @@
 
         .custom-input:focus {
             background: #ffffff !important;
-            border-color: var(--current-color, #0284c7) !important;
+            border-color: var(--current-color, #D48A2E) !important;
             box-shadow: 0 0 0 2.5px var(--current-focus-ring, rgba(2, 132, 199, 0.18)) !important;
         }
 
         .custom-input:focus ~ .input-icon-left {
-            color: var(--current-color, #0284c7) !important;
+            color: var(--current-color, #D48A2E) !important;
         }
 
         .custom-input::placeholder {
@@ -376,14 +376,14 @@
         }
 
         .remember-checkbox-label input {
-            accent-color: var(--current-color, #0284c7);
+            accent-color: var(--current-color, #D48A2E);
             width: 11px;
             height: 11px;
             cursor: pointer;
         }
 
         .forgot-password-link {
-            color: var(--current-color, #0284c7);
+            color: var(--current-color, #D48A2E);
             text-decoration: none;
             font-weight: 700;
         }
@@ -395,7 +395,7 @@
         .login-submit-btn {
             width: 100%;
             height: 32px;
-            background: var(--current-gradient, linear-gradient(135deg, #0284c7 0%, #2563eb 100%));
+            background: var(--current-gradient, linear-gradient(135deg, #D48A2E 0%, #D48A2E 100%));
             border: none;
             border-radius: 6px;
             color: #ffffff;
@@ -436,9 +436,9 @@
         }
 
         .portal-theme-student {
-            --current-color: #0284c7;
+            --current-color: #D48A2E;
             --current-focus-ring: rgba(2, 132, 199, 0.18);
-            --current-gradient: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            --current-gradient: linear-gradient(135deg, #D48A2E 0%, #D48A2E 100%);
             --current-btn-shadow: rgba(2, 132, 199, 0.25);
         }
     </style>

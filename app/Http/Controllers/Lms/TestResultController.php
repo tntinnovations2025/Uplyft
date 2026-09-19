@@ -378,6 +378,9 @@ class TestResultController extends Controller
 
         $testDateFormatted = $assessment->start_time ? $assessment->start_time->format('M d, Y') : $assessment->created_at->format('M d, Y');
 
+        // Dispatch Real-Time Reverb Notification to Principal & Admins
+        \App\Services\PrincipalNotificationService::notifyMarksSubmitted($assessment, $user);
+
         return redirect()->back()->with('success', "Marks for test '{$assessment->title}' (Date: {$testDateFormatted}) saved successfully into Test Results & Marksheet!");
     }
 }

@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Classrooms & Campus Facilities')
 @section('breadcrumb', 'Classrooms & Facilities')
 
@@ -241,7 +241,7 @@
                         @else
                             <span class="status-tag status-free">Free All Day</span>
                         @endif
-                        <button type="button" class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openEditRoomModal({{ $room->id }}, '{{ addslashes($room->room_number) }}', '{{ addslashes($room->building_block ?? '') }}', {{ $room->capacity }})" style="padding:6px 12px;font-size:12px;color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                        <button type="button" class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openEditRoomModal({{ $room->id }}, '{{ addslashes($room->room_number) }}', '{{ addslashes($room->building_block ?? '') }}', {{ $room->capacity }})" style="padding:6px 12px;font-size:12px;color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                             ✏️ Edit
                         </button>
                         <button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation(); triggerDeleteModal('{{ route('principal.rooms.destroy', $room) }}', '{{ addslashes($room->room_number) }}')" style="padding:6px 12px;font-size:12px">
@@ -295,8 +295,8 @@
                     @endif
 
                     <div style="margin-top:16px;text-align:right">
-                        <a href="{{ route('principal.timetables.index') }}" class="btn btn-ghost btn-sm" style="font-size:12px;color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
-                            🗓️ Edit Schedule in Timetable Matrix →
+                        <a href="{{ route('principal.timetables.index') }}" class="btn btn-ghost btn-sm" style="font-size:12px;color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
+                            🗓️ Edit Schedule in Timetable →
                         </a>
                     </div>
                 </div>

@@ -220,6 +220,22 @@ class DatesheetController extends Controller
                 }
             }
 
+            if ($createdCount > 0) {
+                try {
+                    $sections = \App\Models\ClassSection::whereIn('id', $sectionIds)->get();
+                    foreach ($sections as $sec) {
+                        \App\Services\PortalNotificationService::notifyStudentDatesheetPublished(
+                            $instituteId,
+                            $sec->id,
+                            $title,
+                            $sec->section_name
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Log::warning("Failed to dispatch datesheet student notification: " . $e->getMessage());
+                }
+            }
+
             return redirect()->back()->with('success', "Official Exam Datesheet published successfully for {$createdCount} scheduled exam paper(s)!");
         }
 
@@ -298,6 +314,22 @@ class DatesheetController extends Controller
             ]);
 
             $createdCount++;
+        }
+
+        if ($createdCount > 0) {
+            try {
+                $sections = \App\Models\ClassSection::whereIn('id', $validated['class_section_ids'])->get();
+                foreach ($sections as $sec) {
+                    \App\Services\PortalNotificationService::notifyStudentDatesheetPublished(
+                        $instituteId,
+                        $sec->id,
+                        $validated['title'],
+                        $sec->section_name
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Log::warning("Failed to dispatch datesheet student notification: " . $e->getMessage());
+            }
         }
 
         return redirect()->back()->with('success', "Exam schedule '{$validated['title']}' published for {$createdCount} class section(s) on the Datesheet!");

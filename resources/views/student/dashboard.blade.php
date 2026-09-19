@@ -634,10 +634,14 @@
 
             <div class="metric-body">
                 <div class="metric-value">
-                    {{ $todaySlots->count() > 0 ? $todaySlots->count() : 3 }} <span style="font-size:14px;color:#68665D;font-weight:600">Lectures</span>
+                    {{ $todaySlots->count() }} <span style="font-size:14px;color:#68665D;font-weight:600">{{ Str::plural('Lecture', $todaySlots->count()) }}</span>
                 </div>
                 <div class="metric-subtext">
-                    Starts at <strong>{{ $todaySlots->first()?->start_time ? substr($todaySlots->first()->start_time, 0, 5) : '08:00 AM' }}</strong>
+                    @if($todaySlots->isNotEmpty())
+                        Starts at <strong>{{ substr($todaySlots->first()->start_time, 0, 5) }}</strong>
+                    @else
+                        No lectures scheduled today
+                    @endif
                 </div>
             </div>
 
@@ -658,10 +662,14 @@
 
             <div class="metric-body">
                 <div class="metric-value">
-                    {{ $upcomingAssessments->count() > 0 ? $upcomingAssessments->count() : 1 }} <span style="font-size:14px;color:#68665D;font-weight:600">Due Soon</span>
+                    {{ $upcomingAssessments->count() }} <span style="font-size:14px;color:#68665D;font-weight:600">Due Soon</span>
                 </div>
                 <div class="metric-subtext">
-                    Practice tests &amp; AI assistant ready
+                    @if($upcomingAssessments->isNotEmpty())
+                        {{ $upcomingAssessments->count() }} {{ Str::plural('assessment', $upcomingAssessments->count()) }} pending
+                    @else
+                        No pending tests or assignments
+                    @endif
                 </div>
             </div>
 
@@ -853,28 +861,10 @@
                             </span>
                         </div>
                     @empty
-                        <div class="timetable-slot-row">
-                            <div style="display:flex;flex-direction:column;gap:1px">
-                                <span style="font-size:13.5px;font-weight:800;color:#1B1A17">Physics &amp; Mechanics</span>
-                                <span style="font-size:11.5px;color:#68665D;font-weight:500">Faculty Member • Room 101</span>
-                            </div>
-                            <span class="slot-timing-badge">08:00 - 09:00</span>
-                        </div>
-
-                        <div class="timetable-slot-row">
-                            <div style="display:flex;flex-direction:column;gap:1px">
-                                <span style="font-size:13.5px;font-weight:800;color:#1B1A17">Urdu Language &amp; Literature</span>
-                                <span style="font-size:11.5px;color:#68665D;font-weight:500">Faculty Member • Room 102</span>
-                            </div>
-                            <span class="slot-timing-badge">09:00 - 10:00</span>
-                        </div>
-
-                        <div class="timetable-slot-row">
-                            <div style="display:flex;flex-direction:column;gap:1px">
-                                <span style="font-size:13.5px;font-weight:800;color:#1B1A17">English Grammar &amp; Composition</span>
-                                <span style="font-size:11.5px;color:#68665D;font-weight:500">Faculty Member • Room 103</span>
-                            </div>
-                            <span class="slot-timing-badge">10:00 - 11:00</span>
+                        <div style="text-align:center;padding:26px 16px;background:#F9F8F5;border:1px dashed #E1DFD7;border-radius:12px;color:#68665D">
+                            <x-icon name="calendar-check" class="w-6 h-6 mx-auto mb-2 text-slate-400" />
+                            <div style="font-size:13px;font-weight:700;color:#1B1A17">No Lectures Scheduled Today</div>
+                            <div style="font-size:11.5px;margin-top:2px">Enjoy your academic free day or review study materials.</div>
                         </div>
                     @endforelse
                 </div>
@@ -902,14 +892,10 @@
                                 </span>
                             </div>
                         @empty
-                            <div class="deadline-item">
-                                <div>
-                                    <div style="font-size:13px;font-weight:800;color:#1B1A17">Midterm Preparation Quiz</div>
-                                    <div style="font-size:11.5px;color:#68665D;font-weight:500">Physics &amp; Mechanics</div>
-                                </div>
-                                <span style="font-size:11px;font-weight:800;color:#8A5A10;background:#F8E9D3;border:1px solid #E8CEAA;padding:2px 8px;border-radius:6px">
-                                    Due in 3 Days
-                                </span>
+                            <div style="text-align:center;padding:18px 14px;background:#F9F8F5;border:1px dashed #E1DFD7;border-radius:12px;color:#68665D">
+                                <x-icon name="check-circle" class="w-5 h-5 mx-auto mb-1 text-emerald-600" />
+                                <div style="font-size:12.5px;font-weight:700;color:#1B1A17">No Pending Tests or Deadlines</div>
+                                <div style="font-size:11px;margin-top:1px">You are completely up-to-date with your coursework.</div>
                             </div>
                         @endforelse
                     </div>

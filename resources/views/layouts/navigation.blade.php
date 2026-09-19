@@ -67,6 +67,14 @@
                             <span>Dashboard</span>
                         </a>
 
+                        <a href="{{ route('teacher.diary.index') }}" class="glossy-nav-item {{ request()->routeIs('teacher.diary.*') ? 'active' : '' }}" style="margin-bottom: 8px;">
+                            <span class="icon" style="color:#F59E0B;"><x-icon name="book-open" /></span>
+                            <span class="flex-1 flex items-center justify-between">
+                                <span>Daily Diary</span>
+                                <span style="font-size:10px; font-weight:800; background:rgba(217,119,6,0.2); color:#F59E0B; padding:2px 7px; border-radius:9999px; border:1px solid rgba(245,158,11,0.3);">Daily</span>
+                            </span>
+                        </a>
+
                         <div style="padding: 4px 6px 2px; display: flex; align-items: center; justify-content: space-between;">
                             <span style="font-size: 10px; font-weight: 800; color: #8A877E; text-transform: uppercase; letter-spacing: 0.8px;">
                                 {{ auth()->user()->staff_role ? strtoupper(auth()->user()->staff_role) . ' HUBS' : 'FACULTY HUBS' }}
@@ -247,7 +255,7 @@
                         @if(auth()->user()->hasPermission('timetables'))
                             <a href="{{ auth()->user()->staffUrl('timetables') }}" class="glossy-nav-item {{ request()->is('*/timetables*') ? 'active' : '' }}">
                                 <span class="icon"><x-icon name="calendar-days" /></span>
-                                <span>Timetable Matrix</span>
+                                <span>Timetable</span>
                             </a>
                         @endif
                         @if(auth()->user()->hasPermission('rooms'))
@@ -412,6 +420,14 @@
                         <a href="{{ route('student.dashboard') }}" class="glossy-nav-item {{ request()->routeIs('student.dashboard') ? 'active' : '' }}" style="margin-bottom: 8px;">
                             <span class="icon"><x-icon name="chart-pie" /></span>
                             <span>Dashboard</span>
+                        </a>
+
+                        <a href="{{ route('student.diary.index') }}" class="glossy-nav-item {{ request()->routeIs('student.diary.*') ? 'active' : '' }}" style="margin-bottom: 8px;">
+                            <span class="icon" style="color:#F59E0B;"><x-icon name="book-open" /></span>
+                            <span class="flex-1 flex items-center justify-between">
+                                <span>Daily Diary</span>
+                                <span style="font-size:10px; font-weight:800; background:rgba(217,119,6,0.2); color:#F59E0B; padding:2px 7px; border-radius:9999px; border:1px solid rgba(245,158,11,0.3);">Daily</span>
+                            </span>
                         </a>
 
                         <div style="padding: 4px 6px 2px; display: flex; align-items: center; justify-content: space-between;">
@@ -803,7 +819,7 @@
                         </a>
                         <a href="{{ route('principal.timetables.index') }}" class="glossy-nav-item {{ (request()->routeIs('principal.timetables.*') || request()->is('principal/timetables*')) ? 'active' : '' }}">
                             <span class="icon"><x-icon name="calendar-days" /></span>
-                            <span>Timetable Matrix</span>
+                            <span>Timetable</span>
                         </a>
                     </div>
 

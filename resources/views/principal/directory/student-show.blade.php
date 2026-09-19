@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.directory.';
@@ -219,7 +219,7 @@
                         <td>{{ $inv->due_date ? $inv->due_date->format('d M, Y') : 'N/A' }}</td>
                         <td>
                             @if($inv->pdf_path)
-                                <a href="{{ Storage::url($inv->pdf_path) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                                <a href="{{ Storage::url($inv->pdf_path) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                                     📥 PDF Voucher
                                 </a>
                             @endif

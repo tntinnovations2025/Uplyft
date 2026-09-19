@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.students.';
@@ -130,7 +130,7 @@
     /* Section colour themes */
     .toggle-personal  { background: #ecfdf5; color: #059669; }
     .toggle-guardian  { background: #fef3c7; color: #d97706; }
-    .toggle-academic  { background: #eff6ff; color: #0284c7; }
+    .toggle-academic  { background: #FBF3E8; color: #D48A2E; }
     .toggle-financial { background: #fdf4ff; color: #9333ea; }
 
     .btn-submit {
@@ -411,7 +411,7 @@
                         <span style="font-size:11px;color:#64748b">Charged strictly on 1st time registration (Non-Refundable).</span>
                     </div>
                     <div>
-                        <label class="field-label" style="color:#0284c7">
+                        <label class="field-label" style="color:#D48A2E">
                             Security Deposit Fee ({{ $currencySymbol ?? 'PKR' }}) — <span style="color:#059669;font-weight:bold">Refundable on Graduation/Departure</span>
                         </label>
                         <input type="number" id="security_fee" name="security_fee" min="0" step="500" class="form-control" value="{{ old('security_fee', '5000') }}" oninput="recalculateFeeVoucher()">
@@ -488,17 +488,17 @@
                             <div style="font-size:10px;text-transform:uppercase;color:#059669;font-weight:700">Admission Fee</div>
                             <div id="preview_admission_fee" style="font-size:15px;font-weight:800;color:#059669;margin-top:4px">{{ $currencySymbol ?? 'PKR' }} 5,000</div>
                         </div>
-                        <div style="background:#eff6ff;padding:12px;border-radius:10px;border:1px solid #bfdbfe">
-                            <div style="font-size:10px;text-transform:uppercase;color:#0284c7;font-weight:700">Security Fee</div>
-                            <div id="preview_security_fee" style="font-size:15px;font-weight:800;color:#0284c7;margin-top:4px">{{ $currencySymbol ?? 'PKR' }} 5,000</div>
+                        <div style="background:#FBF3E8;padding:12px;border-radius:10px;border:1px solid #E8CEAA">
+                            <div style="font-size:10px;text-transform:uppercase;color:#D48A2E;font-weight:700">Security Fee</div>
+                            <div id="preview_security_fee" style="font-size:15px;font-weight:800;color:#D48A2E;margin-top:4px">{{ $currencySymbol ?? 'PKR' }} 5,000</div>
                         </div>
                         <div style="background:#ecfdf5;padding:12px;border-radius:10px;border:1px solid #a7f3d0">
                             <div style="font-size:10px;text-transform:uppercase;color:#059669;font-weight:700">Scholarship</div>
                             <div id="preview_discount" style="font-size:15px;font-weight:800;color:#059669;margin-top:4px">- {{ $currencySymbol ?? 'PKR' }} 0</div>
                         </div>
-                        <div style="background:#eff6ff;padding:12px;border-radius:10px;border:1px solid #bfdbfe">
-                            <div style="font-size:10px;text-transform:uppercase;color:#0284c7;font-weight:700">Tax (<span id="preview_tax_rate">15%</span>)</div>
-                            <div id="preview_tax_amount" style="font-size:15px;font-weight:800;color:#0284c7;margin-top:4px">+ {{ $currencySymbol ?? 'PKR' }} 2,250</div>
+                        <div style="background:#FBF3E8;padding:12px;border-radius:10px;border:1px solid #E8CEAA">
+                            <div style="font-size:10px;text-transform:uppercase;color:#D48A2E;font-weight:700">Tax (<span id="preview_tax_rate">15%</span>)</div>
+                            <div id="preview_tax_amount" style="font-size:15px;font-weight:800;color:#D48A2E;margin-top:4px">+ {{ $currencySymbol ?? 'PKR' }} 2,250</div>
                         </div>
                         <div style="background:#fdf2f8;padding:12px;border-radius:10px;border:1px solid #fbcfe8">
                             <div style="font-size:10px;text-transform:uppercase;color:#be185d;font-weight:800">Grand Total</div>

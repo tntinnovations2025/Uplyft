@@ -457,7 +457,7 @@ class AccountsController extends Controller
             $receiptPath = $request->file('receipt_image')->store('receipts', 'public');
         }
 
-        FinancialTransaction::create([
+        $transaction = FinancialTransaction::create([
             'institute_id' => $user->institute_id,
             'account_head_id' => $head->id,
             'title' => $validated['title'],
@@ -470,6 +470,11 @@ class AccountsController extends Controller
             'notes' => $validated['notes'] ?? null,
             'created_by' => $user->id,
         ]);
+
+        // Dispatch Real-Time Reverb Notification for expenses
+        if ($head->type === 'expense') {
+            \App\Services\PrincipalNotificationService::notifyExpenseRecorded($transaction, $user);
+        }
 
         $redirectUrl = auth()->user()->isPrincipal() || auth()->user()->isGlobalAdmin()
             ? route('principal.accounts.index', ['tab' => 'ledger'])

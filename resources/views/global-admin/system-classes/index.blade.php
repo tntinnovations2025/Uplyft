@@ -1,4 +1,4 @@
-@extends('global-admin.layouts.app')
+﻿@extends('global-admin.layouts.app')
 @section('breadcrumb', 'System Classes')
 @section('title', 'System Classes')
 
@@ -59,7 +59,7 @@
             @empty
             <tr>
                 <td colspan="7" style="text-align:center;color:#64748b;padding:40px;font-weight:500">
-                    No classes defined yet. <a href="{{ route('global-admin.system-classes.create') }}" style="color:#0284c7;font-weight:700">Add one →</a>
+                    No classes defined yet. <a href="{{ route('global-admin.system-classes.create') }}" style="color:#D48A2E;font-weight:700">Add one →</a>
                 </td>
             </tr>
             @endforelse

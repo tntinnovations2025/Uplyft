@@ -1,4 +1,4 @@
-@extends('lms.layouts.app')
+﻿@extends('lms.layouts.app')
 
 @section('title', 'Create New Assessment')
 @section('breadcrumb', 'Assessments / Create')
@@ -94,7 +94,7 @@
 
             <div style="display:flex;justify-content:flex-end;gap:12px">
                 <a href="{{ route('lms.assessments.index') }}" class="btn btn-ghost">Cancel</a>
-                <button type="submit" class="btn btn-primary" style="background:#0284c7;padding:10px 24px;color:#fff;border-radius:8px;border:none;font-weight:600;cursor:pointer">
+                <button type="submit" class="btn btn-primary" style="background:#D48A2E;padding:10px 24px;color:#fff;border-radius:8px;border:none;font-weight:600;cursor:pointer">
                     Save &amp; Continue &rarr;
                 </button>
             </div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -262,7 +262,7 @@
             <tr>
                 <td>
                     <strong>Security Deposit Fee</strong>
-                    <br><span style="font-size:9px;color:#2563eb;font-weight:bold">🛡️ Refundable upon leaving / graduation</span>
+                    <br><span style="font-size:9px;color:#D48A2E;font-weight:bold">🛡️ Refundable upon leaving / graduation</span>
                 </td>
                 <td class="right">{{ $currencySymbol ?? $currency ?? 'PKR' }} {{ number_format($feeBreakdown['security_fee'], 2) }}</td>
                 <td class="right">—</td>

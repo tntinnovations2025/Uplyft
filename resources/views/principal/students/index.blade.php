@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.students.';
@@ -153,7 +153,7 @@
 
         @if(auth()->check() && (auth()->user()->isPrincipal() || auth()->user()->isGlobalAdmin() || auth()->user()->hasPermission('students', 'edit')))
             @if(auth()->user()->isPrincipal() || auth()->user()->isGlobalAdmin())
-            <button type="button" onclick="openBulkImportModal()" class="btn btn-ghost btn-sm" style="border-color:#3b82f6;color:#2563eb;background:#eff6ff">
+            <button type="button" onclick="openBulkImportModal()" class="btn btn-ghost btn-sm" style="border-color:#D48A2E;color:#D48A2E;background:#FBF3E8">
                 <span>📥 Import Students</span>
             </button>
             @endif
@@ -298,7 +298,7 @@
                     </td>
                     <td style="text-align:right">
                         <div style="display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap">
-                            <a href="{{ route($routePrefix . 'show', $student) }}" class="btn btn-ghost btn-sm" style="padding:6px 12px;font-size:12px;font-weight:700;color:#0284c7;border-color:#bae6fd;background:#f0f9ff" title="View Full Student Details, Documents & Address">
+                            <a href="{{ route($routePrefix . 'show', $student) }}" class="btn btn-ghost btn-sm" style="padding:6px 12px;font-size:12px;font-weight:700;color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8" title="View Full Student Details, Documents & Address">
                                 👁️ View Details
                             </a>
                             @if(auth()->check() && (auth()->user()->isPrincipal() || auth()->user()->isGlobalAdmin() || auth()->user()->hasPermission('students', 'edit')))
@@ -356,7 +356,7 @@
             <div style="font-size:15px;font-weight:800;color:#0f172a" id="modalStudentName">Student Name</div>
             <div style="font-size:12.5px;color:#64748b;margin-top:4px;font-weight:600">
                 Roll No: <span id="modalStudentRoll" style="color:#059669;font-weight:800">STD-XXXX</span> | 
-                Current: <span id="modalCurrentClass" style="color:#2563eb;font-weight:800">Class</span>
+                Current: <span id="modalCurrentClass" style="color:#D48A2E;font-weight:800">Class</span>
             </div>
         </div>
 
@@ -518,7 +518,7 @@
     <div class="modal-box" style="max-width:520px;border-radius:18px;padding:24px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
             <div style="display:flex;align-items:center;gap:10px">
-                <div style="width:36px;height:36px;border-radius:10px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:18px">
+                <div style="width:36px;height:36px;border-radius:10px;background:#FBF3E8;color:#D48A2E;display:flex;align-items:center;justify-content:center;font-size:18px">
                     📥
                 </div>
                 <div>
@@ -535,7 +535,7 @@
             <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin-bottom:16px">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
                     <span style="font-size:12px;font-weight:700;color:#0f172a">📁 Sample CSV Template</span>
-                    <a href="{{ route('principal.bulk-import.sample', 'students') }}" class="btn btn-ghost btn-sm" style="font-size:11px;color:#0284c7;padding:4px 10px">
+                    <a href="{{ route('principal.bulk-import.sample', 'students') }}" class="btn btn-ghost btn-sm" style="font-size:11px;color:#D48A2E;padding:4px 10px">
                         ⬇️ Download Sample CSV
                     </a>
                 </div>
@@ -558,7 +558,7 @@
 
             <div style="margin-bottom:20px">
                 <label style="display:block;font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px">Select CSV / Excel File</label>
-                <input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required style="width:100%;padding:8px;border:1px dashed #3b82f6;background:#eff6ff;border-radius:10px;font-size:12px">
+                <input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required style="width:100%;padding:8px;border:1px dashed #D48A2E;background:#FBF3E8;border-radius:10px;font-size:12px">
             </div>
 
             <div style="display:flex;justify-content:flex-end;gap:10px">

@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Faculty & Staff Directory')
 @section('breadcrumb', 'Faculty & Staff Roster')
 
@@ -485,14 +485,14 @@
             <a href="{{ route('principal.staff.authorities') }}" class="btn btn-ghost" style="border-color:#cbd5e1;color:#0f172a">
                 🛡️ Permissions &amp; Role Access
             </a>
-            <button type="button" id="btnOpenImportStaff" onclick="window.openImportStaffModal ? window.openImportStaffModal() : openImportStaffModal()" class="btn btn-ghost" style="border-color:#3b82f6;color:#2563eb;background:#eff6ff;cursor:pointer">
+            <button type="button" id="btnOpenImportStaff" onclick="window.openImportStaffModal ? window.openImportStaffModal() : openImportStaffModal()" class="btn btn-ghost" style="border-color:#D48A2E;color:#D48A2E;background:#FBF3E8;cursor:pointer">
                 📥 Import Staff
             </button>
             <a href="{{ route('principal.staff.create') }}" class="btn btn-primary">
                 🚀 New Staff Onboarding
             </a>
         @else
-            <div style="font-size:12px;font-weight:700;color:#0284c7;background:#f0f9ff;padding:6px 14px;border-radius:10px;border:1px solid #bae6fd;display:inline-flex;align-items:center;gap:6px">
+            <div style="font-size:12px;font-weight:700;color:#D48A2E;background:#FBF3E8;padding:6px 14px;border-radius:10px;border:1px solid #E8CEAA;display:inline-flex;align-items:center;gap:6px">
                 <span>👁️</span> <span>View Only Access Mode</span>
             </div>
         @endif
@@ -643,8 +643,8 @@
                     $badgeStyle = 'background:#fffbeb;color:#d97706;border:1px solid #fde68a';
                 } elseif (str_contains($roleRaw, 'coord')) {
                     $catKey = 'coordinator';
-                    $avatarGradient = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-                    $badgeStyle = 'background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe';
+                    $avatarGradient = 'linear-gradient(135deg, #D48A2E, #C07A22)';
+                    $badgeStyle = 'background:#FBF3E8;color:#D48A2E;border:1px solid #E8CEAA';
                 } else {
                     $cSlug = \Illuminate\Support\Str::slug($staff->staff_role ?? 'other');
                     $catKey = !empty($cSlug) ? 'custom-' . $cSlug : 'other';
@@ -662,7 +662,7 @@
                             <div style="font-weight:700;color:#0f172a;font-size:14.5px">{{ $staff->name }}</div>
                             <div style="font-size:12px;color:#64748b;margin-top:1px">✉️ {{ $staff->email }}</div>
                             @if($staff->identifier)
-                                <span style="display:inline-block;margin-top:3px;font-size:10.5px;color:#0284c7;background:#f0fdf4;padding:2px 8px;border-radius:6px;border:1px solid #bae6fd;font-family:monospace;font-weight:700">
+                                <span style="display:inline-block;margin-top:3px;font-size:10.5px;color:#D48A2E;background:#f0fdf4;padding:2px 8px;border-radius:6px;border:1px solid #E8CEAA;font-family:monospace;font-weight:700">
                                     🆔 {{ $staff->identifier }}
                                 </span>
                             @endif
@@ -749,7 +749,7 @@
                         <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap">
                             @if($canEditStaff)
                                 {{-- Change Role, Designation & Contract --}}
-                                <button type="button" class="btn" onclick='openEditRoleModal({{ json_encode($editRoleData, JSON_HEX_APOS | JSON_HEX_QUOT) }})' title="Change Designation, Role & Contract Type" style="padding:6px 11px;font-size:11.5px;font-weight:800;border-radius:10px;background:#eff6ff;color:#2563eb;border:1.5px solid #bfdbfe;cursor:pointer">
+                                <button type="button" class="btn" onclick='openEditRoleModal({{ json_encode($editRoleData, JSON_HEX_APOS | JSON_HEX_QUOT) }})' title="Change Designation, Role & Contract Type" style="padding:6px 11px;font-size:11.5px;font-weight:800;border-radius:10px;background:#FBF3E8;color:#D48A2E;border:1.5px solid #E8CEAA;cursor:pointer">
                                     ✏️ Edit Role
                                 </button>
                             @endif
@@ -856,7 +856,7 @@
 
         <div class="perm-footer">
             <div class="perm-legend">
-                <span>👁️ <strong style="color:#0284c7">View Only</strong></span>
+                <span>👁️ <strong style="color:#D48A2E">View Only</strong></span>
                 <span>✏️ <strong style="color:#7c3aed">Edit &amp; Manage</strong></span>
                 <span>⚪ <strong style="color:#64748b">Revoked</strong></span>
             </div>
@@ -923,7 +923,7 @@
                         <span id="modalStaffEmail" style="font-size:13px;color:#64748b;font-weight:500">
                             staff@school.com
                         </span>
-                        <span id="modalStaffId" style="font-size:11px;color:#0369a1;font-family:monospace;font-weight:700;background:#f0f9ff;padding:3px 10px;border-radius:8px;border:1px solid #bae6fd">
+                        <span id="modalStaffId" style="font-size:11px;color:#C07A22;font-family:monospace;font-weight:700;background:#FBF3E8;padding:3px 10px;border-radius:8px;border:1px solid #E8CEAA">
                             EMP-XXXX
                         </span>
                     </div>
@@ -952,7 +952,7 @@
 
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px">
                     <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#64748b;letter-spacing:0.5px">💼 Contract Type</div>
-                    <div id="modalStaffEmployment" style="font-size:14.5px;font-weight:700;color:#0284c7;margin-top:4px">Permanent</div>
+                    <div id="modalStaffEmployment" style="font-size:14.5px;font-weight:700;color:#D48A2E;margin-top:4px">Permanent</div>
                 </div>
 
                 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px">
@@ -1039,7 +1039,7 @@
                 </div>
 
                 <!-- 0. System Access Level (Role) -->
-                <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:14px 18px">
+                <div style="background:#FBF3E8;border:1.5px solid #E8CEAA;border-radius:12px;padding:14px 18px">
                     <label style="display:block;font-size:12px;font-weight:800;text-transform:uppercase;color:#1e40af;letter-spacing:0.5px;margin-bottom:6px">
                         🔑 System Portal Access Role *
                     </label>
@@ -1244,7 +1244,7 @@
             } else {
                 keys.forEach(k => {
                     const badge = document.createElement('span');
-                    badge.style.cssText = 'background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;font-size:11px;padding:4px 10px;border-radius:12px;font-weight:700';
+                    badge.style.cssText = 'background:#FBF3E8;color:#C07A22;border:1px solid #E8CEAA;font-size:11px;padding:4px 10px;border-radius:12px;font-weight:700';
                     badge.textContent = '⚡ ' + k.replace('_', ' ').toUpperCase();
                     rightsContainer.appendChild(badge);
                 });
@@ -1617,7 +1617,7 @@
     function showToast(message, type) {
         const toast = document.getElementById('perm-toast');
         toast.innerHTML = `<span>${type === 'error' ? '⚠️' : '✅'}</span> ${message}`;
-        toast.style.borderColor = type === 'error' ? 'rgba(244,63,94,0.5)' : 'rgba(0,206,209,0.4)';
+        toast.style.borderColor = type === 'error' ? 'rgba(244,63,94,0.5)' : 'rgba(212,138,46,0.4)';
         toast.classList.add('show');
         clearTimeout(toast._t);
         toast._t = setTimeout(() => toast.classList.remove('show'), 2600);
@@ -2013,7 +2013,7 @@
         {{-- Header --}}
         <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #e2e8f0;background:#f8fafc">
             <div style="display:flex;align-items:center;gap:12px">
-                <div style="width:40px;height:40px;border-radius:12px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #bfdbfe">📥</div>
+                <div style="width:40px;height:40px;border-radius:12px;background:#FBF3E8;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid #E8CEAA">📥</div>
                 <div>
                     <div style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:#0f172a">Import Staff</div>
                     <div style="font-size:11.5px;color:#64748b;margin-top:1px">Upload CSV or Excel to onboard faculty &amp; support staff in bulk.</div>
@@ -2046,7 +2046,7 @@
                 <div style="margin-bottom:18px">
                     <label style="display:block;font-size:12px;font-weight:700;color:#0f172a;margin-bottom:8px">SELECT CSV / EXCEL FILE</label>
                     <input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required
-                        style="width:100%;padding:10px 14px;border:2px dashed #3b82f6;background:#eff6ff;border-radius:12px;font-size:13px;cursor:pointer;box-sizing:border-box">
+                        style="width:100%;padding:10px 14px;border:2px dashed #D48A2E;background:#FBF3E8;border-radius:12px;font-size:13px;cursor:pointer;box-sizing:border-box">
                 </div>
                 <div style="display:flex;justify-content:flex-end;gap:10px">
                     <button type="button" class="btn btn-ghost" onclick="closeImportStaffModal()">Cancel</button>

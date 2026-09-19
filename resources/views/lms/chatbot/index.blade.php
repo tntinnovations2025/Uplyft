@@ -11,34 +11,35 @@
 <div id="chatbot-wrapper" style="width:100%;max-width:1400px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
 
     {{-- Step 1 & Step 2: Initial Subject & Response Mode Selection Screen --}}
-    <div id="subject-selection-screen" style="{{ $selectedSubjectId ? 'display:none;' : 'display:flex;' }}flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:0 16px 40px rgba(0,0,0,0.3);margin:20px auto;max-width:760px;width:100%">
+    <div id="subject-selection-screen" style="{{ $selectedSubjectId ? 'display:none;' : 'display:flex;' }}flex-direction:column;align-items:center;justify-content:center;padding:22px 24px;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,0.08);margin:10px auto;max-width:520px;width:100%">
         
         {{-- Avatar & Header --}}
-        <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,var(--accent),var(--accent-hover));display:flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:20px;box-shadow:0 8px 28px rgba(212,138,46,0.4)">
-            🤖
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-hover));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 12px rgba(212,138,46,0.35)">
+                🤖
+            </div>
+            <h2 style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin:0;letter-spacing:-0.3px">
+                UPLYFT AI Study Assistant
+            </h2>
         </div>
 
-        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;color:var(--text);margin-bottom:12px;text-align:center">
-            UPLYFT AI Study Assistant
-        </h2>
-
         {{-- Sympathetic Welcome Message --}}
-        <div style="background:rgba(212,138,46,0.08);border:1px solid rgba(212,138,46,0.3);border-radius:18px;padding:18px 24px;margin-bottom:32px;max-width:580px;width:100%;text-align:center">
-            <p style="font-size:15px;color:var(--warning);font-weight:600;line-height:1.6;margin:0">
+        <div style="background:rgba(212,138,46,0.08);border:1px solid rgba(212,138,46,0.22);border-radius:9px;padding:7px 12px;margin-bottom:12px;max-width:460px;width:100%;text-align:center">
+            <p style="font-size:11.5px;color:var(--warning);font-weight:600;line-height:1.4;margin:0">
                 "I am here to help you achieve more .. let's team up . Please choose a subject &amp; response mode" 🤝🌟
             </p>
         </div>
 
         {{-- SECTION 1: Class Selection (For Principal / Administration or Multi-Class Teachers ONLY) --}}
         @if(!auth()->user()->isStudent() && ($isAdministration || $classes->count() > 1))
-            <div style="width:100%;max-width:580px;margin-bottom:20px">
-                <label style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="width:100%;max-width:460px;margin-bottom:12px">
+                <label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
                     <span>🏫 Step 1: Select Class / Grade</span>
-                    <span style="font-size:11px;font-weight:600;color:var(--accent2);text-transform:none">
+                    <span style="font-size:10px;font-weight:600;color:var(--accent2);text-transform:none">
                         {{ $classes->count() }} Classes available
                     </span>
                 </label>
-                <select id="center-class-selector" onchange="onClassFilterChange(this.value)" style="width:100%;padding:14px 18px;background:var(--surface2);border:2px solid var(--accent);border-radius:14px;color:var(--text);font-size:15px;font-weight:600;outline:none;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.15);transition:border-color 0.2s">
+                <select id="center-class-selector" onchange="onClassFilterChange(this.value)" style="width:100%;padding:8px 12px;background:var(--surface2);border:1.5px solid var(--accent);border-radius:9px;color:var(--text);font-size:12.5px;font-weight:600;outline:none;font-family:inherit;cursor:pointer">
                     <option value="">— Select a Class —</option>
                     @foreach($classes as $cls)
                         <option value="{{ $cls->id }}" @selected($selectedClassId == $cls->id)>
@@ -48,91 +49,91 @@
                 </select>
             </div>
 
-            <div id="no-class-prompt" style="{{ (!$selectedClassId) ? 'display:block;' : 'display:none;' }}width:100%;max-width:580px;margin-bottom:24px;padding:16px 20px;background:rgba(212,138,46,0.06);border:1px dashed rgba(212,138,46,0.35);border-radius:16px;text-align:center">
-                <div style="font-size:24px;margin-bottom:6px">👆</div>
-                <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px">Please select a class first</div>
-                <div style="font-size:11px;color:var(--text-muted)">Choose your class from the dropdown above to view and access its subjects.</div>
+            <div id="no-class-prompt" style="{{ (!$selectedClassId) ? 'display:block;' : 'display:none;' }}width:100%;max-width:460px;margin-bottom:14px;padding:12px 14px;background:rgba(212,138,46,0.06);border:1px dashed rgba(212,138,46,0.35);border-radius:12px;text-align:center">
+                <div style="font-size:18px;margin-bottom:4px">👆</div>
+                <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px">Please select a class first</div>
+                <div style="font-size:10.5px;color:var(--text-muted)">Choose your class from the dropdown above to view its subjects.</div>
             </div>
         @elseif(auth()->user()->isStudent())
             @if($classes->isNotEmpty())
                 {{-- Enrolled Class info for Student --}}
-                <div style="width:100%;max-width:580px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;background:rgba(212,138,46,0.06);border:1px solid rgba(212,138,46,0.25);border-radius:14px;padding:12px 18px">
-                    <div style="display:flex;align-items:center;gap:10px">
-                        <span style="font-size:22px">🎓</span>
+                <div style="width:100%;max-width:460px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;background:rgba(212,138,46,0.06);border:1px solid rgba(212,138,46,0.22);border-radius:9px;padding:6px 12px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <span style="font-size:15px">🎓</span>
                         <div>
-                            <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted)">Enrolled Class</div>
-                            <div style="font-size:14px;font-weight:700;color:var(--warning)">{{ $classes->pluck('name')->implode(', ') }}</div>
+                            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted)">Enrolled Class</div>
+                            <div style="font-size:12px;font-weight:700;color:var(--warning)">{{ $classes->pluck('name')->implode(', ') }}</div>
                         </div>
                     </div>
-                    <span class="badge badge-purple" style="font-size:11px;font-weight:700">
+                    <span class="badge badge-purple" style="font-size:10px;font-weight:700;padding:2px 7px">
                         {{ $subjects->count() }} Assigned {{ Str::plural('Subject', $subjects->count()) }}
                     </span>
                 </div>
             @endif
         @elseif($classes->isNotEmpty())
             {{-- Enrolled Class info for single-class Teachers --}}
-            <div style="width:100%;max-width:580px;margin-bottom:20px;display:flex;align-items:center;gap:12px;background:rgba(212,138,46,0.08);border:1px solid rgba(212,138,46,0.25);border-radius:14px;padding:12px 18px">
-                <span style="font-size:22px">🎓</span>
+            <div style="width:100%;max-width:460px;margin-bottom:10px;display:flex;align-items:center;gap:10px;background:rgba(212,138,46,0.08);border:1px solid rgba(212,138,46,0.22);border-radius:9px;padding:6px 12px">
+                <span style="font-size:15px">🎓</span>
                 <div>
-                    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)">Your Assigned Class</div>
-                    <div style="font-size:14px;font-weight:700;color:var(--warning)">{{ $classes->pluck('name')->implode(', ') }}</div>
+                    <div style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted)">Your Assigned Class</div>
+                    <div style="font-size:12px;font-weight:700;color:var(--warning)">{{ $classes->pluck('name')->implode(', ') }}</div>
                 </div>
             </div>
         @endif
 
         {{-- Unenrolled Student Warning --}}
         @if(auth()->user()->isStudent() && $subjects->isEmpty())
-            <div style="width:100%;max-width:580px;margin-bottom:24px;padding:24px 20px;background:rgba(239,68,68,0.08);border:1px dashed rgba(239,68,68,0.3);border-radius:16px;text-align:center">
-                <div style="font-size:28px;margin-bottom:8px">🎓</div>
-                <div style="font-size:15px;font-weight:800;color:var(--danger);margin-bottom:4px">You are not currently enrolled in any class or subjects</div>
-                <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Please contact your campus administration to assign your class section and course enrollments.</div>
+            <div style="width:100%;max-width:460px;margin-bottom:16px;padding:16px 14px;background:rgba(239,68,68,0.08);border:1px dashed rgba(239,68,68,0.3);border-radius:12px;text-align:center">
+                <div style="font-size:22px;margin-bottom:6px">🎓</div>
+                <div style="font-size:13px;font-weight:800;color:var(--danger);margin-bottom:3px">You are not currently enrolled in any class or subjects</div>
+                <div style="font-size:11px;color:var(--text-muted);line-height:1.4">Please contact your campus administration to assign your class section and course enrollments.</div>
             </div>
         @endif
 
         {{-- SECTION 2: Subject Selection (Visible only when class is selected or student enrolled) --}}
-        <div id="step2-subject-section" style="{{ (!auth()->user()->isStudent() && ($isAdministration || $classes->count() > 1) && !$selectedClassId) || (auth()->user()->isStudent() && $subjects->isEmpty()) ? 'display:none;' : 'display:block;' }}width:100%;max-width:580px;margin-bottom:28px">
-            <label style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:block;margin-bottom:10px">
+        <div id="step2-subject-section" style="{{ (!auth()->user()->isStudent() && ($isAdministration || $classes->count() > 1) && !$selectedClassId) || (auth()->user()->isStudent() && $subjects->isEmpty()) ? 'display:none;' : 'display:block;' }}width:100%;max-width:460px;margin-bottom:12px">
+            <label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);display:block;margin-bottom:5px">
                 📚 {{ (!auth()->user()->isStudent() && ($isAdministration || $classes->count() > 1)) ? 'Step 2: Choose Subject' : 'Step 1: Choose Your Enrolled Subject' }}
             </label>
-            <select id="center-subject-selector" onchange="onCenterSubjectChange(this.value)" style="width:100%;padding:14px 18px;background:var(--surface2);border:2px solid var(--accent);border-radius:14px;color:var(--text);font-size:15px;font-weight:600;outline:none;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.15)">
+            <select id="center-subject-selector" onchange="onCenterSubjectChange(this.value)" style="width:100%;padding:7px 11px;background:var(--surface2);border:1.5px solid var(--accent);border-radius:8px;color:var(--text);font-size:12.5px;font-weight:600;outline:none;font-family:inherit;cursor:pointer">
                 <option value="">— Select a Subject —</option>
             </select>
 
-            <div id="quick-subj-container" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"></div>
+            <div id="quick-subj-container" style="display:flex;gap:5px;flex-wrap:wrap;margin-top:7px"></div>
         </div>
 
         {{-- SECTION 3: Response Mode Selection --}}
-        <div style="width:100%;max-width:580px;margin-bottom:32px">
-            <label style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);display:block;margin-bottom:12px">
+        <div style="width:100%;max-width:460px;margin-bottom:16px">
+            <label style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);display:block;margin-bottom:6px">
                 ⚙️ {{ (!auth()->user()->isStudent() && ($isAdministration || $classes->count() > 1)) ? 'Step 3: Select Preferred Answer Mode' : 'Step 2: Select Preferred Answer Mode' }}
             </label>
             
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
                 {{-- Mode 1: Short --}}
                 <div class="welcome-mode-card active" id="card-mode-short" onclick="setWelcomeMode('short')">
-                    <div style="font-size:24px;margin-bottom:6px">⚡</div>
-                    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Short Answer</div>
-                    <div style="font-size:11px;color:var(--text-muted);line-height:1.4">Direct &amp; to the point in a few lines</div>
+                    <div style="font-size:17px;margin-bottom:2px">⚡</div>
+                    <div style="font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:1px">Short Answer</div>
+                    <div style="font-size:9.5px;color:var(--text-muted);line-height:1.3">Direct &amp; to the point</div>
                 </div>
 
                 {{-- Mode 2: Long --}}
                 <div class="welcome-mode-card" id="card-mode-long" onclick="setWelcomeMode('long')">
-                    <div style="font-size:24px;margin-bottom:6px">📖</div>
-                    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Long &amp; Detailed</div>
-                    <div style="font-size:11px;color:var(--text-muted);line-height:1.4">In-depth answers from notes/books</div>
+                    <div style="font-size:17px;margin-bottom:2px">📖</div>
+                    <div style="font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:1px">Long &amp; Detailed</div>
+                    <div style="font-size:9.5px;color:var(--text-muted);line-height:1.3">In-depth study notes</div>
                 </div>
 
                 {{-- Mode 3: Summary --}}
                 <div class="welcome-mode-card" id="card-mode-summary" onclick="setWelcomeMode('summary')">
-                    <div style="font-size:24px;margin-bottom:6px">📋</div>
-                    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Summary Option</div>
-                    <div style="font-size:11px;color:var(--text-muted);line-height:1.4">Summarize topic with headings</div>
+                    <div style="font-size:17px;margin-bottom:2px">📋</div>
+                    <div style="font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:1px">Summary Option</div>
+                    <div style="font-size:9.5px;color:var(--text-muted);line-height:1.3">Key points &amp; headings</div>
                 </div>
             </div>
         </div>
 
         {{-- Start Chat Button --}}
-        <button id="start-chat-btn" onclick="confirmCenterSubject()" class="btn btn-primary" style="padding:16px 48px;border-radius:16px;font-size:16px;font-weight:800;box-shadow:0 8px 24px rgba(212,138,46,0.4)" {{ !$selectedSubjectId ? 'disabled' : '' }}>
+        <button id="start-chat-btn" onclick="confirmCenterSubject()" class="btn btn-primary" style="padding:9px 24px;border-radius:9px;font-size:13px;font-weight:800;box-shadow:0 4px 14px rgba(212,138,46,0.3)" {{ !$selectedSubjectId ? 'disabled' : '' }}>
             Open Chatbot Interface 💬
         </button>
     </div>
@@ -324,31 +325,31 @@
 <style>
     /* Welcome Mode Selection Cards */
     .welcome-mode-card {
-        padding: 16px 12px;
+        padding: 9px 8px;
         background: var(--surface2);
-        border: 2px solid var(--border);
-        border-radius: 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
         text-align: center;
         cursor: pointer;
         transition: all 0.2s ease;
     }
     .welcome-mode-card:hover {
         border-color: var(--accent);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
     .welcome-mode-card.active {
         background: rgba(212,138,46,0.12);
         border-color: var(--accent);
-        box-shadow: 0 6px 20px rgba(212,138,46,0.25);
+        box-shadow: 0 4px 14px rgba(212,138,46,0.22);
     }
 
     .quick-subj-btn {
         background: var(--surface2);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 12px;
+        border-radius: 7px;
+        padding: 4px 9px;
+        font-size: 11px;
         font-weight: 600;
         color: var(--text);
         cursor: pointer;

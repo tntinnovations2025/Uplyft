@@ -1,4 +1,4 @@
-@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && auth()->user()->isTeacher() ? 'layouts.app' : 'principal.layouts.app')
 @section('title', 'Classes, Grades & Sections')
 @section('breadcrumb', 'Classes & Sections')
 
@@ -187,7 +187,7 @@
                     <span class="badge badge-purple">{{ $class->subjects->count() }} Subjects</span>
 
                     <!-- Rename Class Button -->
-                    <button type="button" class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openEditClassModal({{ $class->id }}, '{{ addslashes($class->custom_name) }}')" style="padding:4px 10px;font-size:12px;color:#38bdf8;border:1px solid rgba(56,189,248,0.3)">
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); openEditClassModal({{ $class->id }}, '{{ addslashes($class->custom_name) }}')" style="padding:4px 10px;font-size:12px;color:#E8CEAA;border:1px solid rgba(56,189,248,0.3)">
                         ✏️ Rename Class
                     </button>
 
@@ -244,7 +244,7 @@
                             <td>
                                 <form method="POST" action="{{ route('principal.sections.incharge', $sec) }}" style="display:flex;align-items:center;gap:6px">
                                     @csrf
-                                    <select name="class_incharge_id" onchange="this.form.submit()" style="padding:4px 8px;background:#070b14;border:1px solid rgba(0,206,209,0.3);border-radius:6px;color:#fff;font-size:12px;outline:none">
+                                    <select name="class_incharge_id" onchange="this.form.submit()" style="padding:4px 8px;background:#070b14;border:1px solid rgba(212,138,46,0.3);border-radius:6px;color:#fff;font-size:12px;outline:none">
                                         <option value="">-- Assign Incharge --</option>
                                         @foreach($teachers as $t)
                                             <option value="{{ $t->id }}" {{ $sec->class_incharge_id == $t->id ? 'selected' : '' }}>
@@ -273,7 +273,7 @@
                                                         <strong style="color:#fff">{{ $st->full_name }}</strong> 
                                                         <span style="color:#94a3b8;font-family:monospace">({{ $st->roll_number }})</span>
                                                     </div>
-                                                    <a href="{{ route('principal.students.show', $st) }}" target="_blank" style="color:#38bdf8;text-decoration:none;font-weight:600">
+                                                    <a href="{{ route('principal.students.show', $st) }}" target="_blank" style="color:#E8CEAA;text-decoration:none;font-weight:600">
                                                         Profile &rarr;
                                                     </a>
                                                 </div>
@@ -288,7 +288,7 @@
                                 <button type="button" 
                                         class="btn btn-ghost btn-sm"
                                         onclick="openEditSectionModal({{ $sec->id }}, '{{ addslashes($sec->section_name) }}', {{ $capacity }}, '{{ route('principal.sections.update', $sec) }}')"
-                                        style="font-size:12px;color:#38bdf8;border:1px solid rgba(56,189,248,0.3)">
+                                        style="font-size:12px;color:#E8CEAA;border:1px solid rgba(56,189,248,0.3)">
                                     ✏️ Edit Section
                                 </button>
                                 <button type="button" 
@@ -394,7 +394,7 @@
 
             <!-- Step 3: Class Name / Alias Input -->
             <div class="form-group">
-                <label for="custom_name" style="color:#38bdf8;font-weight:700">3. Class Display Name / Alias *</label>
+                <label for="custom_name" style="color:#E8CEAA;font-weight:700">3. Class Display Name / Alias *</label>
                 <input id="custom_name" type="text" name="custom_name" placeholder="e.g. Grade 9, Grade 10, FMMA, FBT" required value="{{ old('custom_name') }}" style="border-color:rgba(56,189,248,0.4)">
                 <div style="font-size:11px;color:var(--text-muted);margin-top:4px">
                     You can rename or alias any class for this academic session.
@@ -417,7 +417,7 @@
             <!-- Automated Intelligent Room Allocation Badge -->
             <div style="padding:10px 14px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
                 <span style="font-size:16px">⚡</span>
-                <div style="font-size:12px;color:#38bdf8;font-weight:600">
+                <div style="font-size:12px;color:#E8CEAA;font-weight:600">
                     <strong>Intelligent Room Allocation:</strong> Room auto-assigned based on optimal seating capacity &amp; facility load balancing.
                 </div>
             </div>
@@ -450,7 +450,7 @@
     <div class="modal-box" style="border-color:rgba(56,189,248,0.4)">
         <div class="modal-header">
             <div>
-                <div class="modal-title" style="color:#38bdf8">✏️ Rename Class</div>
+                <div class="modal-title" style="color:#E8CEAA">✏️ Rename Class</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:2px">
                     Update the display name or session alias for this class.
                 </div>
@@ -462,13 +462,13 @@
             @method('PUT')
 
             <div class="form-group">
-                <label for="edit_custom_name" style="color:#38bdf8;font-weight:700">Class Name / Alias *</label>
+                <label for="edit_custom_name" style="color:#E8CEAA;font-weight:700">Class Name / Alias *</label>
                 <input id="edit_custom_name" type="text" name="custom_name" required placeholder="e.g. Grade 9 - Science, FMMA, 10th">
             </div>
 
             <div class="modal-actions">
                 <button type="button" class="btn btn-ghost" onclick="closeEditClassModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary" style="background:linear-gradient(135deg, #0284c7, #0369a1);border:none">
+                <button type="submit" class="btn btn-primary" style="background:linear-gradient(135deg, #D48A2E, #C07A22);border:none">
                     Save New Class Name
                 </button>
             </div>
@@ -481,7 +481,7 @@
     <div class="modal-box" style="border-color:rgba(56,189,248,0.4)">
         <div class="modal-header">
             <div>
-                <div class="modal-title" style="color:#38bdf8">✏️ Edit Section Details</div>
+                <div class="modal-title" style="color:#E8CEAA">✏️ Edit Section Details</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:2px">
                     Update section name or required seating capacity.
                 </div>
@@ -493,26 +493,26 @@
             @method('PUT')
 
             <div class="form-group">
-                <label for="edit_section_name" style="color:#38bdf8;font-weight:700">Section Name *</label>
+                <label for="edit_section_name" style="color:#E8CEAA;font-weight:700">Section Name *</label>
                 <input id="edit_section_name" type="text" name="section_name" required placeholder="e.g. Section A, Blue, Morning">
             </div>
 
             <div class="form-group">
-                <label for="edit_capacity" style="color:#38bdf8;font-weight:700">Expected Student Capacity *</label>
+                <label for="edit_capacity" style="color:#E8CEAA;font-weight:700">Expected Student Capacity *</label>
                 <input id="edit_capacity" type="number" name="capacity" min="1" max="1000" required>
             </div>
 
             <!-- Automated Intelligent Room Allocation Badge -->
             <div style="padding:10px 14px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
                 <span style="font-size:16px">⚡</span>
-                <div style="font-size:12px;color:#38bdf8;font-weight:600">
+                <div style="font-size:12px;color:#E8CEAA;font-weight:600">
                     <strong>Facility Auto-Balancing:</strong> Room allocation updates automatically if capacity requirement increases.
                 </div>
             </div>
 
             <div class="modal-actions">
                 <button type="button" class="btn btn-ghost" onclick="closeEditSectionModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary" style="background:linear-gradient(135deg, #0284c7, #0369a1);border:none">
+                <button type="submit" class="btn btn-primary" style="background:linear-gradient(135deg, #D48A2E, #C07A22);border:none">
                     Save Section Changes
                 </button>
             </div>
@@ -544,7 +544,7 @@
             <!-- Automated Intelligent Room Allocation Badge -->
             <div style="padding:10px 14px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
                 <span style="font-size:16px">⚡</span>
-                <div style="font-size:12px;color:#38bdf8;font-weight:600">
+                <div style="font-size:12px;color:#E8CEAA;font-weight:600">
                     <strong>Intelligent Room Allocation:</strong> Room auto-assigned based on optimal seating capacity &amp; facility load balancing.
                 </div>
             </div>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'My Schedule')
-@section('page-header', 'Teacher Schedule')
+@section('title', 'Timetable')
+@section('page-header', 'Timetable')
 
 @section('content')
 <div class="space-y-6">
@@ -10,7 +10,7 @@
         <div class="relative z-10">
             <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2.5 font-display">
                 <i class="fa-solid fa-calendar-days text-pink-500"></i>
-                <span>Weekly Teaching Schedule</span>
+                <span>Timetable</span>
             </h2>
             <p class="text-xs text-slate-500 font-medium mt-1">Your assigned classes, sections, and laboratories for the active session.</p>
         </div>

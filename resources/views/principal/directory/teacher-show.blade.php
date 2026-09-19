@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.directory.';
@@ -29,12 +29,12 @@
         width: 56px;
         height: 56px;
         border-radius: 12px;
-        background: #eff6ff;
+        background: #FBF3E8;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 24px;
-        border: 2px solid #bfdbfe;
+        border: 2px solid #E8CEAA;
         box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
     }
     .detail-grid {
@@ -96,7 +96,7 @@
             <div style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:800;color:#0f172a;letter-spacing:-0.5px">
                 {{ $teacher->full_name }}
             </div>
-            <div style="font-size:13px;color:#0284c7;font-weight:700;margin-top:4px;display:flex;gap:12px;align-items:center">
+            <div style="font-size:13px;color:#D48A2E;font-weight:700;margin-top:4px;display:flex;gap:12px;align-items:center">
                 <span class="badge badge-blue">Employee ID: {{ $teacher->employee_id ?? 'EMP-' . $teacher->id }}</span>
                 <span>🎓 {{ $teacher->qualification ?? 'Faculty Member' }}</span>
             </div>
@@ -118,7 +118,7 @@
 <!-- TEACHER PERSONAL & ACADEMIC PROFILE -->
 <div class="card mb-6">
     <div class="card-header">
-        <div class="card-title" style="color:#0284c7">👤 Faculty &amp; Contact Details</div>
+        <div class="card-title" style="color:#D48A2E">👤 Faculty &amp; Contact Details</div>
     </div>
 
     <div class="detail-grid detail-grid-3 mb-4">
@@ -159,7 +159,7 @@
 <!-- VERIFIED EDUCATIONAL QUALIFICATION RESULTS SECTION -->
 <div class="card mb-6" style="border-color:rgba(56,189,248,0.3)">
     <div class="card-header">
-        <div class="card-title" style="color:#0284c7">📜 Verified Educational Qualification Results</div>
+        <div class="card-title" style="color:#D48A2E">📜 Verified Educational Qualification Results</div>
     </div>
 
     <div class="detail-grid detail-grid-3 mb-2">
@@ -167,7 +167,7 @@
             <div class="info-label">Matric / O-Level Result</div>
             <div style="margin-top:6px">
                 @if($teacher->matriculation_cert)
-                    <a href="{{ Storage::url($teacher->matriculation_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                    <a href="{{ Storage::url($teacher->matriculation_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                         📄 View Matric Result
                     </a>
                 @else
@@ -180,7 +180,7 @@
             <div class="info-label">Inter / A-Level Result</div>
             <div style="margin-top:6px">
                 @if($teacher->intermediate_cert)
-                    <a href="{{ Storage::url($teacher->intermediate_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                    <a href="{{ Storage::url($teacher->intermediate_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                         📄 View Inter Result
                     </a>
                 @else
@@ -193,7 +193,7 @@
             <div class="info-label">Bachelors Result / Degree</div>
             <div style="margin-top:6px">
                 @if($teacher->bachelors_cert)
-                    <a href="{{ Storage::url($teacher->bachelors_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                    <a href="{{ Storage::url($teacher->bachelors_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                         📄 View Bachelors Result
                     </a>
                 @else
@@ -209,7 +209,7 @@
                 <div class="info-box">
                     <div class="info-label">MS / M.Phil Result Certificate</div>
                     <div style="margin-top:6px">
-                        <a href="{{ Storage::url($teacher->masters_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                        <a href="{{ Storage::url($teacher->masters_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                             🔬 View MS Result
                         </a>
                     </div>
@@ -220,7 +220,7 @@
                 <div class="info-box">
                     <div class="info-label">PhD Degree / Certificate</div>
                     <div style="margin-top:6px">
-                        <a href="{{ Storage::url($teacher->phd_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                        <a href="{{ Storage::url($teacher->phd_cert) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                             🎓 View PhD Degree
                         </a>
                     </div>
@@ -313,7 +313,7 @@
                     </div>
 
                     <div style="display:flex;align-items:center;gap:12px">
-                        <a href="{{ Storage::url($slip->file_path) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                        <a href="{{ Storage::url($slip->file_path) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                             👁️ View / Download File
                         </a>
 

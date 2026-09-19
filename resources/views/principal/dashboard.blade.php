@@ -194,7 +194,7 @@
                     <span><x-icon name="receipt" class="w-3.5 h-3.5" /></span> Fee Ledger
                 </a>
                 <a href="{{ route('principal.timetables.index') }}" class="btn btn-primary btn-sm" style="padding:8px 14px;font-size:12px">
-                    <span><x-icon name="calendar-days" class="w-3.5 h-3.5" /></span> Timetable Matrix
+                    <span><x-icon name="calendar-days" class="w-3.5 h-3.5" /></span> Timetable
                 </a>
             </div>
         </div>
@@ -285,24 +285,54 @@
     </div>
 
     <!-- KPI 2: Upcoming / Due Fee -->
-    <div id="kpi-upcoming" class="exec-kpi-card clickable" style="border-top:3px solid #D48A2E" onclick="document.getElementById('section-invoices').scrollIntoView({behavior:'smooth',block:'start'})">
+    <div id="kpi-upcoming" class="exec-kpi-card clickable" style="border-top:3px solid {{ $upcomingDueDate ? '#D48A2E' : ($totalOverdue > 0 ? '#A2412C' : '#2E6E42') }}" onclick="document.getElementById('section-invoices').scrollIntoView({behavior:'smooth',block:'start'})">
         <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-                <span style="font-size:10.5px;color:#68665D;text-transform:uppercase;font-weight:800;letter-spacing:0.5px">Upcoming / Due Fee</span>
-                <div class="exec-icon-box" style="background:#F8E9D3;color:#8A5A10">
-                    <x-icon name="hourglass-half" class="w-4 h-4" />
+                <span style="font-size:10.5px;color:#68665D;text-transform:uppercase;font-weight:800;letter-spacing:0.5px">
+                    @if($upcomingDueDate)
+                        Upcoming Due Fee
+                    @elseif($totalOverdue > 0)
+                        Overdue Receivables
+                    @elseif($totalPending > 0)
+                        Pending Receivables
+                    @else
+                        Receivables Status
+                    @endif
+                </span>
+                <div class="exec-icon-box" style="background:{{ $upcomingDueDate ? '#F8E9D3' : ($totalOverdue > 0 ? '#F6E4E1' : '#E3EFE2') }};color:{{ $upcomingDueDate ? '#8A5A10' : ($totalOverdue > 0 ? '#A2412C' : '#2E6E42') }}">
+                    @if($totalOverdue > 0 && !$upcomingDueDate)
+                        <x-icon name="triangle-exclamation" class="w-4 h-4" />
+                    @elseif($totalPending == 0)
+                        <x-icon name="check" class="w-4 h-4" />
+                    @else
+                        <x-icon name="hourglass-half" class="w-4 h-4" />
+                    @endif
                 </div>
             </div>
-            <div style="font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;color:#8A5A10;letter-spacing:-0.5px;margin-bottom:4px">
-                PKR {{ number_format($upcomingFeeAmount) }}
+            <div style="font-family:'Manrope',sans-serif;font-size:22px;font-weight:800;color:{{ $upcomingDueDate ? '#8A5A10' : ($totalOverdue > 0 ? '#A2412C' : '#2E6E42') }};letter-spacing:-0.5px;margin-bottom:4px">
+                PKR {{ number_format($upcomingDueDate ? $upcomingFeeAmount : ($totalOverdue > 0 ? $totalOverdue : $totalPending)) }}
             </div>
         </div>
         <div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid #EAE8E1;font-size:11px;color:#68665D">
-                <span>Due Date</span>
-                <span class="exec-badge-pill" style="background:#F8E9D3;color:#8A5A10;padding:2px 6px">
-                    {{ Carbon\Carbon::parse($upcomingDueDate)->format('d M Y') }} ({{ $daysLeft }}d left)
-                </span>
+                <span>Status / Timeline</span>
+                @if($upcomingDueDate)
+                    <span class="exec-badge-pill" style="background:#F8E9D3;color:#8A5A10;padding:2px 6px">
+                        {{ Carbon\Carbon::parse($upcomingDueDate)->format('d M Y') }} ({{ $daysLeft }}d left)
+                    </span>
+                @elseif($totalOverdue > 0)
+                    <span class="exec-badge-pill" style="background:#F6E4E1;color:#A2412C;padding:2px 6px">
+                        {{ $overdueCount }} Overdue Invoice{{ $overdueCount > 1 ? 's' : '' }}
+                    </span>
+                @elseif($totalPending > 0)
+                    <span class="exec-badge-pill" style="background:#F8E9D3;color:#8A5A10;padding:2px 6px">
+                        Pending Verification
+                    </span>
+                @else
+                    <span class="exec-badge-pill" style="background:#E3EFE2;color:#2E6E42;padding:2px 6px">
+                        All Dues Cleared
+                    </span>
+                @endif
             </div>
         </div>
         <span class="kpi-click-hint">View Details &#8595;</span>
@@ -640,7 +670,13 @@
                     Average student presence across active academic levels
                 </div>
             </div>
-            <span class="exec-badge-pill" style="background:#E7ECF6;color:#3A529C;border:1px solid #CAD5EE">Overall: {{ $overallStudentAttendance }}%</span>
+            <span class="exec-badge-pill" style="background:#E7ECF6;color:#3A529C;border:1px solid #CAD5EE">
+                @if($overallStudentAttendance !== null)
+                    Overall: {{ $overallStudentAttendance }}%
+                @else
+                    No logs recorded yet
+                @endif
+            </span>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:12px">
@@ -651,12 +687,22 @@
                         <strong style="font-size:13px;color:#1B1A17">{{ $sAtt['name'] }}</strong>
                         <span style="font-size:11px;color:#68665D;margin-left:6px">Incharge: {{ $sAtt['incharge'] }}</span>
                     </div>
+                    @if($sAtt['has_logs'])
                     <div style="font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:{{ $sAtt['color'] == '#10b981' ? '#2E6E42' : ($sAtt['color'] == '#ef4444' ? '#A2412C' : '#D48A2E') }}">
                         {{ number_format($sAtt['rate'], 1) }}%
                     </div>
+                    @else
+                    <div style="font-size:11.5px;font-weight:700;color:#8A5A10">
+                        No logs yet
+                    </div>
+                    @endif
                 </div>
                 <div style="width:100%;height:6px;background:#E1DFD7;border-radius:9999px;overflow:hidden">
+                    @if($sAtt['has_logs'])
                     <div style="height:100%;width:{{ $sAtt['rate'] }}%;background:{{ $sAtt['color'] == '#10b981' ? '#2E6E42' : ($sAtt['color'] == '#ef4444' ? '#A2412C' : '#D48A2E') }};border-radius:9999px"></div>
+                    @else
+                    <div style="height:100%;width:0%;background:#A19E92;border-radius:9999px"></div>
+                    @endif
                 </div>
             </div>
             @endforeach

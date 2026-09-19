@@ -364,6 +364,9 @@ class StaffController extends Controller
             Log::warning('Welcome email failed: '.$e->getMessage());
         }
 
+        // Dispatch Real-Time Reverb Notification to Principal & Admins
+        \App\Services\PrincipalNotificationService::notifyStaffOnboarded($user, auth()->user());
+
         return redirect()
             ->route('principal.staff.index')
             ->with('success', "🎉 Staff account for {$user->name} ({$staffRoleTitle}) created successfully! Default Password: '{$plainPassword}'.");

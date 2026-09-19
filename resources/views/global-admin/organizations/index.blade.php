@@ -1,4 +1,4 @@
-@extends('global-admin.layouts.app')
+﻿@extends('global-admin.layouts.app')
 @section('breadcrumb', 'Organization Networks')
 @section('title', 'Registered Organization Networks')
 
@@ -103,7 +103,7 @@
                             <div style="font-size:13.5px;font-weight:800;color:#0f172a">
                                 👔 {{ $org->owner->name }}
                             </div>
-                            <div style="font-size:11.5px;color:#0284c7;font-weight:600">
+                            <div style="font-size:11.5px;color:#D48A2E;font-weight:600">
                                 ✉️ {{ $org->owner->email }}
                             </div>
                             @if($org->owner->identifier)
@@ -130,7 +130,7 @@
                                 </a>
                                 @if($campPrincipal)
                                     <div style="font-size:11px;color:#334155;font-weight:600">
-                                        👤 Principal: {{ $campPrincipal->name }} (<span style="color:#0284c7">{{ $campPrincipal->email }}</span>)
+                                        👤 Principal: {{ $campPrincipal->name }} (<span style="color:#D48A2E">{{ $campPrincipal->email }}</span>)
                                     </div>
                                 @else
                                     <div style="font-size:10.5px;color:#94a3b8;font-style:italic">

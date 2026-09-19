@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -12,7 +12,7 @@
         .body { padding: 32px 28px; color: #cbd5e1; }
         .body p { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
         .otp-box { background: rgba(99,102,241,0.1); border: 2px dashed #6366f1; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0; }
-        .otp-code { font-family: monospace, monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #38bdf8; }
+        .otp-code { font-family: monospace, monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #E8CEAA; }
         .otp-expiry { font-size: 12px; color: #94a3b8; margin-top: 8px; }
         .warning-card { background: rgba(239,68,68,0.12); border-left: 4px solid #ef4444; padding: 16px; border-radius: 8px; margin: 24px 0; }
         .warning-card p { margin: 0; font-size: 13px; color: #fca5a5; line-height: 1.5; }
@@ -47,7 +47,7 @@
             </div>
 
             <p style="font-size:12px;color:#94a3b8">If the button above does not work, copy and paste this link into your browser:<br>
-            <a href="{{ url('/password/cancel/' . $notification->cancellation_token) }}" style="color:#38bdf8">{{ url('/password/cancel/' . $notification->cancellation_token) }}</a></p>
+            <a href="{{ url('/password/cancel/' . $notification->cancellation_token) }}" style="color:#E8CEAA">{{ url('/password/cancel/' . $notification->cancellation_token) }}</a></p>
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} UPLYFT Multi-Tenant School Platform &bull; Automated Security Dispatch

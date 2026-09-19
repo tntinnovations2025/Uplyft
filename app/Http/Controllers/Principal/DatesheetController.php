@@ -199,6 +199,22 @@ class DatesheetController extends Controller
                 }
             }
 
+            if ($createdCount > 0) {
+                try {
+                    $sections = \App\Models\ClassSection::whereIn('id', $sectionIds)->get();
+                    foreach ($sections as $sec) {
+                        \App\Services\PortalNotificationService::notifyStudentDatesheetPublished(
+                            $instituteId,
+                            $sec->id,
+                            $title,
+                            $sec->section_name
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    \Log::warning("Failed to dispatch datesheet student notification: " . $e->getMessage());
+                }
+            }
+
             return redirect()->back()->with('success', "Official Exam Datesheet published for {$createdCount} scheduled exam paper(s)!");
         }
 

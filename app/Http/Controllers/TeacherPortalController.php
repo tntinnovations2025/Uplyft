@@ -47,70 +47,9 @@ class TeacherPortalController extends Controller
             }
         })->exists();
 
-        // If no DB slots exist for this teacher, build default schedule ONLY IF DB is completely empty
-        if ($mergedSlots->isEmpty() && ! $hasAnyInstituteTimetables) {
-            $slotsData = collect([
-                [
-                    'day' => 'monday',
-                    'start_time' => '09:00 AM',
-                    'end_time' => '10:30 AM',
-                    'subject_name' => 'CS-101 Intro',
-                    'subject_code' => 'CS-101',
-                    'room_name' => 'Lab A (BS-CS)',
-                    'section_name' => 'Section A',
-                    'color_theme' => 'cyan',
-                ],
-                [
-                    'day' => 'monday',
-                    'start_time' => '11:30 AM',
-                    'end_time' => '01:00 PM',
-                    'subject_name' => 'CS-201 Advanced',
-                    'subject_code' => 'CS-201',
-                    'room_name' => 'Room 302',
-                    'section_name' => 'Section B',
-                    'color_theme' => 'indigo',
-                ],
-                [
-                    'day' => 'tuesday',
-                    'start_time' => '11:30 AM',
-                    'end_time' => '01:00 PM',
-                    'subject_name' => 'SE-202 Software Eng',
-                    'subject_code' => 'SE-202',
-                    'room_name' => 'Room 405 (BS-SE)',
-                    'section_name' => 'Section A',
-                    'color_theme' => 'indigo',
-                ],
-                [
-                    'day' => 'wednesday',
-                    'start_time' => '09:00 AM',
-                    'end_time' => '10:30 AM',
-                    'subject_name' => 'CS-101 Intro',
-                    'subject_code' => 'CS-101',
-                    'room_name' => 'Lab A (BS-CS)',
-                    'section_name' => 'Section A',
-                    'color_theme' => 'cyan',
-                ],
-                [
-                    'day' => 'thursday',
-                    'start_time' => '11:30 AM',
-                    'end_time' => '01:00 PM',
-                    'subject_name' => 'SE-202 Software Eng',
-                    'subject_code' => 'SE-202',
-                    'room_name' => 'Room 405 (BS-SE)',
-                    'section_name' => 'Section A',
-                    'color_theme' => 'indigo',
-                ],
-                [
-                    'day' => 'friday',
-                    'start_time' => '09:00 AM',
-                    'end_time' => '10:30 AM',
-                    'subject_name' => 'CS-305 Data Structures',
-                    'subject_code' => 'CS-305',
-                    'room_name' => 'Hall B (BS-SE)',
-                    'section_name' => 'Section C',
-                    'color_theme' => 'emerald',
-                ],
-            ]);
+        // If no DB slots exist for this teacher, return empty collection (no fake fallbacks)
+        if ($mergedSlots->isEmpty()) {
+            $slotsData = collect();
         } else {
             $colors = ['cyan', 'indigo', 'emerald', 'amber', 'purple'];
             $colorIdx = 0;
@@ -149,12 +88,9 @@ class TeacherPortalController extends Controller
             });
         }
 
-        // Today's classes
+        // Today's classes strictly for today's day of the week
         $todayDay = strtolower(now()->format('l'));
         $todaySlots = $slotsData->where('day', $todayDay)->values();
-        if ($todaySlots->isEmpty()) {
-            $todaySlots = $slotsData->where('day', 'monday')->values();
-        }
 
         // Weekly schedule grid mapping
         $timeSlotsList = $slotsData->pluck('start_time')->unique()->values();
@@ -174,6 +110,13 @@ class TeacherPortalController extends Controller
             }
         }
 
+        // Real pending assignments count for this teacher
+        $pendingSubmissionsCount = \App\Models\AssessmentSubmission::whereIn('status', [\App\Models\AssessmentSubmission::STATUS_COMPLETED, \App\Models\AssessmentSubmission::STATUS_AUTO_SUBMITTED])
+            ->whereNull('total_score')
+            ->whereHas('assessment', function ($q) use ($user) {
+                $q->where('creator_id', $user->id)->orWhere('teacher_id', $user->id);
+            })->count();
+
         // Fetch real financial metrics for accountants and staff with accounting permissions
         $isAccountant = strtolower($user->staff_role ?? '') === 'accountant' || ($user->hasPermission('accounts') && !$user->hasPermission('attendance'));
 
@@ -188,13 +131,13 @@ class TeacherPortalController extends Controller
         $monthlyCollectedData = [];
         $monthlyUnpaidData = [];
 
-        // Heavy financial aggregations are cached briefly and only computed for
-        // roles with accounting access (keeps dashboard reloads sub-second).
+        // Heavy financial aggregations are strictly scoped to the active institute
         if ($showFinancials) {
-            $financialMetrics = \Illuminate\Support\Facades\Cache::remember("teacher_dash_finance_{$instituteId}", 60, function () {
-                $totalFeeCollected = \App\Models\Invoice::where('status', 'paid')->sum('amount_pkr');
-                $totalRemainingFee = \App\Models\Invoice::where('status', 'unpaid')->sum('amount_pkr');
-                $totalFinesCollected = \App\Models\FinancialTransaction::where('type', 'income')
+            $financialMetrics = \Illuminate\Support\Facades\Cache::remember("teacher_dash_finance_{$instituteId}", 30, function () use ($instituteId) {
+                $totalFeeCollected = (float) \App\Models\Invoice::where('institute_id', $instituteId)->where('status', 'paid')->sum('amount_pkr');
+                $totalRemainingFee = (float) \App\Models\Invoice::where('institute_id', $instituteId)->where('status', 'unpaid')->sum('amount_pkr');
+                $totalFinesCollected = (float) \App\Models\FinancialTransaction::where('institute_id', $instituteId)
+                    ->where('type', 'income')
                     ->whereHas('accountHead', function ($q) {
                         $q->where('name', 'like', '%Fine%')
                           ->orWhere('name', 'like', '%Penalty%')
@@ -202,8 +145,8 @@ class TeacherPortalController extends Controller
                     })->sum('amount');
 
                 // Detailed Financial Analytics Data
-                $paidCount = \App\Models\Invoice::where('status', 'paid')->count();
-                $unpaidCount = \App\Models\Invoice::where('status', 'unpaid')->count();
+                $paidCount = \App\Models\Invoice::where('institute_id', $instituteId)->where('status', 'paid')->count();
+                $unpaidCount = \App\Models\Invoice::where('institute_id', $instituteId)->where('status', 'unpaid')->count();
 
                 // 6-Month Fee & Income Collection Trends
                 $monthsList = [];
@@ -217,11 +160,13 @@ class TeacherPortalController extends Controller
                     $startOfMonth = $monthDate->copy()->startOfMonth();
                     $endOfMonth = $monthDate->copy()->endOfMonth();
 
-                    $collected = \App\Models\Invoice::where('status', 'paid')
+                    $collected = \App\Models\Invoice::where('institute_id', $instituteId)
+                        ->where('status', 'paid')
                         ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
                         ->sum('amount_pkr');
 
-                    $unpaid = \App\Models\Invoice::where('status', 'unpaid')
+                    $unpaid = \App\Models\Invoice::where('institute_id', $instituteId)
+                        ->where('status', 'unpaid')
                         ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
                         ->sum('amount_pkr');
 
@@ -245,7 +190,8 @@ class TeacherPortalController extends Controller
         return view('teacher.dashboard', compact(
             'user', 'todaySlots', 'slotsData', 'timeSlotsList', 'daysOfWeek', 'weeklyGrid', 'activeTerm',
             'isAccountant', 'totalFeeCollected', 'totalRemainingFee', 'totalFinesCollected',
-            'paidCount', 'unpaidCount', 'monthsList', 'monthlyCollectedData', 'monthlyUnpaidData'
+            'paidCount', 'unpaidCount', 'monthsList', 'monthlyCollectedData', 'monthlyUnpaidData',
+            'pendingSubmissionsCount'
         ));
     }
 
@@ -273,29 +219,8 @@ class TeacherPortalController extends Controller
             }
         })->exists();
 
-        if ($mergedSlots->isEmpty() && ! $hasAnyInstituteTimetables) {
-            $slotsData = collect([
-                [
-                    'day' => 'monday',
-                    'start_time' => '09:00 AM',
-                    'end_time' => '10:30 AM',
-                    'subject_name' => 'CS-101 Intro',
-                    'subject_code' => 'CS-101',
-                    'room_name' => 'Lab A (BS-CS)',
-                    'section_name' => 'Section A',
-                    'color_theme' => 'cyan',
-                ],
-                [
-                    'day' => 'tuesday',
-                    'start_time' => '11:30 AM',
-                    'end_time' => '01:00 PM',
-                    'subject_name' => 'SE-202 Software Eng',
-                    'subject_code' => 'SE-202',
-                    'room_name' => 'Room 405 (BS-SE)',
-                    'section_name' => 'Section A',
-                    'color_theme' => 'indigo',
-                ],
-            ]);
+        if ($mergedSlots->isEmpty()) {
+            $slotsData = collect();
         } else {
             $colors = ['cyan', 'indigo', 'emerald', 'amber', 'purple'];
             $colorIdx = 0;
@@ -553,6 +478,26 @@ class TeacherPortalController extends Controller
                 ]
             );
             $processed++;
+
+            // Dispatch student portal notification
+            try {
+                $studentModel = Student::withoutGlobalScopes()->find((int) $studentId);
+                if ($studentModel) {
+                    \App\Services\PortalNotificationService::notifyStudentAttendanceMarked(
+                        $studentModel,
+                        strtolower($statusVal),
+                        $date,
+                        $section->section_name
+                    );
+                }
+            } catch (\Throwable $e) {
+                \Log::warning("Could not dispatch student attendance notification: " . $e->getMessage());
+            }
+        }
+
+        if ($processed > 0 && $section) {
+            // Dispatch Real-Time Reverb Notification to Principal & Admins
+            \App\Services\PrincipalNotificationService::notifyAttendanceMarked($instituteId, $section, $processed, $date, $user);
         }
 
         return redirect()->back()->with('success', "✅ Attendance successfully recorded for {$processed} student(s) on {$date}.");

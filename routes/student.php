@@ -37,6 +37,9 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
         Route::get('/datesheet', [StudentPortalController::class, 'datesheet'])->name('datesheet');
         Route::get('/exam-report', [StudentPortalController::class, 'examReport'])->name('examReport');
 
+        // ── Student Daily Diary (Homework, Tests & Class Updates) ──
+        Route::get('/diary', [\App\Http\Controllers\Student\DailyDiaryController::class, 'index'])->name('diary.index');
+
         // ── Cambridge / Standard Mock Examinations & Instant Grading ──
         Route::get('/mocks', [\App\Http\Controllers\Student\StudentMockController::class, 'index'])->name('mocks.index');
         Route::get('/mocks/{assessment}/take', [\App\Http\Controllers\Student\StudentMockController::class, 'take'])->name('mocks.take');

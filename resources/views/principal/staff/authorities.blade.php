@@ -1,4 +1,4 @@
-@extends('principal.layouts.app')
+﻿@extends('principal.layouts.app')
 
 @section('title', 'Role Authority Governance Center — UPLYFT')
 @section('breadcrumb', 'Default Authorities & Role Governance')
@@ -221,9 +221,9 @@
                 </div>
             </div>
 
-            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:14px 18px">
-                <div style="font-size:11px;font-weight:700;color:#0284c7;text-transform:uppercase">ROLE SYNC ENGINE</div>
-                <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#0284c7;margin-top:4px">
+            <div style="background:#FBF3E8;border:1px solid #E8CEAA;border-radius:14px;padding:14px 18px">
+                <div style="font-size:11px;font-weight:700;color:#D48A2E;text-transform:uppercase">ROLE SYNC ENGINE</div>
+                <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#D48A2E;margin-top:4px">
                     ⚡ Auto-Sync Active
                 </div>
             </div>
@@ -267,7 +267,7 @@
                     'teacher' => 'linear-gradient(135deg, #059669, #10b981)',
                     'administration' => 'linear-gradient(135deg, #4f46e5, #6366f1)',
                     'accountant' => 'linear-gradient(135deg, #d97706, #f59e0b)',
-                    'coordinator' => 'linear-gradient(135deg, #0284c7, #38bdf8)',
+                    'coordinator' => 'linear-gradient(135deg, #D48A2E, #E8CEAA)',
                     default => 'linear-gradient(135deg, #7c3aed, #a855f7)',
                 };
             @endphp
@@ -409,7 +409,7 @@
             'teacher' => 'linear-gradient(135deg, #059669, #10b981)',
             'administration' => 'linear-gradient(135deg, #4f46e5, #6366f1)',
             'accountant' => 'linear-gradient(135deg, #d97706, #f59e0b)',
-            'coordinator' => 'linear-gradient(135deg, #0284c7, #38bdf8)',
+            'coordinator' => 'linear-gradient(135deg, #D48A2E, #E8CEAA)',
             default => 'linear-gradient(135deg, #7c3aed, #a855f7)',
         };
     @endphp

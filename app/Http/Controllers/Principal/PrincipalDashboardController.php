@@ -264,25 +264,31 @@ class PrincipalDashboardController extends Controller
 
         $sectionAttendanceList = [];
         $totalSectionAttendanceSum = 0;
+        $activeSectionsWithLogs = 0;
 
         foreach ($classSections as $cs) {
             $agg = $sectionAttAgg->get($cs->id);
             $totalAtt = $agg ? (int) $agg->total_att : 0;
             $presentAtt = $agg ? (int) $agg->present_att : 0;
 
-            $rate = $totalAtt > 0 ? round(($presentAtt / $totalAtt) * 100, 1) : 0;
-            $totalSectionAttendanceSum += $rate;
+            $hasLogs = $totalAtt > 0;
+            $rate = $hasLogs ? round(($presentAtt / $totalAtt) * 100, 1) : null;
+            if ($hasLogs) {
+                $totalSectionAttendanceSum += $rate;
+                $activeSectionsWithLogs++;
+            }
 
             $sectionAttendanceList[] = [
                 'name' => ($cs->instituteClass->name ?? 'Class') . ' — ' . $cs->section_name,
                 'rate' => $rate,
-                'color' => $rate >= 75 ? '#10b981' : ($rate >= 50 ? '#f59e0b' : '#ef4444'),
+                'has_logs' => $hasLogs,
+                'color' => !$hasLogs ? '#A19E92' : ($rate >= 75 ? '#10b981' : ($rate >= 50 ? '#f59e0b' : '#ef4444')),
                 'incharge' => $cs->classIncharge ? $cs->classIncharge->name : 'Staff Assigned',
-                'is_critical' => $rate > 0 && $rate < 75.0,
+                'is_critical' => $hasLogs && $rate < 75.0,
             ];
         }
 
-        $overallStudentAttendance = count($sectionAttendanceList) > 0 ? round($totalSectionAttendanceSum / count($sectionAttendanceList), 1) : 0;
+        $overallStudentAttendance = $activeSectionsWithLogs > 0 ? round($totalSectionAttendanceSum / $activeSectionsWithLogs, 1) : null;
 
         // 6. Term Progress & Academic Timeline
         $termProgressPercent = 65.0;
@@ -319,6 +325,7 @@ class PrincipalDashboardController extends Controller
             'totalPaid',
             'totalPending',
             'totalOverdue',
+            'overdueCount',
             'feeRecoveryRate',
             'upcomingFeeAmount',
             'upcomingDueDate',

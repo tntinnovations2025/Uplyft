@@ -356,11 +356,13 @@ class TimetableController extends Controller
         }
 
         $classSectionId = $request->get('class_section_id');
+        $teacherId      = $request->get('teacher_id');
 
         try {
             $excelService = new \App\Services\TimetableMultiSheetExcelService();
 
             if ($classSectionId) {
+                // Section-wise export
                 $section = ClassSection::whereHas('instituteClass', function ($q) use ($instituteId) {
                     $q->where('institute_id', $instituteId);
                 })->with('instituteClass')->findOrFail($classSectionId);
@@ -371,7 +373,23 @@ class TimetableController extends Controller
                 $secName = $section->section_name ?: 'A';
                 $sanitized = preg_replace('/[^A-Za-z0-9_]/', '_', "{$className}_{$secName}");
                 $filename = "{$sanitized}_Timetable.xlsx";
+
+            } elseif ($teacherId) {
+                // Teacher-wise export — filter slots to that teacher and build a dedicated workbook
+                $teacher = User::where('institute_id', $instituteId)->findOrFail($teacherId);
+
+                $allSlots = Timetable::where('academic_term_id', $activeTerm->id)
+                    ->where('teacher_id', $teacherId)
+                    ->with(['subject', 'teacher', 'section.instituteClass', 'room'])
+                    ->orderBy('start_time')
+                    ->get();
+
+                $filePath = $excelService->generateTeacherTimetable($instituteId, $activeTerm->id, $teacher, $allSlots);
+                $safeName = preg_replace('/[^A-Za-z0-9_]/', '_', $teacher->name);
+                $filename  = "{$safeName}_Timetable.xlsx";
+
             } else {
+                // Full institute export
                 $filePath = $excelService->generateCompleteInstitute($instituteId, $activeTerm->id);
                 $filename = "Institute_Complete_Timetable.xlsx";
             }
@@ -386,6 +404,7 @@ class TimetableController extends Controller
             return back()->with('error', 'Failed to generate Timetable Excel: ' . $e->getMessage());
         }
     }
+
 
     public function store(Request $request): RedirectResponse
     {
@@ -569,16 +588,31 @@ class TimetableController extends Controller
             ->where('is_active', true)
             ->first();
 
-        $assignments = collect();
+        $classes = \App\Models\InstituteClass::where('institute_id', $instituteId)
+            ->when($activeTerm, fn($q) => $q->where('academic_term_id', $activeTerm->id))
+            ->with('sections')
+            ->get();
+
+        $selectedClassId = $request->get('class_id');
+
+        $assignmentsQuery = TeacherSubjectSection::query();
         if ($activeTerm) {
-            $assignments = TeacherSubjectSection::where('academic_term_id', $activeTerm->id)
-                ->with(['section.instituteClass', 'subject', 'teacher.availabilities'])
-                ->orderBy('teacher_id')
-                ->get();
+            $assignmentsQuery->where('academic_term_id', $activeTerm->id);
         }
+
+        $assignments = $assignmentsQuery
+            ->with(['section.instituteClass', 'subject', 'teacher.availabilities'])
+            ->orderBy('teacher_id')
+            ->get();
 
         $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-        return view('principal.timetables.days_and_hours', compact('activeTerm', 'assignments', 'days'));
+        return view('principal.timetables.days_and_hours', compact(
+            'activeTerm', 
+            'assignments', 
+            'days', 
+            'classes', 
+            'selectedClassId'
+        ));
     }
 }

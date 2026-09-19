@@ -11,20 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('student_assessment_answers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('assessment_question_id')->constrained('assessment_questions')->cascadeOnDelete();
-            $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
-            $table->text('provided_answer')->nullable();
-            $table->decimal('marks_awarded', 6, 2)->nullable();
-            $table->text('ai_feedback')->nullable();
-            $table->enum('grading_status', ['pending', 'auto_graded', 'ai_graded', 'manually_graded'])->default('pending');
-            $table->foreignId('graded_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamps();
+        if (! Schema::hasTable('student_assessment_answers')) {
+            Schema::create('student_assessment_answers', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('assessment_question_id')->constrained('assessment_questions')->cascadeOnDelete();
+                $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
+                $table->text('provided_answer')->nullable();
+                $table->decimal('marks_awarded', 6, 2)->nullable();
+                $table->text('ai_feedback')->nullable();
+                $table->enum('grading_status', ['pending', 'auto_graded', 'ai_graded', 'manually_graded'])->default('pending');
+                $table->foreignId('graded_by')->nullable()->constrained('users')->nullOnDelete();
+                $table->timestamps();
 
-            $table->unique(['assessment_question_id', 'student_id'], 'unique_student_question_answer');
-            $table->index('student_id');
-        });
+                $table->unique(['assessment_question_id', 'student_id'], 'unique_student_question_answer');
+                $table->index('student_id');
+            });
+        }
     }
 
     public function down(): void

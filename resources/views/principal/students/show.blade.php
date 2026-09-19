@@ -1,4 +1,4 @@
-@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
+﻿@extends(auth()->check() && !auth()->user()->isPrincipal() && !auth()->user()->isGlobalAdmin() ? 'layouts.app' : 'principal.layouts.app')
 
 @php
     $routePrefix = 'principal.students.';
@@ -123,7 +123,7 @@
 
         <div class="detail-item">
             <div class="detail-label">Guardian Phone Number</div>
-            <div class="detail-value" style="color:#0284c7">{{ $student->guardian_phone ?? 'N/A' }}</div>
+            <div class="detail-value" style="color:#D48A2E">{{ $student->guardian_phone ?? 'N/A' }}</div>
         </div>
 
         <div class="detail-item">
@@ -169,7 +169,7 @@
 
         <div class="detail-item">
             <div class="detail-label">Student B-Form / CNIC Number</div>
-            <div class="detail-value" style="font-family:monospace;color:#0284c7">{{ $student->b_form_or_father_cnic ?? 'N/A' }}</div>
+            <div class="detail-value" style="font-family:monospace;color:#D48A2E">{{ $student->b_form_or_father_cnic ?? 'N/A' }}</div>
         </div>
 
         <div class="detail-item">
@@ -211,11 +211,11 @@
                 </div>
             </div>
             @if($student->b_form_or_father_cnic && (str_contains($student->b_form_or_father_cnic, '/') || str_contains($student->b_form_or_father_cnic, '.')))
-                <a href="{{ Storage::url($student->b_form_or_father_cnic) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                <a href="{{ Storage::url($student->b_form_or_father_cnic) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                     📄 View File
                 </a>
             @elseif($student->b_form_or_father_cnic)
-                <span style="font-size:11px;color:#0284c7;font-family:monospace;font-weight:600">{{ $student->b_form_or_father_cnic }}</span>
+                <span style="font-size:11px;color:#D48A2E;font-family:monospace;font-weight:600">{{ $student->b_form_or_father_cnic }}</span>
             @else
                 <span style="font-size:11px;color:#64748b;background:#f1f5f9;padding:3px 8px;border-radius:6px">Not Uploaded</span>
             @endif
@@ -293,7 +293,7 @@
                 <div style="font-size:12px;color:#64748b;margin-top:2px">Status: {{ strtoupper($invoice->status) }} &bull; Due: {{ $invoice->due_date }}</div>
             </div>
             @if($invoice->pdf_path)
-                <a href="{{ Storage::url($invoice->pdf_path) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#0284c7;border-color:#bae6fd;background:#f0f9ff">
+                <a href="{{ Storage::url($invoice->pdf_path) }}" target="_blank" class="btn btn-ghost btn-sm" style="color:#D48A2E;border-color:#E8CEAA;background:#FBF3E8">
                     📄 Download PDF
                 </a>
             @endif
